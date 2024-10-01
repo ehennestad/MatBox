@@ -1,4 +1,4 @@
-# Matbox: Efficient MATLAB Toolbox Development
+# MatBox: Efficient MATLAB Toolbox Development
 [![Version Number](https://img.shields.io/github/v/release/ehennestad/MatBox?label=version)](https://github.com/ehennestad/MatBox/releases/latest)
 ![MATLAB Tests](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fehennestad%2FMatBox%2Fmain%2Fdocs%2Freports%2Fbadge%2Ftests.json)
 [![codecov](https://codecov.io/gh/ehennestad/MatBox/graph/badge.svg?token=6D7STF19X0)](https://codecov.io/gh/ehennestad/MatBox)
