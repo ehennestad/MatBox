@@ -17,8 +17,8 @@ function S = getAddonMetadata(packageUuid)
     fex = matlab.addons.repositories.FileExchangeRepository();
     addonUrl = fex.getAddonURL(packageUuid);
 
-    % Parse the xml if the URL points to an XML document  
-    if endsWith(addonUrl, '.xml')    
+    % Parse the xml if the URL points to an XML document
+    if endsWith(addonUrl, '.xml')
 
         [filepath, C] = matbox.setup.internal.utility.tempsave(addonUrl);
         S = readstruct(filepath); delete(C) % Read XML

@@ -9,7 +9,7 @@ function S = getRequiredAdditionalSoftwareStructForToolboxOptions(githubRepo)
 %       - Name	        Name of software package, specified as a string scalar or character vector
 %       - Platform	    Platform to download the additional software package for, specified as "win64", "maci64", or "glnxa64"
 %       - DownloadURL	URL to download the additional software package, specified as a string scalar or character vector
-%       - LicenseURL	URL for the software package license file, specified as a string scalar or character vector    
+%       - LicenseURL	URL for the software package license file, specified as a string scalar or character vector
     
     arguments
         githubRepo (1,:) string

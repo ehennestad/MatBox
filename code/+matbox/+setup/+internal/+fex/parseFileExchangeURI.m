@@ -6,7 +6,7 @@ function [packageUuid, version] = parseFileExchangeURI(uri)
     
     arguments
         uri (1,:) string
-    end        
+    end
     
     FEX_API_URL = "https://addons.mathworks.com/registry/v1/";
     

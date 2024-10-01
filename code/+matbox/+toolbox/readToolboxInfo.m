@@ -24,7 +24,7 @@ function [toolboxOptions, identifier, toolboxInfo] = readToolboxInfo(projectRoot
     
     if nargout >= 2
         % Get toolbox identifier and remove it from toolbox info
-        identifier = toolboxOptions.Identifier; 
+        identifier = toolboxOptions.Identifier;
         toolboxOptions = rmfield(toolboxOptions, 'Identifier');
     end
     if nargout < 3

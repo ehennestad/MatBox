@@ -32,7 +32,7 @@ function newVersion = updateVersionNumber(previousVersion, releaseType, versionS
             versionParts(3) = "0";
         case "patch"
             versionParts(3) = string(str2double(versionParts(3)) + 1);
-        case "specific"        
+        case "specific"
             if startsWith(versionString, "v")
                 % if there's a "v" at the front, which is common in github, remove it
                 versionString = extractAfter(versionString, 1);

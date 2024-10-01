@@ -27,4 +27,3 @@ classdef BasicTest <  matlab.unittest.TestCase
         end
     end
 end
-

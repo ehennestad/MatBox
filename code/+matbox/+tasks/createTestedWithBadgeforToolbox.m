@@ -1,5 +1,5 @@
 function createTestedWithBadgeforToolbox(versionNumber, projcetRootDirectory)
-%createTestedWithBadgesforToolbox - Take the test reports from the runs against 
+%createTestedWithBadgesforToolbox - Take the test reports from the runs against
 % multiple MATLAB releases, and generate the "Tested with" badge
 %
 %   Adapted from: https://github.com/mathworks/climatedatastore/tree/main/buildUtilities
@@ -42,7 +42,7 @@ function createTestedWithBadgeforToolbox(versionNumber, projcetRootDirectory)
         end
     end
     if releasesTestedWith ~= ""
-        switch releasesFailed 
+        switch releasesFailed
             case 0
                 badgecolor = "green";
             case 1

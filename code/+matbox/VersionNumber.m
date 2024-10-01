@@ -76,7 +76,7 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
                 elseif i == 3
                     obj.Patch = versionAsArray(i);
                 elseif i == 4
-                    obj.Build = versionAsArray(i);                    
+                    obj.Build = versionAsArray(i);
                 end
             end
         end
@@ -232,7 +232,6 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
             end
             result = ~(obj == other);
         end
-
     end
 
     methods
@@ -272,9 +271,9 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
                 case '%d.%d'
                     verNums = {obj.Major, obj.Minor};
                 case '%d.%d.%d'
-                    verNums = {obj.Major, obj.Minor, obj.Patch};        
+                    verNums = {obj.Major, obj.Minor, obj.Patch};
                 case '%d.%d.%d.%d'
-                    verNums = {obj.Major, obj.Minor, obj.Patch, obj.Build};        
+                    verNums = {obj.Major, obj.Minor, obj.Patch, obj.Build};
             end
         end
     end
@@ -301,7 +300,6 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
             end
 
             validVersions = [validVersions{:}];
-
         
             isValid = arrayfun(@(v) versionRef == v, validVersions);
             if ~any(isValid)
