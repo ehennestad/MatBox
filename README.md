@@ -1,4 +1,9 @@
 # Matbox: Efficient MATLAB Toolbox Development
+[![Version Number](https://img.shields.io/github/v/release/ehennestad/MatBox?label=version)](https://github.com/ehennestad/MatBox/releases/latest)
+![MATLAB Tests](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fehennestad%2FMatBox%2Fmain%2Fdocs%2Freports%2Fbadge%2Ftests.json)
+[![codecov](https://codecov.io/gh/ehennestad/MatBox/graph/badge.svg?token=6D7STF19X0)](https://codecov.io/gh/ehennestad/MatBox)
+![MATLAB Code Issues](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fehennestad%2FMatBox%2Fmain%2Fdocs%2Freports%2Fbadge%2Fcode_issues.json)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://gitHub.com/ehennestad/MatBox/graphs/commit-activity)
 
 Matbox is a streamlined solution for managing MATLAB toolbox development, designed to simplify the entire lifecycle—from code checks and dependency management to cleaning, packaging, and continuous integration. With Matbox, you can automate tedious tasks like verifying code quality, handling external dependencies, ensuring compatibility, and bundling your toolbox for distribution.
 
