@@ -40,7 +40,7 @@ function writeBadgeJSONFile(label, message, color, projectRootDirectory, options
         label (1,1) string
         message (1,1) string
         color (1,1) string {mustBeMember(color, ["red","green","blue","orange","yellow"])}
-        projectRootDirectory (1,1) string {mustBeFolder} = missing
+        projectRootDirectory (1,1) string = missing
         options.OutputFolder (1,1) string = missing
         options.FileName (1,1) string = missing
     end

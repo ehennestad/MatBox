@@ -1,4 +1,4 @@
-function createTestedWithBadgeforToolbox(versionNumber, projcetRootDirectory)
+function createTestedWithBadgeforToolbox(versionNumber, projectRootDirectory)
 %createTestedWithBadgesforToolbox - Take the test reports from the runs against
 % multiple MATLAB releases, and generate the "Tested with" badge
 %
@@ -6,13 +6,13 @@ function createTestedWithBadgeforToolbox(versionNumber, projcetRootDirectory)
     
     arguments
         versionNumber (1,1) string
-        projcetRootDirectory (1,1) string {mustBeFolder}
+        projectRootDirectory (1,1) string {mustBeFolder}
     end
     
     releasesTestedWith = "";
     releasesFailed = 0;
     % Go through the R2* directories and extract the failed test info
-    releaseDirectoryInfo = dir(fullfile(projcetRootDirectory, "docs", "reports"));
+    releaseDirectoryInfo = dir(fullfile(projectRootDirectory, "docs", "reports"));
     % Select only folders
     releaseDirectoryInfo = releaseDirectoryInfo([releaseDirectoryInfo.isdir]);
     % with a name like R2*
@@ -53,7 +53,7 @@ function createTestedWithBadgeforToolbox(versionNumber, projcetRootDirectory)
                 badgecolor = "red";
         end
 
-        outputDirectory = fullfile(projcetRootDirectory, '.github', 'badges', versionNumber);
+        outputDirectory = fullfile(projectRootDirectory, '.github', 'badges', versionNumber);
         matbox.utility.writeBadgeJSONFile("tested with", releasesTestedWith, badgecolor,...
             "OutputFolder", outputDirectory)
     end
