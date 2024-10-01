@@ -307,7 +307,7 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
                 validVersionsAsString = compose('    %s', arrayfun(@(v) string(v), validVersions));
                 validVersionsAsString = strjoin(validVersionsAsString, newline);
                 errorMsg = sprintf("Version must be one of:\n%s", validVersionsAsString);
-                error(errorMsg)
+                error("MatBox:InvalidVersionNumber", errorMsg) %#ok<SPERR>
             end
         end
     end

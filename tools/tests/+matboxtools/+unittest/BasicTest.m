@@ -25,5 +25,11 @@ classdef BasicTest <  matlab.unittest.TestCase
             testCase.verifyClass(pathStr, 'char')
             testCase.verifyTrue(isfolder(pathStr))
         end
+
+        function testToolboxVersion(testCase)
+            versionStr = matbox.toolboxversion();
+            testCase.verifyClass(versionStr, 'char')
+            testCase.verifyTrue(startsWith(versionStr, 'Version'))
+        end
     end
 end
