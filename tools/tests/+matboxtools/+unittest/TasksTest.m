@@ -30,16 +30,14 @@ classdef TasksTest <  matlab.unittest.TestCase
             testCase.verifyTrue(isfolder(fullfile(pwd, "docs", "reports")))
         end
 
-        function testTestToolbox(testCase)
+        function testPackageToolbox(testCase)
             pathStr = matboxtools.projectdir();
             copyfile(pathStr, pwd);
-
-            rmdir(fullfile(pwd, 'releases'), 's')
-
+            if isfolder(fullfile(pwd, 'releases'))
+                rmdir(fullfile(pwd, 'releases'), 's')
+            end
             matbox.tasks.packageToolbox(pwd, "build", "")
             testCase.verifyTrue(isfolder(fullfile(pwd, "releases")))
-
-            
         end
     end
 end
