@@ -22,7 +22,7 @@ classdef TasksTest <  matlab.unittest.TestCase
     
     methods (Test)
         function testCodecheckToolbox(testCase)
-            pathStr = matbox.toolboxdir();
+            pathStr = matboxtools.projectdir();
 
             copyfile(pathStr, pwd);
             matbox.tasks.codecheckToolbox(pwd)
