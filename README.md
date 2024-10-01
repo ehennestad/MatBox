@@ -2,6 +2,8 @@
 
 Matbox is a streamlined solution for managing MATLAB toolbox development, designed to simplify the entire lifecycle—from code checks and dependency management to cleaning, packaging, and continuous integration. With Matbox, you can automate tedious tasks like verifying code quality, handling external dependencies, ensuring compatibility, and bundling your toolbox for distribution.
 
+To get started, use the [template repository](https://github.com/ehennestad/Matlab-Toolbox)
+
 ## Key Features:
 
 - **Automated Dependency Management**: Streamline your project setup with automatic installation and configuration of required packages.
