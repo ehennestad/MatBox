@@ -23,6 +23,8 @@ function newVersion = packageToolbox(projectRootDirectory, releaseType, versionS
         releaseType {mustBeTextScalar,mustBeMember(releaseType,["build","major","minor","patch","specific"])} = "build"
         versionString {mustBeTextScalar} = "";
         options.SourceFolderName = "code"
+        options.IgnorePatterns (1,:) string = string.empty
+        options.PathFolders (1,:) string = string.empty
     end
 
     includeBuildNumer = strcmp(releaseType, 'build');
@@ -38,7 +40,8 @@ function newVersion = packageToolbox(projectRootDirectory, releaseType, versionS
         versionString, "IncludeBuildNumber", includeBuildNumer);
 
     % Create/retrieve options for packaging toolbox
-    toolboxOptions = matbox.toolbox.createToolboxOptions(projectRootDirectory, newVersion);
+    nvPairs = namedargs2cell(options);
+    toolboxOptions = matbox.toolbox.createToolboxOptions(projectRootDirectory, newVersion, nvPairs{:});
 
     % Update Contents.m header based on toolbox options and new version number
     if isempty(char(toolboxOptions.AuthorCompany))
