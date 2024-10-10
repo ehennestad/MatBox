@@ -63,4 +63,8 @@ function newVersion = packageToolbox(projectRootDirectory, releaseType, versionS
         mkdir( fileparts(toolboxOptions.OutputFile) );
     end
     matlab.addons.toolbox.packageToolbox(toolboxOptions);
+
+    if ~nargout
+        clear newVersion
+    end
 end

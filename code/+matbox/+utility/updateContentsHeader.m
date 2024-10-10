@@ -6,11 +6,15 @@ function updateContentsHeader(toolboxFolder, contentsHeader)
 
     % Read Contents.m
     contentsFilePath = fullfile(toolboxFolder, 'Contents.m');
-    contentsStr = fileread(contentsFilePath);
-
-    % Assume header is 5 lines
-    contentsStrLines = strsplit(contentsStr, newline);
-    contentsStrLines(1:5) = cellstr(strsplit(contentsHeader, newline));
+    if isfile(contentsFilePath)
+        contentsStr = fileread(contentsFilePath);
+    
+        % Assume header is 5 lines
+        contentsStrLines = strsplit(contentsStr, newline);
+        contentsStrLines(1:5) = cellstr(strsplit(contentsHeader, newline));
+    else
+        contentsStrLines = cellstr(strsplit(contentsHeader, newline));
+    end
 
     % Update Contents.m
     fid = fopen(contentsFilePath, 'w');
@@ -18,5 +22,5 @@ function updateContentsHeader(toolboxFolder, contentsHeader)
     fclose(fid);
 
     fprintf('Updated %s\n', contentsFilePath)
-    disp(strjoin(contentsStrLines, newline))
+    %disp(strjoin(contentsStrLines, newline))
 end
