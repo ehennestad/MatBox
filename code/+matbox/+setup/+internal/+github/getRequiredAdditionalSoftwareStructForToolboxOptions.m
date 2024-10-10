@@ -18,7 +18,8 @@ function S = getRequiredAdditionalSoftwareStructForToolboxOptions(githubRepo)
     numAddons = numel(githubRepo);
 
     fieldNames = ["Name", "Platform", "DownloadURL", "LicenseURL"];
-    
+    platformNames = ["maci64", "win64", "glnxa64"];
+
     S = cell2struct( repmat({""}, 1, numel(fieldNames)), cellstr(fieldNames), 2 );
     S = repmat(S, 1, numAddons);
 
@@ -26,11 +27,18 @@ function S = getRequiredAdditionalSoftwareStructForToolboxOptions(githubRepo)
         [owner, name, branchName] = matbox.setup.internal.github.parseRepositoryURL(githubRepo(iAddon));
         if ismissing(branchName); branchName = "main"; end
         S(iAddon).Name = name;
-        S(iAddon).Platform = 'maci64';
+        S(iAddon).Platform = platformNames(1);
 
-        S(iAddon).DownloadURL = sprintf( '%s/archive/refs/heads/%s.zip', githubRepo(iAddon), branchName );
+        S(iAddon).DownloadURL = sprintf( "%s/archive/refs/heads/%s.zip", githubRepo(iAddon), branchName );
 
         licenseUrl = matbox.setup.internal.github.api.getLicenseHtmlUrl(name, owner);
-        S(iAddon).LicenseURL = licenseUrl;
+        S(iAddon).LicenseURL = string(licenseUrl);
     end
+
+    S = repmat(S, numel(platformNames), 1);
+    for i = 2:numel(platformNames)
+        [S(i,:).Platform] = deal(platformNames(i));
+    end
+
+    S = S(:);
 end
