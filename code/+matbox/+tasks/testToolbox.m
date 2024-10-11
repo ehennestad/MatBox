@@ -24,7 +24,7 @@ function testToolbox(projectRootDirectory, options)
     
     testFolder = fullfile(projectRootDirectory, options.ToolsFolderName, "tests");
     codeFolder = fullfile(projectRootDirectory, options.SourceFolderName);
-    oldpath  = addpath(genpath(testFolder), codeFolder );
+    oldpath = addpath(genpath(testFolder), genpath(codeFolder));
     finalize = onCleanup(@()(path(oldpath)));
     
     % Run startup function if it exists
