@@ -36,8 +36,20 @@ function testToolbox(projectRootDirectory, options)
     if ~isfolder(outputDirectory)
         mkdir(outputDirectory)
     end
-    
+
     suite = TestSuite.fromFolder( testFolder, "IncludingSubfolders", true );
+    
+    if isMATLABReleaseOlderThan('R2022a') % fromFolder did not include packages
+        % List packages and add suites by package names
+        packageListing = dir(fullfile(testFolder, '+*'));
+        for i = 1:numel(packageListing)
+            if packageListing(i).isdir
+                packageName = packageListing(i).name(2:end);
+                suite = [suite, TestSuite.fromPackage( packageName, ...
+                    "IncludingSubpackages", true )]; %#ok<AGROW>
+            end
+        end
+    end
 
     runner = TestRunner.withTextOutput('OutputDetail', Verbosity.Detailed);
 
