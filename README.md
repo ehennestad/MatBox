@@ -17,3 +17,7 @@ To get started, use the [template repository](https://github.com/ehennestad/Matl
 - **Effortless Packaging**: Package your MATLAB toolbox for easy distribution with minimal configuration.
 
 Whether you are building your first toolbox or maintaining a complex library, Matbox helps you stay organized, efficient, and focused on writing great code.
+
+## Requirements
+It is recommended to use MATLAB R2023a or later. Toolbox packaging will only work with R2023 or later, other functionality of the toolbox should work with older releases as well.
+
