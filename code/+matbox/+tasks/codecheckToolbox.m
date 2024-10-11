@@ -16,6 +16,8 @@ function codecheckToolbox(projectRootDir)
         issues = checkcode(filesToCheck);
         issues = cat(1, issues{:});
         issueCount = size(issues,1);
+        infoCount = issueCount;
+        [warningCount, errorCount] = deal(0);
     else
         % Use the new code analyzer in R2022b and later
         issues = codeIssues(filesToCheck);
