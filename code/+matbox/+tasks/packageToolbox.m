@@ -15,13 +15,14 @@ function newVersion = packageToolbox(projectRootDirectory, releaseType, versionS
 % Adapted from: https://github.com/mathworks/climatedatastore/blob/main/buildUtilities/packageToolbox.m
 
 % Todo:
-%  - Create a matlab script that fills in toolbox options for path
-%  - and requirements
+%  [ ] Create a matlab script that fills in toolbox options for path
+%  [ ] and requirements
 
     arguments
         projectRootDirectory (1,1) string {mustBeFolder}
         releaseType {mustBeTextScalar,mustBeMember(releaseType,["build","major","minor","patch","specific"])} = "build"
         versionString {mustBeTextScalar} = "";
+        options.ToolboxShortName (1,1) string = missing
         options.SourceFolderName = "code"
         options.IgnorePatterns (1,:) string = string.empty
         options.PathFolders (1,:) string = string.empty
