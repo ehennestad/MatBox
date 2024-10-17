@@ -7,7 +7,7 @@ function [toolboxOptions, identifier, toolboxInfo] = readToolboxInfo(projectRoot
         projectRootDir (1,1) string {mustBeFolder} = pwd()
     end
 
-    fileListing = dir( fullfile(projectRootDir, "**", "MLToolboxInfo.json") );
+    fileListing = dir( fullfile(projectRootDir, "*", "MLToolboxInfo.json") );
 
     if isempty(fileListing)
         error('MatBox:ToolboxInfoFileNotFound', ...
