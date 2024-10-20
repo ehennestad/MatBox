@@ -49,7 +49,7 @@ function writeBadgeJSONFile(label, message, color, projectRootDirectory, options
         if ismissing(projectRootDirectory)
             error("Please specify project root directory or output folder")
         end
-        options.OutputFolder = fullfile(projectRootDirectory, "docs", "reports", "badge");
+        options.OutputFolder = fullfile(projectRootDirectory, ".github", "badges");
     end
 
     if ~isfolder(options.OutputFolder)

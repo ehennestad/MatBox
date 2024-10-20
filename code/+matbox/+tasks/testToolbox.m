@@ -1,16 +1,15 @@
 function testToolbox(projectRootDirectory, options)
     %RUNTESTWITHCODECOVERAGE Summary of this function goes here
     %   Detailed explanation goes here
-    
-    % Todo
 
     arguments
         projectRootDirectory (1,1) string {mustBeFolder}
-        options.HtmlReports (1,1) logical = false;
-        options.ReportSubdirectory (1,1) string = "";
-        options.SourceFolderName (1,1) string = "code";
-        options.ToolsFolderName (1,1) string = "tools";
+        options.HtmlReports (1,1) logical = false
+        options.ReportSubdirectory (1,1) string = ""
+        options.SourceFolderName (1,1) string = "code"
+        options.ToolsFolderName (1,1) string = "tools"
         options.CoverageFileList (1,:) string = string.empty
+        options.CreateBadge (1,1) logical = true
     end
     
     import matlab.unittest.TestSuite;
@@ -78,10 +77,18 @@ function testToolbox(projectRootDirectory, options)
         results.generateHTMLReport(outputDirectory,'MainFile',"testreport.html");
     end
 
+    if options.CreateBadge
+        createTestResultBadge(results, projectRootDirectory) % local function
+    end
+    
+    results.assertSuccess()
+end
+
+function createTestResultBadge(results, projectRootDirectory)
     numTests = numel(results);
     numPassedTests = sum([results.Passed]);
     numFailedTests = sum([results.Failed]);
-
+    
     % Generate the JSON files for the shields in the readme.md
     if numFailedTests == 0
         color = "green";
@@ -94,6 +101,4 @@ function testToolbox(projectRootDirectory, options)
         message = sprintf("%d/%d passed", numPassedTests, numTests);
     end
     matbox.utility.writeBadgeJSONFile("tests", message, color, projectRootDirectory)
-    
-    results.assertSuccess()
 end
