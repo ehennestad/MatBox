@@ -1,9 +1,6 @@
 # Ignore everything in docs/reports
 docs/reports/*
 
-# Don't ignore the badge file/directory
-!docs/reports/badge
-
 # Autosave files
 *.asv
 *.m~
