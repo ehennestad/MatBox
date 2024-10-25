@@ -6,6 +6,7 @@ function codecheckToolbox(projectRootDir, options)
         options.RequireIssuesResolved (1,1) logical = false
         options.SeverityThreshold (1,1) string ...
             {mustBeMember(options.SeverityThreshold, ["info", "warning", "error"])} = "warning"
+        options.SaveReport (1,1) logical = true
     end
 
     toolboxFileInfo = dir(fullfile(projectRootDir, "**", "*.m"));
@@ -31,6 +32,11 @@ function codecheckToolbox(projectRootDir, options)
         issueCount.Info = sum(issues.Issues.Severity == "info");
         issueCount.Warning = sum(issues.Issues.Severity == "warning");
         issueCount.Error = sum(issues.Issues.Severity == "error");
+
+        if options.SaveReport
+            reportFilePath = fullfile(projectRootDir, 'docs', 'reports', 'code_issues');
+            export(issues, reportFilePath);
+        end
     end
     fprintf("Checked %d files with %d issue(s).\n", ...
         numel(filesToCheck), issueCount.Total)
