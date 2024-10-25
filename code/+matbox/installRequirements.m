@@ -14,7 +14,7 @@ function installRequirements(toolboxFolder, mode, options)
         options.InstallationLocation (1,1) string = matbox.setup.internal.getDefaultAddonFolder()
     end
 
-    doUpdate = any(strcmp(mode, {'update'})) || any( strcmp(mode, {'u'}) );
+    doUpdate = any(strcmp(mode, {'update'})) || any( strcmp(mode, {'u'}) ); %#ok<NASGU>
     %Todo.
     
     reqs = matbox.setup.internal.getRequirements(toolboxFolder);

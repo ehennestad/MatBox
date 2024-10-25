@@ -56,48 +56,4 @@ function repoFolder = downloadZippedGithubRepo(githubUrl, targetFolder, updateFl
     clear fileCleanupObj
 
     repoFolder = targetFolder;
-
-    % Fix github unzipped directory...
-    %repoFolder = restructureUnzippedGithubRepo(targetFolder);
-end
-
-function folderPath = restructureUnzippedGithubRepo(folderPath)
-%restructureUnzippedGithubRepo Move the folder of a github addon.
-%
-
-% Github packages unzips to a new folder within the created
-% folder. Move it up one level. Also, remove the '-master' from
-% foldername.
-    
-    rootDir = fileparts(folderPath);
-
-    % Find the repository folder
-    L = dir(folderPath);
-    L = L(~strncmp({L.name}, '.', 1));
-    
-    if numel(L) > 1
-        % This is unexpected, there should only be one folder.
-        return
-    end
-
-    % Move folder up one level
-    oldDir = fullfile(folderPath, L.name);
-    newDir = fullfile(rootDir, L.name);
-    movefile(oldDir, newDir)
-    rmdir(folderPath)
-        
-    % Remove the master postfix from foldername
-    if contains(L.name, '-master')
-        newName = strrep(L.name, '-master', '');
-    elseif contains(L.name, '-main')
-        newName = strrep(L.name, '-main', '');
-    else
-        folderPath = fullfile(rootDir, L.name);
-        return
-    end
-    
-    % Rename folder to remove main/master tag
-    renamedDir = fullfile(rootDir, newName);
-    movefile(newDir, renamedDir)
-    folderPath = renamedDir;
 end

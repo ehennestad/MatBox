@@ -12,7 +12,7 @@ function repoTargetFolder = installGithubRepository(repositoryUrl, branchName, o
     [organization, repoName] = matbox.setup.internal.github.parseRepositoryURL(repositoryUrl);
     
     if ~options.Update
-        [repoExists, repoPath] = matbox.setup.internal.pathtool.lookForRepository(repoName, branchName);
+        [repoExists, ~] = matbox.setup.internal.pathtool.lookForRepository(repoName, branchName);
         if repoExists
             return
         end

@@ -44,10 +44,10 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
 
                 if isstring(iVersion) || ischar(iVersion)
                     if strcmp(iVersion, "latest")
-                        obj(i).IsLatest = true;
+                        obj(i).IsLatest = true; %#ok<AGROW>
                         obj(i).setVersion(255);
                     else
-                        obj(i).fromString(iVersion); %#ok<AGROW>
+                        obj(i).fromString(iVersion);
                     end
 
                 elseif isnumeric(iVersion)
@@ -279,11 +279,11 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
     end
 
     methods
-        function rep = compactRepresentationForSingleLine(obj,displayConfiguration,width)
+        function rep = compactRepresentationForSingleLine(obj,displayConfiguration,~)
             % Fit as many array elements in the available space as possible
             rep = fullDataRepresentation(obj, displayConfiguration, 'StringArray', string(obj));
         end
-        function rep = compactRepresentationForColumn(obj,displayConfiguration,width)
+        function rep = compactRepresentationForColumn(obj,displayConfiguration,~)
             % Fit as many array elements in the available space as possible
             rep = fullDataRepresentation(obj, displayConfiguration, 'StringArray', string(obj));
         end
