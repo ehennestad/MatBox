@@ -34,8 +34,11 @@ function codecheckToolbox(projectRootDir, options)
         issueCount.Error = sum(issues.Issues.Severity == "error");
 
         if options.SaveReport
-            reportFilePath = fullfile(projectRootDir, 'docs', 'reports', 'code_issues');
-            export(issues, reportFilePath);
+            reportDirectory = fullfile(projectRootDir, 'docs', 'reports');
+            if ~isfolder(reportDirectory)
+                mkdir(reportDirectory)
+            end
+            export(issues, fullfile(reportDirectory, 'code_issues'));
         end
     end
     fprintf("Checked %d files with %d issue(s).\n", ...
