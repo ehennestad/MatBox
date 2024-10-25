@@ -89,7 +89,7 @@ function codespellToolbox(codeFolder, options)
             S(i).Suggestion = string(splitWords{2});
 
             typos(i) = splitLine{3};
-            S(i).Auto = numel( strsplit(S(i).Suggestion, ',') ) == 1;
+            S(i).Auto = isscalar( strsplit(S(i).Suggestion, ',') );
 
             if ~ismissing(options.IgnoreFilePath)
                 S(i).Ignore = createIgnoreLink(S(i).Word, options.IgnoreFilePath);

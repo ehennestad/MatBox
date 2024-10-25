@@ -31,7 +31,7 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
             if isempty(versionSpecification)
                 return
             end
-            if numel(versionSpecification) == 1 && iscell(versionSpecification{1})
+            if isscalar(versionSpecification) && iscell(versionSpecification{1})
                 versionSpecification = versionSpecification{1};
             end
             
@@ -60,7 +60,7 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
             end
 
             if isfield(options, 'IsLatest')
-                assert(numel(obj)==1, 'Can not set latest for multiple versions')
+                assert(isscalar(obj), 'Can not set latest for non-scalar VersionNumber instances')
                 [obj.IsLatest] = options.IsLatest;
             end
         end
@@ -264,7 +264,7 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
 
     methods (Access = private)
         function verNums = getNumbersForFormat(obj)
-            assert(numel(obj)==1, 'Function only accepts scalar object')
+            assert(isscalar(obj), 'Function only accepts scalar object')
             switch obj.Format
                 case '%d'
                     verNums = {obj.Major};
