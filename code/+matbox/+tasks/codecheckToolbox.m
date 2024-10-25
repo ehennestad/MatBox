@@ -1,4 +1,4 @@
-function codecheckToolbox(projectRootDir, options)
+function issues = codecheckToolbox(projectRootDir, options)
     arguments
         projectRootDir (1,1) string {mustBeFolder}
         % Assumes this function is located in <rootDir>/dev
@@ -54,7 +54,9 @@ function codecheckToolbox(projectRootDir, options)
             checkcode(filesToCheck)
         else
             % R2022b and later, just display issues
-            disp(issues)
+            if ~nargout
+                disp(issues)
+            end
         end
 
         % Throw error if unresolved issues are present at specified severity
@@ -66,6 +68,10 @@ function codecheckToolbox(projectRootDir, options)
             elseif options.SeverityThreshold == "error" && issueCount.Error > 0
                 throwUnresolvedCodeIssuesException()
             end
+        end
+
+        if ~nargout
+            clear issues
         end
     end
 end
