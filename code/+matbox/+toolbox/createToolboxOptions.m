@@ -15,7 +15,15 @@ function toolboxOptions = createToolboxOptions(projectRootDirectory, versionNumb
 
     % Read the toolbox info from MLToolboxInfo.json
     [toolboxInfo, identifier] = matbox.toolbox.readToolboxInfo(projectRootDirectory);
-        
+    
+    % Resolve folders to add to path for toolbox. This needs to be done
+    % before creating the ToolboxOptions object due to a bug in that class
+    % (See matbox.toolbox.internal.resolvePathFolders for more info)
+    [toolboxPathFolders, cleanupObj] = matbox.toolbox.internal.resolvePathFolders(...
+        projectRootDirectory, ...
+        "PathFolders", options.PathFolders, ...
+        "SourceFolderName", options.SourceFolderName); %#ok<ASGLU>
+
     if ismissing(options.ToolboxShortName)
         MLTBX_NAME = toolboxInfo.ToolboxName;
     else
@@ -29,30 +37,17 @@ function toolboxOptions = createToolboxOptions(projectRootDirectory, versionNumb
     % Set the toolbox version
     opts.ToolboxVersion = versionNumber;
 
-    % Ignore some file
+    % Ignore some files if specified
     toIgnore = false(size( opts.ToolboxFiles ));
     for i = 1:numel(options.IgnorePatterns)
         toIgnore = toIgnore | contains(opts.ToolboxFiles, options.IgnorePatterns(i));
     end
-    opts.ToolboxFiles = opts.ToolboxFiles(~toIgnore);
-
-    %opts.ToolboxImageFile = fullfile(projectRootDirectory, "img", "light_openMINDS-MATLAB-logo_toolbox.png");
-    %opts.ToolboxGettingStartedGuide = fullfile(projectRootDirectory, "code", "gettingStarted.mlx");
-
-    % Specify toolbox path TODO: empty folders
-    toolboxPathFolders = fullfile(projectRootDirectory, options.SourceFolderName);
-
-    if isempty(options.PathFolders)
-        toolboxPathFolders = string( strsplit(genpath(toolboxPathFolders), pathsep));
-        toolboxPathFolders = toolboxPathFolders(1:end-1); % Last element is empty
-    else
-        for i = 1:numel(options.PathFolders)
-            toolboxPathFolders(end+1) = fullfile(projectRootDirectory, options.PathFolders(i)); %#ok<AGROW>
-        end
+    if any(toIgnore)
+        opts.ToolboxFiles = opts.ToolboxFiles(~toIgnore);
     end
 
     opts.ToolboxMatlabPath = toolboxPathFolders;
-    
+
     opts.SupportedPlatforms.Win64 = true;
     opts.SupportedPlatforms.Maci64 = true;
     opts.SupportedPlatforms.Glnxa64 = true;

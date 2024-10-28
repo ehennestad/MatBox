@@ -18,10 +18,23 @@ function [toolboxOptions, identifier, toolboxInfo] = readToolboxInfo(projectRoot
               'Multiple instances of "MLToolboxInfo.json" were found in the project root directory. Please ensure there is only one file.');
     end
 
+    % Load options from MLToolboxInfo json file
     toolboxInfoFilePath = fullfile(fileListing.folder, fileListing.name);
     toolboxInfo = jsondecode(fileread(toolboxInfoFilePath));
     toolboxOptions = toolboxInfo.ToolboxOptions;
-    
+        
+    % Expand path names by prepending project root directory
+    pathOptions = ["ToolboxImageFile", "ToolboxGettingStartedGuide"];
+    for iPathOption = 1:numel(pathOptions)
+        iOptionName = pathOptions(iPathOption);
+        if isfield(toolboxOptions, iOptionName)
+            iOptionValue = toolboxOptions.(iOptionName);
+            if ~startsWith(iOptionValue, projectRootDir)
+                toolboxOptions.(iOptionName) = fullfile(projectRootDir, iOptionValue);
+            end
+        end
+    end
+
     if nargout >= 2
         % Get toolbox identifier and remove it from toolbox info
         identifier = toolboxOptions.Identifier;
