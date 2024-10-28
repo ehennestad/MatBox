@@ -63,6 +63,10 @@ function newVersion = packageToolbox(projectRootDirectory, releaseType, versionS
     if ~isfolder( fileparts(toolboxOptions.OutputFile) )
         mkdir( fileparts(toolboxOptions.OutputFile) );
     end
+
+    warnState = warning('off', 'MATLAB:toolbox_packaging:packaging:FilesDoNotExistWarning');
+    cleanupObj = onCleanup(@(ws) warning(warnState));
+    
     matlab.addons.toolbox.packageToolbox(toolboxOptions);
 
     if ~nargout
