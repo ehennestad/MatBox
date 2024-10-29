@@ -54,7 +54,7 @@ jobs:
         with:
           name: reports-${{ matrix.MATLABVersion }}
           path: docs/reports
-          
+
   # Report on what releases tested successfully.
   # Generate a draft release based on the tag
   # Recreate the tag with the final version of JSON files
@@ -62,12 +62,12 @@ jobs:
     needs: test
     if: always()
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
         with:
             ref: refs/heads/main
-    
+
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v2
 
@@ -104,7 +104,6 @@ jobs:
           versionNumber=$(echo "${{ github.ref_name }}" | sed 's/\./_/g')
           echo "versionNumber=$versionNumber" >> $GITHUB_ENV
 
-
       # Save the MLTBX.
       - name: Save Packaged Toolbox
         uses: actions/upload-artifact@v4
@@ -112,18 +111,44 @@ jobs:
           name: MatBox${{ env.versionNumber }}.mltbx
           path: releases/MatBox_${{ env.versionNumber }}.mltbx
 
-      # Commit the JSON for the MATLAB releases badge and ToolboxPackaging.prj
-      - name: commit changed files
+      # Commit the updated Contents.m
+      - name: commit contents file
         continue-on-error: true
         run: |
           git config user.name "${{ github.workflow }} by ${{ github.actor }}"
           git config user.email "<>"
           git status
           git add code/Contents.m
-          git add .github/badges/${{  github.ref_name }}/tested_with.json
           git commit -m "Final checkins for release ${{  github.ref_name }}"
           git fetch
           git push
+
+      # Commit the JSON for the MATLAB releases test badge to gh-badges branch
+      - name: Checkout gh-badges branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-badges
+          path: gh-badges
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push to gh-badges
+        run: |
+          cp .github/badges/${{  github.ref_name }}/tested_with.json gh-badges/.github/badges/${{  github.ref_name }}/tested_with.json
+          cd gh-badges
+          
+          git add .github/badges/${{  github.ref_name }}/tested_with.json
+          
+          git config user.name "${{ github.workflow }} by ${{ github.actor }}"
+          git config user.email "<>"
+
+          # Only proceed with commit and push if changes are detected
+          if [[ $(git add .github/badges/* --dry-run | wc -l) -gt 0 ]]; then
+            git add .github/badges/*
+            git commit -m "Update tested with badge for release"
+            git push -f
+          else
+            echo "Nothing to commit"
+          fi
 
       # Retag the repo so that the updated files are included in the release tag
       - name: update tag
@@ -144,5 +169,5 @@ jobs:
           draft: true        
           artifacts: "releases/MatBox_${{ env.versionNumber }}.mltbx"
           generateReleaseNotes: true
-          body: "![MATLAB Versions Tested](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fehennestad%2Fmatbox%2Fmain%2F.github%2Fbadges%2F${{  github.ref_name }}%2Ftested_with.json)"
+          body: "![MATLAB Versions Tested](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fehennestad%2Fmatbox%2Fgh-badges%2F.github%2Fbadges%2F${{  github.ref_name }}%2Ftested_with.json)"
 
