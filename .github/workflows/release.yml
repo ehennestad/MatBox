@@ -23,6 +23,7 @@ jobs:
 
     steps:
       # Checks-out the repository under $GITHUB_WORKSPACE, so the job can access it
+      - name: Checkout repository
       - uses: actions/checkout@v4
           
       - name: Set up MATLAB
@@ -48,7 +49,7 @@ jobs:
           env_vars: ${{ matrix.MATLABVersion }}
 
       # Save the contents of the report directory from each release into an artifact.
-      - name: Save Report Directory
+      - name: Save report directory
         uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -64,9 +65,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Use deploy key to push back to protected branch
+      - name: Checkout repository using deploy key
       - uses: actions/checkout@v4
         with:
-            ref: refs/heads/main
+          ref: refs/heads/main
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
 
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v2
@@ -85,14 +89,14 @@ jobs:
           command: addpath(genpath("tools")), createTestedWithBadgeforToolbox("${{  github.ref_name }}")     
           
       # Publish test results from all the releases
-      - name: Publish Test Results
+      - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
           junit_files: "docs/reports/*/test-results.xml"
 
       # Package the MLTBX
-      - name: Package Toolbox
+      - name: Package toolbox
         uses: matlab-actions/run-command@v2
         with:
           command: addpath(genpath("tools")), packageToolbox("specific","${{  github.ref_name }}")     
@@ -105,14 +109,14 @@ jobs:
           echo "versionNumber=$versionNumber" >> $GITHUB_ENV
 
       # Save the MLTBX.
-      - name: Save Packaged Toolbox
+      - name: Save packaged toolbox
         uses: actions/upload-artifact@v4
         with:
           name: MatBox${{ env.versionNumber }}.mltbx
           path: releases/MatBox_${{ env.versionNumber }}.mltbx
 
       # Commit the updated Contents.m
-      - name: commit contents file
+      - name: Commit updated Contents.m file
         continue-on-error: true
         run: |
           git config user.name "${{ github.workflow }} by ${{ github.actor }}"
@@ -150,7 +154,7 @@ jobs:
           fi
 
       # Retag the repo so that the updated files are included in the release tag
-      - name: update tag
+      - name: Update tag
         if: always()
         continue-on-error: true
         run: |
@@ -162,7 +166,7 @@ jobs:
           git push --tag
 
       # Create the release
-      - name: Create GitHub Release
+      - name: Create GitHub release
         uses: ncipollo/release-action@v1
         with:
           draft: true        
