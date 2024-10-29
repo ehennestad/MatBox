@@ -24,7 +24,7 @@ jobs:
     steps:
       # Checks-out the repository under $GITHUB_WORKSPACE, so the job can access it
       - name: Checkout repository
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
           
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v2
@@ -67,7 +67,7 @@ jobs:
     steps:
       # Use deploy key to push back to protected branch
       - name: Checkout repository using deploy key
-      - uses: actions/checkout@v4
+        uses: actions/checkout@v4
         with:
           ref: refs/heads/main
           ssh-key: ${{ secrets.DEPLOY_KEY }}
