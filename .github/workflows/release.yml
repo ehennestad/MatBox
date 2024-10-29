@@ -133,6 +133,7 @@ jobs:
 
       - name: Push to gh-badges
         run: |
+          mkdir -p gh-badges/.github/badges/${{  github.ref_name }}
           cp .github/badges/${{  github.ref_name }}/tested_with.json gh-badges/.github/badges/${{  github.ref_name }}/tested_with.json
           cd gh-badges
           
