@@ -1,14 +1,14 @@
 name: Run tests
 
 on:
-  # Triggers the workflow on push or pull request events for the "main" branch
+  # Triggers the workflow on push to any branch other than main or PR to main
+  # This way tests will run on any push to a feature branch and when feature 
+  # branches are merged to main, but not repeated when PRs are actually merged. 
   push:
-    branches: [ "main" ]
+    branches-ignore: ["main"]
     paths-ignore:
-      - 'README.md'
-      - 'tools/README.md'
+      - '*README.md'
       - '.github/workflows/**'
-      - 'docs/reports/**'
   pull_request:
     branches: [ "main" ]
 
