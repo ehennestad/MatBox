@@ -160,10 +160,16 @@ jobs:
         run: |
           git config user.name "${{ github.workflow }} by ${{ github.actor }}"
           git config user.email "<>"
-          git tag -d "${{  github.ref_name }}" 
-          git push --delete origin ${{  github.ref_name }}
-          git tag -m "Release ${{  github.ref_name }}" ${{  github.ref_name }}
-          git push --tag
+
+          # Delete the existing tag locally and remotely
+          git tag -d "${{ github.ref_name }}" 
+          git push origin --delete "${{ github.ref_name }}"
+        
+          # Recreate the tag with a message, including [skip ci] to prevent CI workflows
+          git tag -a "${{ github.ref_name }}" -m "Release ${{ github.ref_name }} [skip ci]" 
+        
+          # Push the new tag to the remote repository
+          git push origin "${{ github.ref_name }}"
 
       # Create the release
       - name: Create GitHub release
