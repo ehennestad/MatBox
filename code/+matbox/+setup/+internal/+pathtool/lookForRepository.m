@@ -18,12 +18,12 @@ function [exists, repositoryPath] = lookForRepository(repositoryName, branchName
         sprintf("%s-%s%s", repositoryName, branchName, filesep), ...
         string(repositoryName) + "$", ...
         string(repositoryName) + filesep];
-    
+
     for i = 1:numel(expectedFolderName)
 
         % Check if this repo is already on path:
         matchingFolderName = regexp(pathList, expectedFolderName(i), 'match');
-        
+
         isEmpty = cellfun('isempty', matchingFolderName);
         matchedFolderIndex = find(~isEmpty);
 
@@ -34,8 +34,8 @@ function [exists, repositoryPath] = lookForRepository(repositoryName, branchName
         else
             matchedFolderNames = unique( string( pathList(matchedFolderIndex) ) );
         end
-    
-        if numel(matchedFolderNames) == 1
+
+        if numel(matchedFolderNames) == 1 %#ok<ISCL>
             exists = true;
             repositoryPath = matchedFolderNames;
             break

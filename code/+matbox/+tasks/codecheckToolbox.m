@@ -86,9 +86,7 @@ function createCodeIssuesBadge(issueCount, projectRootDir)
     if issueCount.Error > 0
         color = "red";
     end
-    %matbox.utility.writeBadgeJSONFile("code issues", ...
-    %    string(issueCount.Total), color, projectRootDir)
-
+    
     matbox.utility.createBadgeSvg("code issues", ...
         string(issueCount.Total), color, projectRootDir)
 end
