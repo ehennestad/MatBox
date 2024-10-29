@@ -136,9 +136,7 @@ jobs:
           mkdir -p gh-badges/.github/badges/${{  github.ref_name }}
           cp .github/badges/${{  github.ref_name }}/tested_with.json gh-badges/.github/badges/${{  github.ref_name }}/tested_with.json
           cd gh-badges
-          
-          git add .github/badges/${{  github.ref_name }}/tested_with.json
-          
+                    
           git config user.name "${{ github.workflow }} by ${{ github.actor }}"
           git config user.email "<>"
 
