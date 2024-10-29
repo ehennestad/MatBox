@@ -7,8 +7,9 @@ on:
   push:
     branches-ignore: ["main"]
     paths-ignore:
-      - '*README.md'
+      - '*.md'
       - '.github/workflows/**'
+      - '.github/badges/**'
   pull_request:
     branches: [ "main" ]
 
