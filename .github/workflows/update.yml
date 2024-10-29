@@ -35,8 +35,7 @@ jobs:
           python-version: 3.11
 
       - name: Install pybadges
-        run: |
-          pip install pybadges
+        run: pip install pybadges
       
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v2
