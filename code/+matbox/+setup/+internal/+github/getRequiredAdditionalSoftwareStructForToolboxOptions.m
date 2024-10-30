@@ -20,6 +20,10 @@ function S = getRequiredAdditionalSoftwareStructForToolboxOptions(githubRepo)
     fieldNames = ["Name", "Platform", "DownloadURL", "LicenseURL"];
     platformNames = ["maci64", "win64", "glnxa64"];
 
+    if ~matbox.overloaded.isMATLABReleaseOlderThan("R2024a")
+        platformNames = [platformNames, "maca64"];
+    end
+
     S = cell2struct( repmat({""}, 1, numel(fieldNames)), cellstr(fieldNames), 2 );
     S = repmat(S, 1, numAddons);
 
