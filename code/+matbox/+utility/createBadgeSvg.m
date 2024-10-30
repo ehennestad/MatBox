@@ -10,7 +10,7 @@ function createBadgeSvg(label, message, color, projectRootDirectory, options)
     end
 
     try
-        matbox.py.libVersion('pybadges');
+        matbox.py.getPackageInfo('pybadges');
     catch
         matbox.py.pipInstall('pybadges')
     end

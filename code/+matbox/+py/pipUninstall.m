@@ -3,10 +3,13 @@ function pipUninstall(packageName)
         packageName (1,1) string
     end
 
-    args = py.list({py.sys.executable, "-m", "pip", "uninstall", "--yes", packageName});
-    status = py.subprocess.check_call(args);
+    pythonExecutable = matbox.py.getPythonExecutable();
 
-    if double(status) ~= 0
-        error('Something went wrong')
+    systemCommand = sprintf("%s -m pip uninstall --yes %s", pythonExecutable, packageName);
+    [status, ~]  = system(systemCommand);
+
+    if status ~= 0
+        error("MatBox:UnableToUninstallPythonPackage", ...
+            "Could not use pip to uninstall %s", packageName)
     end
 end
