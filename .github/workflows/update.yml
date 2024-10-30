@@ -28,14 +28,6 @@ jobs:
       # Checks-out the repository under $GITHUB_WORKSPACE, so the job can access it
       - name: Check out repo
         uses: actions/checkout@v4
-
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.11
-
-      - name: Install pybadges
-        run: pip install pybadges
       
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v2
@@ -61,8 +53,8 @@ jobs:
         with:
           command: addpath(genpath("tools")), testToolbox()
 
-      # Commit the JSON for the badge for the issues and tests
-      - name: commit code issues badge JSON
+      # Commit updated SVG badges for the issues and tests (if changed)
+      - name: Commit svg badges if updated
         if: always()
         continue-on-error: true
         run: |
@@ -85,14 +77,14 @@ jobs:
           files: docs/reports/codecoverage.xml
           
       # Publish test results
-      - name: Publish Test Results
+      - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
           files: "docs/reports/test-results.xml"
           
       # Save the contents of the reports directory as an artifact
-      - name: Save Reports Directory
+      - name: Save reports directory
         uses: actions/upload-artifact@v4
         if: always()
         with:
