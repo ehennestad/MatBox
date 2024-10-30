@@ -60,7 +60,8 @@ jobs:
         run: |
           git config user.name "${{ github.workflow }} by ${{ github.actor }}"
           git config user.email "<>"
-          
+          git fetch 
+
           if [[ $(git add .github/badges/* --dry-run | wc -l) -gt 0 ]]; then
             git add .github/badges/*
             git commit -m "Update code issues and tests badges"
