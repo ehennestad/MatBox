@@ -27,7 +27,7 @@ classdef TasksTest <  matlab.unittest.TestCase
             copyfile(pathStr, pwd);
             % Todo: Add test for saving badge and report
             matbox.tasks.codecheckToolbox(pwd, ...
-                "CreateBadge", false, "SaveReport", false)
+                "CreateBadge", true, "SaveReport", false)
 
             testCase.verifyTrue(isfolder(fullfile(pwd, "docs", "reports")))
         end
