@@ -14,7 +14,7 @@ function pipInstall(packageName)
 %   packageName - (string) The name of the Python package to install.
 %
 % Exceptions:
-%   Throws an error with ID 'MatBox:UnableToInstallPythonLibrary' if the
+%   Throws an error with ID 'MatBox:UnableToInstallPythonPackage' if the
 %   package cannot be installed.
 %
 % Notes:
@@ -38,7 +38,7 @@ function pipInstall(packageName)
     [status, ~]  = system(systemCommand);
 
     if status ~= 0
-        error("MatBox:UnableToInstallPythonLibrary", ...
+        error("MatBox:UnableToInstallPythonPackage", ...
             "Could not use pip to install %s", packageName)
     end
 
