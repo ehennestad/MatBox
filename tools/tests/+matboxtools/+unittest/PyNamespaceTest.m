@@ -27,7 +27,7 @@ classdef PyNamespaceTest < matlab.unittest.TestCase
         end
 
         function testPipInstall(testCase)
-            matbox.py.pipInstall('pybaldges')            
+            matbox.py.pipInstall('pybadges')            
         end
 
         function testPipInstallUnknownPackage(testCase)
