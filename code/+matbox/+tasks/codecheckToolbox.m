@@ -7,10 +7,15 @@ function issues = codecheckToolbox(projectRootDir, options)
         options.SeverityThreshold (1,1) string ...
             {mustBeMember(options.SeverityThreshold, ["info", "warning", "error"])} = "warning"
         options.SaveReport (1,1) logical = true
+        options.FilesToCheck (1,:) string = string.empty
     end
 
-    toolboxFileInfo = dir(fullfile(projectRootDir, "**", "*.m"));
-    filesToCheck = fullfile(string({toolboxFileInfo.folder}'),string({toolboxFileInfo.name}'));
+    if isempty(options.FilesToCheck)
+        toolboxFileInfo = dir(fullfile(projectRootDir, "**", "*.m"));
+        filesToCheck = fullfile(string({toolboxFileInfo.folder}'),string({toolboxFileInfo.name}'));
+    else
+        filesToCheck = options.FilesToCheck;
+    end
     
     if isempty(filesToCheck)
         error("MatBox:CodeIssues", "No files to check.")
