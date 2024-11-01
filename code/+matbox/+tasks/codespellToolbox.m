@@ -8,6 +8,7 @@ function codespellToolbox(codeFolder, options)
         codeFolder (1,1) string {mustBeFolder} = pwd
         options.DoAutomaticFix (1,1) logical = false
         options.IgnoreFilePath (1,1) string = ".codespell_ignore"
+        options.ConfigFilePath (1,1) string = ".codespellrc"
         options.Skip (1,:) string = string.empty
         options.CodeSpellExecutable (1,1) string = '/opt/homebrew/bin/codespell';
         options.RequireCodespellPassing (1,1) logical = false
@@ -28,6 +29,10 @@ function codespellToolbox(codeFolder, options)
         commandStr = sprintf("%s --write-changes", commandStr);
     end
 
+    if ~ismissing(options.ConfigFilePath) && isfile(options.ConfigFilePath)
+        options.IgnoreFilePath = string(missing);
+    end
+
     if ~ismissing(options.IgnoreFilePath)
         commandStr = sprintf("%s --ignore-words %s", commandStr, options.IgnoreFilePath);
         if ~isfile(options.IgnoreFilePath)
@@ -35,6 +40,8 @@ function codespellToolbox(codeFolder, options)
             fwrite(fid, '');
             fclose(fid);
         end
+    elseif ~ismissing(options.ConfigFilePath)
+        commandStr = sprintf("%s --config %s", commandStr, options.ConfigFilePath);
     end
 
     if ~isempty(options.Skip)
@@ -93,6 +100,8 @@ function codespellToolbox(codeFolder, options)
 
             if ~ismissing(options.IgnoreFilePath)
                 S(i).Ignore = createIgnoreLink(S(i).Word, options.IgnoreFilePath);
+            elseif ~ismissing(options.ConfigFilePath)
+                S(i).Ignore = createIgnoreLink(S(i).Word, options.ConfigFilePath);
             end
         end
         
