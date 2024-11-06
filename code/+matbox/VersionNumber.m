@@ -244,10 +244,10 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
     methods (Access = protected)
         % Override CustomDisplay to control display behavior
 
-        %function displayNonScalarObject(obj)
-            %verAsStr = arrayfun(@(o) string(o), obj, 'UniformOutput', true);
-            %disp(verAsStr);
-        %end
+        % function displayNonScalarObject(obj)
+            % verAsStr = arrayfun(@(o) string(o), obj, 'UniformOutput', true);
+            % disp(verAsStr);
+        % end
 
         function displayScalarObject(obj)
             verNums = obj.getNumbersForFormat();

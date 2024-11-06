@@ -4,8 +4,8 @@ function [toolboxPathFolders, cleanupObj] = resolvePathFolders(projectRootDirect
 % Syntax:
 %   [toolboxPathFolders, cleanupObj] = matbox.toolbox.internal.resolvePathFolders(...
 %       projectRootDirectory, options) determines the folders within a
-%       specified project root directory to include in the MATLAB path for a 
-%       toolbox. It recursively identifies path folders within a specified 
+%       specified project root directory to include in the MATLAB path for a
+%       toolbox. It recursively identifies path folders within a specified
 %       source folder or uses a list of custom path folders if provided.
 %
 % Inputs:
@@ -41,7 +41,7 @@ function [toolboxPathFolders, cleanupObj] = resolvePathFolders(projectRootDirect
     end
     
     if isempty(options.PathFolders)
-        toolboxCodeFolder = fullfile(projectRootDirectory, options.SourceFolderName);        
+        toolboxCodeFolder = fullfile(projectRootDirectory, options.SourceFolderName);
         toolboxPathFolders = string( strsplit(genpath(toolboxCodeFolder), pathsep));
         toolboxPathFolders = toolboxPathFolders(1:end-1); % Last element is empty
     else

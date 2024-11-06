@@ -27,7 +27,7 @@ classdef PyNamespaceTest < matlab.unittest.TestCase
         end
 
         function testPipInstall(testCase)
-            matbox.py.pipInstall('pybadges')            
+            matbox.py.pipInstall('pybadges')
         end
 
         function testPipInstallUnknownPackage(testCase)
@@ -42,6 +42,5 @@ classdef PyNamespaceTest < matlab.unittest.TestCase
             location = matbox.py.getPackageInfo('pybadges', "Field", "Location");
             testCase.verifyClass(location, 'string')
         end
-
     end
 end

@@ -114,7 +114,6 @@ function codespellToolbox(codeFolder, options)
             T = sortrows(T, "Auto");
             disp( T )
         end
-
     
         if options.RequireCodespellPassing
             message = sprintf( "Codespell identified the following potential spelling mistakes:\n%s", ...

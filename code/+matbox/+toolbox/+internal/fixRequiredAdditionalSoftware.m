@@ -2,7 +2,7 @@ function fixRequiredAdditionalSoftware(toolboxOptions)
 % fixRequiredAdditionalSoftware - Fix the specification for Required
 % Additional Software
 
-    % Due to a lack of maca64 support for additional software from 
+    % Due to a lack of maca64 support for additional software from
     % ToolboxOptions API in MATLAB R2023b and earlier releases, we need to
     % manually add a *_common.xml specification in the .MLTBX file for each
     % of the additional software using an undocumented MATLAB builtin

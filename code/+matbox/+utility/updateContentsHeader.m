@@ -22,5 +22,5 @@ function updateContentsHeader(toolboxFolder, contentsHeader)
     fclose(fid);
 
     fprintf('Updated %s\n', contentsFilePath)
-    %disp(strjoin(contentsStrLines, newline))
+    % disp(strjoin(contentsStrLines, newline))
 end
