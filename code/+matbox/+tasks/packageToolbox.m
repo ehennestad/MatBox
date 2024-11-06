@@ -58,7 +58,7 @@ function newVersion = packageToolbox(projectRootDirectory, releaseType, versionS
 
     % Write contents header
     matbox.utility.updateContentsHeader(sourceFolderPath, contentHeader);
-    
+
     % Package toolbox
     if ~isfolder( fileparts(toolboxOptions.OutputFile) )
         mkdir( fileparts(toolboxOptions.OutputFile) );
@@ -66,8 +66,11 @@ function newVersion = packageToolbox(projectRootDirectory, releaseType, versionS
 
     warnState = warning('off', 'MATLAB:toolbox_packaging:packaging:FilesDoNotExistWarning');
     cleanupObj = onCleanup(@(ws) warning(warnState));
-    
+
     matlab.addons.toolbox.packageToolbox(toolboxOptions);
+
+    % Hopefully temporary fix for MATLAB bug
+    matbox.toolbox.internal.fixRequiredAdditionalSoftware(toolboxOptions)
 
     if ~nargout
         clear newVersion

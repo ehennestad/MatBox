@@ -56,6 +56,6 @@ function checkAndUpdatePythonPath(installLocation, packageName)
 
     if ~any( contains(pyPath, installLocation) )
         fprintf("Adding %s location to pythonpath\n", packageName)
-        py.sys.path().append(installLocation) 
+        py.sys.path().append(installLocation)
     end
 end

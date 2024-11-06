@@ -15,7 +15,7 @@ function installRequirements(toolboxFolder, mode, options)
     end
 
     doUpdate = any(strcmp(mode, {'update'})) || any( strcmp(mode, {'u'}) ); %#ok<NASGU>
-    %Todo.
+    % Todo.
     
     reqs = matbox.setup.internal.getRequirements(toolboxFolder);
     

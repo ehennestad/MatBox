@@ -47,7 +47,7 @@ function repoFolder = downloadZippedGithubRepo(githubUrl, targetFolder, updateFl
             end
         end
     else
-        %pass
+        % pass
     end
 
     movefile(unzippedFolder, targetFolder);

@@ -10,8 +10,8 @@ function addDependenciesToPath(options)
         switch reqs(i).Type
             case 'GitHub'
                 % Todo.
-                %[repoUrl, branchName] = parseGitHubUrl(reqs(i).URI);
-                %matbox.setup.internal.installGithubRepository( repoUrl, branchName )
+                % [repoUrl, branchName] = parseGitHubUrl(reqs(i).URI);
+                % matbox.setup.internal.installGithubRepository( repoUrl, branchName )
             
             case 'FileExchange'
                 [packageUuid, version] = matbox.setup.internal.fex.parseFileExchangeURI( reqs(i).URI );

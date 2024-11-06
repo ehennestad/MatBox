@@ -18,7 +18,7 @@ function pythonExecutable = getPythonExecutable()
 %   installed or configured in MATLAB.
 %
 % Notes:
-%   This function uses the `pyenv` function introduced in MATLAB R2019b. 
+%   This function uses the `pyenv` function introduced in MATLAB R2019b.
 %   In earlier releases, this function will not work.
 %
 % Example:
@@ -30,7 +30,6 @@ function pythonExecutable = getPythonExecutable()
 %
 % See also:
 %   pyenv
-
 
     % Todo: What if MATLAB release is older than R2019b when pyenv was
     % introduced?
