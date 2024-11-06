@@ -68,6 +68,10 @@ function newVersion = packageToolbox(projectRootDirectory, releaseType, versionS
     cleanupObj = onCleanup(@(ws) warning(warnState));
     
     matlab.addons.toolbox.packageToolbox(toolboxOptions);
+    
+    % Hopefully temporary fix for MATLAB bug
+    matbox.toolbox.internal.fixRequiredAdditionalSoftware(toolboxOptions)
+
 
     if ~nargout
         clear newVersion
