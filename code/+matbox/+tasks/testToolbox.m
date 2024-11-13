@@ -10,11 +10,11 @@ function testToolbox(projectRootDirectory, options)
         options.ToolsFolderName (1,1) string = "tools"
         options.CoverageFileList (1,:) string = string.empty
         options.CreateBadge (1,1) logical = true
+        options.Verbosity (1,1) matlab.unittest.Verbosity = "Detailed"
     end
     
     import matlab.unittest.TestSuite;
     import matlab.unittest.TestRunner;
-    import matlab.unittest.Verbosity;
     import matlab.unittest.plugins.CodeCoveragePlugin;
     import matlab.unittest.plugins.XMLPlugin;
     import matlab.unittest.plugins.codecoverage.CoverageReport;
@@ -50,7 +50,7 @@ function testToolbox(projectRootDirectory, options)
         end
     end
 
-    runner = TestRunner.withTextOutput('OutputDetail', Verbosity.Detailed);
+    runner = TestRunner.withTextOutput('OutputDetail', options.Verbosity);
 
     codecoverageFileName = fullfile(outputDirectory, "codecoverage.xml");
 
