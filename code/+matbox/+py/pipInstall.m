@@ -39,7 +39,7 @@ function pipInstall(packageName, options)
     if options.Update
         systemCommand = systemCommand + " --upgrade";
     end
-    [status, m]  = system(systemCommand);
+    [status, ~]  = system(systemCommand);
 
     if status ~= 0
         error("MatBox:UnableToInstallPythonPackage", ...
