@@ -1,4 +1,4 @@
-function pipInstall(packageName)
+function pipInstall(packageName, options)
 % pipInstall - Install a specified Python package using pip from within MATLAB
 %
 % Syntax:
@@ -30,12 +30,16 @@ function pipInstall(packageName)
 
     arguments
         packageName (1,1) string
+        options.Update (1,1) logical = false 
     end
 
     pythonExecutable = matbox.py.getPythonExecutable();
 
     systemCommand = sprintf("%s -m pip install %s", pythonExecutable, packageName);
-    [status, ~]  = system(systemCommand);
+    if options.Update
+        systemCommand = systemCommand + " --upgrade";
+    end
+    [status, m]  = system(systemCommand);
 
     if status ~= 0
         error("MatBox:UnableToInstallPythonPackage", ...
@@ -43,7 +47,7 @@ function pipInstall(packageName)
     end
 
     % Add install location to PYTHONPATH if it is not already there
-    installLocation = matbox.py.getPackageInfo("pybadges", "Field", "Location");
+    installLocation = matbox.py.getPackageInfo(packageName, "Field", "Location");
 
     checkAndUpdatePythonPath(installLocation, packageName) % Local function
 end
