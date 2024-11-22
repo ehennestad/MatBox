@@ -50,7 +50,7 @@ function testToolbox(projectRootDirectory, options)
         end
     end
 
-    if isenv('GITHUB_ACTIONS') && getenv('GITHUB_ACTIONS')
+    if isenv('GITHUB_ACTIONS') && strcmp(getenv('GITHUB_ACTIONS'), 'true')
         % Remove graphical tests if running on a github runner
         suite = suite.selectIf(~HasTag("Graphical"));
     end
