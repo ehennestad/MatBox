@@ -58,7 +58,7 @@ jobs:
 
   # Report on what releases tested successfully.
   # Generate a draft release based on the tag
-  # Recreate the tag with the final version of JSON files
+  # Recreate the tag with the final version of files
   release:
     needs: test
     if: always()
@@ -178,5 +178,5 @@ jobs:
           draft: true        
           artifacts: "releases/MatBox_${{ env.versionNumber }}.mltbx"
           generateReleaseNotes: true
-          body: "![MATLAB Versions Tested](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fehennestad%2Fmatbox%2Fgh-badges%2F.github%2Fbadges%2F${{  github.ref_name }}%2Ftested_with.json)"
+          body: "![MATLAB Versions Tested](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fehennestad%2Fmatbox%2Fgh-badges%2F.github%2Fbadges%2F${{ github.ref_name }}%2Ftested_with.json)"
 

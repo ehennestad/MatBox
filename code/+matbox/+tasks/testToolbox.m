@@ -50,6 +50,11 @@ function testToolbox(projectRootDirectory, options)
         end
     end
 
+    if isenv('GITHUB_ACTIONS') && strcmp(getenv('GITHUB_ACTIONS'), 'true')
+        % Remove graphical tests if running on a github runner
+        suite = suite.selectIf(~HasTag("Graphical"));
+    end
+
     runner = TestRunner.withTextOutput('OutputDetail', options.Verbosity);
 
     codecoverageFileName = fullfile(outputDirectory, "codecoverage.xml");
