@@ -1,5 +1,6 @@
 function deleteGitTag(tagName, projectDirectory)
 % deleteGitTag - Delete tag from repository (local and remotely)
+%
 
     arguments
         tagName (1,1) string 
