@@ -25,6 +25,11 @@ jobs:
       # Checks-out the repository under $GITHUB_WORKSPACE, so the job can access it
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'  # Use the latest version of Python 3
           
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v2
