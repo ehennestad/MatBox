@@ -77,14 +77,21 @@ function addStartupToMainStartup(toolboxFolder)
             end
         end
 
-        % Prepare the run statement.
-        runStatement = sprintf("run('%s')", startupFilePath);
+        % Prepare the run statement with proper indentation.
+        if insertIdx > 1
+            indentStr = regexp(lines{insertIdx-1}, '^\s*', 'match', 'once');
+        else
+            indentStr = "";
+        end
+        runStatement = indentStr + sprintf("run('%s')", startupFilePath);
         
-        % If the file does not already end with a newline, prepend one.
+        % Adjust newlines if statement is added at the end of the file.
         if insertIdx == numel(lines)
             if ~endsWith(fileContent, newline)
                 runStatement = newline + runStatement;
             end
+            runStatement = runStatement + newline;
+        else
             runStatement = runStatement + newline;
         end
 
