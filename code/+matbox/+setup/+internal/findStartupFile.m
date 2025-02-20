@@ -16,5 +16,8 @@ function startupFilePath = findStartupFile(folderPath)
         startupFilePath = string.empty;
     else
         startupFilePath = string(fullfile(L(1).folder, L(1).name));
+        if numel(L) > 1
+            % Consider displaying a warning?
+        end
     end
 end
