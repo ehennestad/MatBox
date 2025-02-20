@@ -1,8 +1,8 @@
-<a href="https://github.com/user-attachments/assets/906fc0ee-fa3a-4440-b8ff-4e822196f828">
+<a href="https://github.com/user-attachments/assets/2d53e2fa-9b07-41b5-b20f-e086d126102d">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/906fc0ee-fa3a-4440-b8ff-4e822196f828">
-    <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/906fc0ee-fa3a-4440-b8ff-4e822196f828">
-    <img alt="Dropbox-API-Client-logo" src="[/resources/images/toolbox_image.png](https://github.com/user-attachments/assets/906fc0ee-fa3a-4440-b8ff-4e822196f828)" title="MatBox" align="right" height="70"​>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/2d53e2fa-9b07-41b5-b20f-e086d126102d">
+    <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/2d53e2fa-9b07-41b5-b20f-e086d126102d">
+    <img alt="Dropbox-API-Client-logo" src="[/resources/images/toolbox_image.png](https://github.com/user-attachments/assets/2d53e2fa-9b07-41b5-b20f-e086d126102d)" title="MatBox" align="right" height="70"​>
   </picture>
 </a>
 
