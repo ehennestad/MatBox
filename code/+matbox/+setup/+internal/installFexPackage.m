@@ -1,4 +1,4 @@
-function installFexPackage(toolboxIdentifier, installLocation, options)
+function packageTargetFolder = installFexPackage(toolboxIdentifier, installLocation, options)
 % installFexPackage - Install a FileExchange package
 %
 %   This function installs a package from FileExchange. If the package is
@@ -8,14 +8,14 @@ function installFexPackage(toolboxIdentifier, installLocation, options)
 
 %   Todo:
 %   [ ] Separate method for downloading
-%   [ ] Unclear if downloaded zip is added to path. Is this the
-%       responsibility of this function or upstream?
 
     arguments
         toolboxIdentifier
         installLocation
         options.Name (1,1) string = missing
         options.Version (1,1) string = missing
+        options.AddToPath (1,1) logical = true
+        options.AddToPathWithSubfolders (1,1) logical = true
     end
 
     % Check if toolbox is installed
@@ -68,17 +68,29 @@ function installFexPackage(toolboxIdentifier, installLocation, options)
         if endsWith(addonUrl, '/zip')
             [tempFilepath, C] = matbox.setup.internal.utility.tempsave(addonUrl, [toolboxIdentifier, '_temp.zip']);
 
-            installLocation = fullfile(installLocation, toolboxName);
-            if ~isfolder(installLocation); mkdir(installLocation); end
-            unzip(tempFilepath, installLocation);
+            packageTargetFolder = fullfile(installLocation, toolboxName);
+            if ~isfolder(packageTargetFolder); mkdir(packageTargetFolder); end
+            unzip(tempFilepath, packageTargetFolder);
+            if options.AddToPath
+                if options.AddToPathWithSubfolders
+                    addpath(genpath(packageTargetFolder))
+                else
+                    addpath(packageTargetFolder)
+                end
+            end
 
         elseif endsWith(addonUrl, '/mltbx')
             [tempFilepath, C] = matbox.setup.internal.utility.tempsave(addonUrl, [toolboxIdentifier, '_temp.mltbx']);
             matlab.addons.install(tempFilepath);
+            packageTargetFolder = 'n/a'; % todo
         end
 
         delete(C)
         fprintf('Done\n')
+
+        if ~nargout
+            clear packageTargetFolder
+        end
     end
 end
 
