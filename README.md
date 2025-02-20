@@ -1,3 +1,11 @@
+<a href="https://github.com/user-attachments/assets/906fc0ee-fa3a-4440-b8ff-4e822196f828">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/906fc0ee-fa3a-4440-b8ff-4e822196f828">
+    <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/906fc0ee-fa3a-4440-b8ff-4e822196f828">
+    <img alt="Dropbox-API-Client-logo" src="[/resources/images/toolbox_image.png](https://github.com/user-attachments/assets/906fc0ee-fa3a-4440-b8ff-4e822196f828)" title="MatBox" align="right" height="70"​>
+  </picture>
+</a>
+
 # MatBox: Efficient MATLAB Toolbox Development
 [![Version Number](https://img.shields.io/github/v/release/ehennestad/MatBox?label=version)](https://github.com/ehennestad/MatBox/releases/latest)
 [![MATLAB Tests](.github/badges/tests.svg)](https://github.com/ehennestad/MatBox/actions/workflows/update.yml)
