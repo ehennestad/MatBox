@@ -1,5 +1,14 @@
+<a href="https://github.com/user-attachments/assets/2d53e2fa-9b07-41b5-b20f-e086d126102d">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/2d53e2fa-9b07-41b5-b20f-e086d126102d">
+    <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/2d53e2fa-9b07-41b5-b20f-e086d126102d">
+    <img alt="Dropbox-API-Client-logo" src="[/resources/images/toolbox_image.png](https://github.com/user-attachments/assets/2d53e2fa-9b07-41b5-b20f-e086d126102d)" title="MatBox" align="right" height="70"​>
+  </picture>
+</a>
+
 # MatBox: Efficient MATLAB Toolbox Development
 [![Version Number](https://img.shields.io/github/v/release/ehennestad/MatBox?label=version)](https://github.com/ehennestad/MatBox/releases/latest)
+[![View MatBox on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://se.mathworks.com/matlabcentral/fileexchange/180185-matbox)
 [![MATLAB Tests](.github/badges/tests.svg)](https://github.com/ehennestad/MatBox/actions/workflows/update.yml)
 [![codecov](https://codecov.io/gh/ehennestad/MatBox/graph/badge.svg?token=6D7STF19X0)](https://codecov.io/gh/ehennestad/MatBox)
 [![MATLAB Code Issues](.github/badges/code_issues.svg)](https://github.com/ehennestad/MatBox/security/code-scanning)
