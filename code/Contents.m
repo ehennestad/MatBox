@@ -1,5 +1,5 @@
 % MatBox
-% Version 0.9.4 (R2022b+) 29-Oct-2024
+% Version 0.9.5 (R2022b+) 20-Feb-2025
 %
-% Copyright (c) 2024, Eivind Hennestad
+% Copyright (c) 2025, Eivind Hennestad
 % ------------------------------------

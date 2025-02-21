@@ -24,12 +24,21 @@ function installRequirements(toolboxFolder, mode, options)
     
     for i = 1:numel(reqs)
         switch reqs(i).Type
+            
             case 'GitHub'
                 [repoUrl, branchName] = parseGitHubUrl(reqs(i).URI);
-                matbox.setup.internal.installGithubRepository( repoUrl, branchName )
+                matbox.setup.internal.installGithubRepository( ...
+                    repoUrl, ...
+                    branchName, ...
+                    "AddToPath", options.UpdateSearchPath)
+
             case 'FileExchange'
                 [packageUuid, version] = getFEXPackageSpecification( reqs(i).URI );
-                matbox.setup.internal.installFexPackage(packageUuid, installationLocation, 'Version', version);
+                matbox.setup.internal.installFexPackage(...
+                    packageUuid, ...
+                    installationLocation, ...
+                    'Version', version, ...
+                    "AddToPath", options.UpdateSearchPath);
 
             case 'Unknown'
                 continue

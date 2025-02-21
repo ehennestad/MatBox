@@ -5,6 +5,8 @@ function repoTargetFolder = installGithubRepository(repositoryUrl, branchName, o
         branchName (1,1) string = "main"
         options.Update (1,1) logical = false
         options.InstallationLocation (1,1) string = matbox.setup.internal.getDefaultAddonFolder()
+        options.AddToPath (1,1) logical = true
+        options.AddToPathWithSubfolders (1,1) logical = true
     end
 
     if ismissing(branchName); branchName = "main"; end
@@ -45,7 +47,13 @@ function repoTargetFolder = installGithubRepository(repositoryUrl, branchName, o
     if isfile( setupFile )
         run( setupFile )
     else
-        addpath(genpath(repoTargetFolder));
+        if options.AddToPath
+            if options.AddToPathWithSubfolders
+                addpath(genpath(repoTargetFolder))
+            else
+                addpath(repoTargetFolder)
+            end
+        end
     end
 
     if ~nargout
