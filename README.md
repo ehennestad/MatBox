@@ -27,6 +27,38 @@ To get started, use the [template repository](https://github.com/ehennestad/Matl
 
 Whether you are building your first toolbox or maintaining a complex library, Matbox helps you stay organized, efficient, and focused on writing great code.
 
+## How to use:
+
+1. Create a new repository using [template repository](https://github.com/ehennestad/Matlab-Toolbox). It is also possible to use MatBox with an existing repository, but this option is currently not documented. Check the example repositories for hints on how to set things up.
+
+2. If your project have dependencies, add a `requirements.txt` in the root of your repository:
+<details>
+<summary>Example of requirements.txt from [openMINDS_MATLAB_UI](https://github.com/ehennestad/openMINDS-MATLAB-UI)</summary>
+
+### requirements.txt
+```
+https://github.com/openMetadataInitiative/openMINDS_MATLAB
+https://github.com/ehennestad/StructEditor
+https://github.com/VervaekeLab/NANSEN
+fex://66235-widgets-toolbox-compatibility-support/1.3.330
+fex://83328-widgets-toolbox-matlab-app-designer-components
+fex://160058-recursively-list-files-and-folders
+fex://167901-iconbutton-app-component
+```
+</details>
+
+3. Add a `setup.m` based on the [setup template](https://github.com/ehennestad/MatBox/blob/main/code/templates/setup.m)
+
+4. Make necessary adjustments to workflow definitions in `.github/workflows`. Todo: document and/or improve template repo initialization.
+
+5. Customize functions in the `tools/` if necessary.
+
+
+## Example repositories
+- https://github.com/ehennestad/dropbox-sdk-matlab
+- https://github.com/ehennestad/openMINDS-MATLAB-UI
+
+
 ## Requirements
 It is recommended to use MATLAB R2023a or later. Toolbox packaging will only work with R2023 or later, other functionality of the toolbox should work with older releases as well.
 
