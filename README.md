@@ -33,7 +33,7 @@ Whether you are building your first toolbox or maintaining a complex library, Ma
 
 2. If your project have dependencies, add a `requirements.txt` in the root of your repository:
 <details>
-<summary>Example of requirements.txt from [openMINDS_MATLAB_UI](https://github.com/ehennestad/openMINDS-MATLAB-UI)</summary>
+<summary>Example of requirements.txt from openMINDS_MATLAB_UI</summary>
 
 ### requirements.txt
 ```
