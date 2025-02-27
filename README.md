@@ -20,10 +20,10 @@ To get started, use the [template repository](https://github.com/ehennestad/Matl
 
 ## Key Features:
 
-- **Automated Dependency Management**: Streamline your project setup with automatic installation and configuration of required packages.
+- **Automated Dependency Management**: Streamline your project setup with automatic installation and configuration of required packages using a `requirements.txt` file.
 - **Code Quality Assurance**: Perform code checks and maintain clean, consistent codebases with linting and format enforcement.
-- **Continuous Integration**: Seamlessly integrate CI/CD pipelines to ensure code stability and easy deployment.
-- **Effortless Packaging**: Package your MATLAB toolbox for easy distribution with minimal configuration.
+- **Continuous Integration**: Seamlessly integrate CI/CD pipelines to ensure code stability and easy deployment using GitHub actions and workflow templates.
+- **Effortless Packaging**: Package your MATLAB toolbox for easy distribution with minimal configuration using a `MLToolbox.json` file.
 
 Whether you are building your first toolbox or maintaining a complex library, Matbox helps you stay organized, efficient, and focused on writing great code.
 
