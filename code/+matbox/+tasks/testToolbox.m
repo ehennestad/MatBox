@@ -50,9 +50,11 @@ function testToolbox(projectRootDirectory, options)
         end
     end
 
-    if isenv('GITHUB_ACTIONS') && strcmp(getenv('GITHUB_ACTIONS'), 'true')
-        % Remove graphical tests if running on a github runner
-        suite = suite.selectIf(~HasTag("Graphical"));
+    if exist("isenv", "file") == 2 % isenv was introduced in R2022b
+        if isenv('GITHUB_ACTIONS') && strcmp(getenv('GITHUB_ACTIONS'), 'true')
+            % Remove graphical tests if running on a github runner
+            suite = suite.selectIf(~HasTag("Graphical"));
+        end
     end
 
     runner = TestRunner.withTextOutput('OutputDetail', options.Verbosity);
