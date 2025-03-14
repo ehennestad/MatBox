@@ -6,7 +6,7 @@ function [organization, repositoryName, branchName] = parseRepositoryURL(repoUrl
     end
     
     if repoUrl.Host ~= "github.com"
-        error("SETUPTOOLS:GITHUB:InvalidRepositoryURL", ...
+        error("MATBOX:GitHub:InvalidRepositoryURL", ...
             "Please make sure the repository URL's host name is 'github.com'")
     end
     

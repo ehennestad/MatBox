@@ -1,10 +1,11 @@
-function addDependenciesToPath(options)
+function addDependenciesToPath(toolboxFolder, options)
 
     arguments
+        toolboxFolder (1,1) string {mustBeFolder}
         options.InstallationLocation (1,1) string = matbox.setup.internal.getDefaultAddonFolder()
     end
     
-    reqs = matbox.setup.internal.getRequirements();
+    reqs = matbox.setup.internal.getRequirements(toolboxFolder);
 
     for i = 1:numel(reqs)
         switch reqs(i).Type
