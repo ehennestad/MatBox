@@ -7,6 +7,7 @@ function repoTargetFolder = installGithubRepository(repositoryUrl, branchName, o
         options.InstallationLocation (1,1) string = matbox.setup.internal.getDefaultAddonFolder()
         options.AddToPath (1,1) logical = true
         options.AddToPathWithSubfolders (1,1) logical = true
+        options.Verbose (1,1) logical = true
     end
 
     if ismissing(branchName); branchName = "main"; end
@@ -16,6 +17,9 @@ function repoTargetFolder = installGithubRepository(repositoryUrl, branchName, o
     if ~options.Update
         [repoExists, ~] = matbox.setup.internal.pathtool.lookForRepository(repoName, branchName);
         if repoExists
+            if options.Verbose
+                fprintf('Requirement "%s" already exists, skipping.\n', repositoryUrl)
+            end
             return
         end
     end
@@ -41,7 +45,11 @@ function repoTargetFolder = installGithubRepository(repositoryUrl, branchName, o
     commitId = matbox.setup.internal.github.api.getCurrentCommitID(repoName, 'Organization', organization, "BranchName", branchName);
     filePath = fullfile(repoTargetFolder, '.commit_hash');
     matbox.setup.internal.utility.filewrite(filePath, commitId)
-    
+
+    if options.Verbose
+        fprintf('Installed "%s".\n', repositoryUrl)
+    end
+
     % Run setup.m if present.
     setupFile = matbox.setup.internal.findSetupFile(repoTargetFolder);
     if isfile( setupFile )
