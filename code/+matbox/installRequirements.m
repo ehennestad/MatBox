@@ -11,17 +11,19 @@ function installRequirements(toolboxFolder, mode, options)
         % Tentative, not implemented yet!
         options.UseDefaultInstallationLocation (1,1) logical = true
         options.UpdateSearchPath (1,1) logical = true
+        options.SaveSearchPath (1,1) logical = true
         options.InstallationLocation (1,1) string = matbox.setup.internal.getDefaultAddonFolder()
+        options.Verbose (1,1) logical = true
     end
-
-    doUpdate = any(strcmp(mode, {'update'})) || any( strcmp(mode, {'u'}) ); %#ok<NASGU>
-    % Todo.
     
-    reqs = matbox.setup.internal.getRequirements(toolboxFolder);
+    % Parse mode/flags
+    mode = string(mode);
+    doUpdate = any(strcmp(mode, 'update')) || any( strcmp(mode, 'u') );
     
     installationLocation = options.InstallationLocation;
     if ~isfolder(installationLocation); mkdir(installationLocation); end
-    
+        
+    reqs = matbox.setup.internal.getRequirements(toolboxFolder);
     for i = 1:numel(reqs)
         switch reqs(i).Type
             
@@ -30,7 +32,9 @@ function installRequirements(toolboxFolder, mode, options)
                 matbox.setup.internal.installGithubRepository( ...
                     repoUrl, ...
                     branchName, ...
-                    "AddToPath", options.UpdateSearchPath)
+                    "AddToPath", options.UpdateSearchPath, ...
+                    "Update", doUpdate, ...
+                    "Verbose", options.Verbose)
 
             case 'FileExchange'
                 [packageUuid, version] = getFEXPackageSpecification( reqs(i).URI );
@@ -38,11 +42,15 @@ function installRequirements(toolboxFolder, mode, options)
                     packageUuid, ...
                     installationLocation, ...
                     'Version', version, ...
-                    "AddToPath", options.UpdateSearchPath);
+                    "AddToPath", options.UpdateSearchPath, ...
+                    "Verbose", options.Verbose);
 
             case 'Unknown'
                 continue
         end
+    end
+    if options.UpdateSearchPath && options.SaveSearchPath
+        savepath()
     end
 end
 
