@@ -16,6 +16,7 @@ function packageTargetFolder = installFexPackage(toolboxIdentifier, installLocat
         options.Version (1,1) string = missing
         options.AddToPath (1,1) logical = true
         options.AddToPathWithSubfolders (1,1) logical = true
+        options.Verbose (1,1) logical = true
     end
 
     % Check if toolbox is installed
@@ -58,11 +59,13 @@ function packageTargetFolder = installFexPackage(toolboxIdentifier, installLocat
                 toolboxName = options.Name;
             end
         end
-    
-        if ismissing(toolboxName)
-            fprintf('Please wait, installing "<missing name>"...')
-        else
-            fprintf('Please wait, installing "%s"...', toolboxName)
+        
+        if options.Verbose
+            if ismissing(toolboxName)
+                fprintf('Please wait, installing "<missing name>"...')
+            else
+                fprintf('Please wait, installing "%s"...', toolboxName)
+            end
         end
 
         if endsWith(addonUrl, '/zip')
@@ -86,7 +89,9 @@ function packageTargetFolder = installFexPackage(toolboxIdentifier, installLocat
         end
 
         delete(C)
-        fprintf('Done\n')
+        if options.Verbose
+            fprintf('Done.\n')
+        end
 
         if ~nargout
             clear packageTargetFolder
