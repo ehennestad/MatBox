@@ -59,7 +59,16 @@ function newVersion = packageToolbox(projectRootDirectory, releaseType, versionS
     % Write contents header
     matbox.utility.updateContentsHeader(sourceFolderPath, contentHeader);
 
-    % Package toolbox
+    % Generate initial MLTBX with additional software specified
+    finalOutputFile = toolboxOptions.OutputFile;
+    initialOutputFile = strrep(finalOutputFile, '.mltbx', '_initial.mltbx');
+    toolboxOptions.OutputFile = initialOutputFile;
+    matlab.addons.toolbox.packageToolbox(toolboxOptions);
+    mltbxCleanupObj = onCleanup(@() delete(initialOutputFile));
+
+    % Generate final MLTBX without additional software
+    toolboxOptions.RequiredAdditionalSoftware = [];
+    toolboxOptions.OutputFile = finalOutputFile;
     if ~isfolder( fileparts(toolboxOptions.OutputFile) )
         mkdir( fileparts(toolboxOptions.OutputFile) );
     end
@@ -69,8 +78,9 @@ function newVersion = packageToolbox(projectRootDirectory, releaseType, versionS
 
     matlab.addons.toolbox.packageToolbox(toolboxOptions);
 
-    % Hopefully temporary fix for MATLAB bug
-    matbox.toolbox.internal.fixRequiredAdditionalSoftware(toolboxOptions)
+    % Hopefully temporary fix for MATLAB bug. See issue #21
+    % https://github.com/ehennestad/MatBox/issues/21
+    matbox.toolbox.internal.fixRequiredAdditionalSoftware(initialOutputFile, finalOutputFile)
 
     if ~nargout
         clear newVersion

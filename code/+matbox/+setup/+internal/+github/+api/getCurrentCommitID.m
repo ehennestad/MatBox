@@ -11,7 +11,8 @@ function [commitID, commitDetails] = getCurrentCommitID(repositoryName, options)
         options.BranchName = "main"
     end
 
-    assert(~ismissing(options.UserName) || ~ismissing(options.Organization), 'Owner (UserName or Organization) must be specified')
+    assert(~ismissing(options.UserName) || ~ismissing(options.Organization), ...
+        'Owner (UserName or Organization) must be specified')
 
     if ~ismissing(options.UserName)
         owner = options.UserName;
