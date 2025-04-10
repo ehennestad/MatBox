@@ -11,6 +11,7 @@ function installRequirements(toolboxFolder, mode, options)
         % Tentative, not implemented yet!
         options.UseDefaultInstallationLocation (1,1) logical = true
         options.UpdateSearchPath (1,1) logical = true
+        options.SaveSearchPath (1,1) logical = true
         options.InstallationLocation (1,1) string = matbox.setup.internal.getDefaultAddonFolder()
         options.Verbose (1,1) logical = true
     end
@@ -46,6 +47,9 @@ function installRequirements(toolboxFolder, mode, options)
             case 'Unknown'
                 continue
         end
+    end
+    if options.UpdateSearchPath && options.SaveSearchPath
+        savepath()
     end
 end
 
