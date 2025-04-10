@@ -14,24 +14,19 @@ function repoTargetFolder = installGithubRepository(repositoryUrl, branchName, o
 
     [organization, repoName] = matbox.setup.internal.github.parseRepositoryURL(repositoryUrl);
     
-    if ~options.Update
-        [repoExists, ~] = matbox.setup.internal.pathtool.lookForRepository(repoName, branchName);
-        if repoExists
-            if options.Verbose
-                fprintf('Requirement "%s" already exists, skipping.\n', repositoryUrl)
-            end
-            return
+    [repoExists, repoFolderLocation] = matbox.setup.internal.pathtool.lookForRepository(repoName, branchName);
+    if repoExists && ~options.Update
+        if options.Verbose
+            fprintf('Requirement "%s" already exists, skipping.\n', repositoryUrl)
         end
+        return
     end
     
-    % Todo: Implement updating
-    % if repoExists
-    %     if options.Update
-    %         % Todo: Delete old repo and download again.
-    %     else
-    %         return
-    %     end
-    % end
+    if repoExists && options.Update
+        % Remove old repo from path and delete folder
+        rmpath(genpath(repoFolderLocation));
+        rmdir(repoFolderLocation, 's')
+    end
 
     targetFolder = options.InstallationLocation;
     repoTargetFolder = fullfile(targetFolder);
