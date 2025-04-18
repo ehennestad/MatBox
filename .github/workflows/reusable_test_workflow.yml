@@ -33,6 +33,12 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: Cancel non-latest runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          all_but_latest: true
+          access_token: ${{ github.token }}
+        
       # Check out the repository under $GITHUB_WORKSPACE, so the job can access it
       # Check out the head-ref if PR, as we are going to push badges back to the PR branch
       - name: Check out repo
