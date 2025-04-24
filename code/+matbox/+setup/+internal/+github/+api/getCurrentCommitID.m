@@ -6,21 +6,15 @@ function [commitID, commitDetails] = getCurrentCommitID(repositoryName, options)
 
     arguments
         repositoryName (1,1) string
-        options.UserName (1,1) string = missing
-        options.Organization (1,1) string = missing
+        options.Owner (1,1) string = missing
         options.BranchName = "main"
     end
 
-    assert(~ismissing(options.UserName) || ~ismissing(options.Organization), ...
-        'Owner (UserName or Organization) must be specified')
+    assert(~ismissing(options.Owner), ...
+        'Repository owner (username or organization) must be specified')
 
-    if ~ismissing(options.UserName)
-        owner = options.UserName;
-    else
-        owner = options.Organization;
-    end
-
-    API_BASE_URL = sprintf("https://api.github.com/repos/%s/%s", owner, repositoryName);
+    API_BASE_URL = sprintf("https://api.github.com/repos/%s/%s", ...
+        options.Owner, repositoryName);
     
     apiURL = strjoin( [API_BASE_URL, "commits", options.BranchName], '/');
 
@@ -40,6 +34,6 @@ function [commitID, commitDetails] = getCurrentCommitID(repositoryName, options)
         commitDetails.CommitID = commitID;
         commitDetails.RepositoryName = repositoryName;
         commitDetails.BranchName = options.BranchName;
-        commitDetails.Organization = options.Organization;
+        commitDetails.Owner = options.Owner;
     end
 end
