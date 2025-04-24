@@ -64,10 +64,16 @@ function repoTargetFolder = installGithubRepository(repositoryUrl, branchName, o
     end
 
     if repoExists
-        rmpath(genpath(repoFolderLocation));
-        rmdir(repoFolderLocation, 's');
-        if options.Verbose
-            fprintf('Removed "%s".\n', repoFolderLocation)
+        if contains(repoFolderLocation, options.InstallationLocation)
+            rmpath(genpath(repoFolderLocation));
+            rmdir(repoFolderLocation, 's');
+            if options.Verbose
+                fprintf('Removed "%s".\n', repoFolderLocation)
+            end
+        else
+            warning("Found repository in another location (%s) than the " + ...
+                "specified installation location. Please update manually.", repoFolderLocation)
+            return
         end
     end
 
