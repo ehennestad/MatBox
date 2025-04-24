@@ -1,4 +1,17 @@
 function repoTargetFolder = installGithubRepository(repositoryUrl, branchName, options)
+% INSTALLGITHUBREPOSITORY Install or update a GitHub repository
+%   repoTargetFolder = installGithubRepository(repositoryUrl, branchName, options)
+%   installs or updates a GitHub repository and returns the target folder path.
+%
+%   Parameters:
+%       repositoryUrl - URL of the GitHub repository
+%       branchName - Branch to install (default: "main")
+%       options - Structure with the following fields:
+%           Update - Whether to update if repository exists (default: false)
+%           InstallationLocation - Where to install (default: default addon folder)
+%           AddToPath - Whether to add to MATLAB path (default: true)
+%           AddToPathWithSubfolders - Whether to add subfolders (default: true)
+%           Verbose - Whether to display verbose output (default: true)
 
     arguments
         repositoryUrl (1,1) string
@@ -10,22 +23,52 @@ function repoTargetFolder = installGithubRepository(repositoryUrl, branchName, o
         options.Verbose (1,1) logical = true
     end
 
+    % Branch name might be set to missing from upstream callers
+    % Todo: Should default to "default" and use git api to resolve name of
+    % default branch
     if ismissing(branchName); branchName = "main"; end
 
-    [organization, repoName] = matbox.setup.internal.github.parseRepositoryURL(repositoryUrl);
+    [ownerName, repositoryName] = matbox.setup.internal.github.parseRepositoryURL(repositoryUrl);
     
-    [repoExists, repoFolderLocation] = matbox.setup.internal.pathtool.lookForRepository(repoName, branchName);
-    if repoExists && ~options.Update
-        if options.Verbose
-            fprintf('Requirement "%s" already exists, skipping.\n', repositoryUrl)
+    [repoExists, repoFolderLocation] = ...
+        matbox.setup.internal.pathtool.lookForRepository(repositoryName, branchName);
+
+    if repoExists
+        isUpdateNeeded = options.Update;
+        repoTargetFolder = repoFolderLocation;
+        
+        if options.Update % Handle repository update
+            if isGitRepository(repoFolderLocation)
+                wasSuccess = gitPull(repoFolderLocation);
+                if wasSuccess
+                    if options.Verbose
+                        fprintf('Used git pull to update repository "%s"\n', repositoryUrl)
+                    end
+                    isUpdateNeeded = false;
+                end
+            else
+                isUpdateNeeded = checkCommitHash(repoFolderLocation, repositoryName, ...
+                    ownerName, branchName, repositoryUrl, "Verbose", options.Verbose);
+            end
         end
-        return
+
+        if ~isUpdateNeeded
+            if options.Verbose
+                fprintf('Requirement "%s" already exists, skipping.\n', repositoryUrl)
+            end
+            if ~nargout
+                clear repoTargetFolder
+            end
+            return
+        end
     end
-    
-    if repoExists && options.Update
-        % Remove old repo from path and delete folder
+
+    if repoExists
         rmpath(genpath(repoFolderLocation));
-        rmdir(repoFolderLocation, 's')
+        rmdir(repoFolderLocation, 's');
+        if options.Verbose
+            fprintf('Removed "%s".\n', repoFolderLocation)
+        end
     end
 
     targetFolder = options.InstallationLocation;
@@ -37,9 +80,8 @@ function repoTargetFolder = installGithubRepository(repositoryUrl, branchName, o
     downloadUrl = sprintf( '%s/archive/refs/heads/%s.zip', repositoryUrl, branchName );
     repoTargetFolder = matbox.setup.internal.downloadZippedGithubRepo(downloadUrl, repoTargetFolder, true, true);
 
-    commitId = matbox.setup.internal.github.api.getCurrentCommitID(repoName, 'Organization', organization, "BranchName", branchName);
-    filePath = fullfile(repoTargetFolder, '.commit_hash');
-    matbox.setup.internal.utility.filewrite(filePath, commitId)
+    matbox.setup.internal.github.writeCommitHash(...
+        repoTargetFolder, repositoryName, ownerName, branchName)
 
     if options.Verbose
         fprintf('Installed "%s".\n', repositoryUrl)
@@ -61,5 +103,82 @@ function repoTargetFolder = installGithubRepository(repositoryUrl, branchName, o
 
     if ~nargout
         clear repoTargetFolder
+    end
+end
+
+function tf = isGitRepository(folderPath)
+    tf = isfolder(fullfile(folderPath, '.git'));
+end
+
+function wasSuccess = gitPull(folderPath)
+% gitPull - Try to do a repository pull using git
+    wasSuccess = false;
+    
+    % Try to use git commands to update the repository
+    try
+        if exist("gitrepo", "file")
+            repo = gitrepo(folderPath);
+            repo.pull()
+            wasSuccess = true;
+        else
+            currentDir = pwd;
+            cd(folderPath);
+            workDirCleanup = onCleanup(@() cd(currentDir));
+            
+            % Try to use git pull to update the repository
+            [status, cmdout] = system('git pull');
+            
+            % Return to original directory
+            clear workDirCleanup
+            
+            if status == 0
+                wasSuccess = true;
+                % Run setup if present after update
+                setupFile = matbox.setup.internal.findSetupFile(folderPath);
+                if isfile(setupFile)
+                    run(setupFile);
+                end
+            else
+                warning('Git pull failed with message: %s\n.', cmdout);
+            end
+        end
+    catch ME
+        warning(ME.identifier, 'Git pull failed with message: %s\n.', ME.message);
+    end
+end
+
+function needsUpdate = checkCommitHash(repoFolderLocation, repoName, ...
+        organization, branchName, repositoryUrl, options)
+    
+    needsUpdate = false;
+
+    % Check if commit hash has changed before updating
+    try
+        % Read the stored commit hash
+        storedCommitHash = matbox.setup.internal.github.readCommitHash(repoFolderLocation);
+        
+        % Get the current commit hash from GitHub API
+        currentCommitHash = ...
+            matbox.setup.internal.github.api.getCurrentCommitID(...
+            repoName, ...
+            'Organization', organization, ...
+            'BranchName', branchName);
+        
+        % Only update if commit hashes are different
+        if strcmp(storedCommitHash, currentCommitHash)
+            if options.Verbose
+                fprintf('Repository "%s" is already up to date (commit: %s).\n', repositoryUrl, storedCommitHash);
+            end
+        else
+            needsUpdate = true;
+            if options.Verbose
+                fprintf('Updating "%s" from commit %s to %s.\n', repositoryUrl, storedCommitHash, currentCommitHash);
+            end
+        end
+    catch ME
+        needsUpdate = true;
+        if options.Verbose
+            fprintf('Could not verify commit hash: %s\nForcing update.\n', ME.message);
+        end
     end
 end
