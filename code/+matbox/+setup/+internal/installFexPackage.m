@@ -25,6 +25,9 @@ function packageTargetFolder = installFexPackage(toolboxIdentifier, installLocat
 
     if isInstalled
         matlab.addons.enableAddon(toolboxIdentifier, version)
+        if options.Verbose
+            fprintf('Requirement "%s" is already installed. Skipping...\n', options.Title)
+        end
 
     else % Download toolbox
         fex = matlab.addons.repositories.FileExchangeRepository();
