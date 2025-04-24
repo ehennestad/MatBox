@@ -108,14 +108,18 @@ end
 
 function toolboxName = retrieveToolboxName(toolboxIdentifier)
     fex = matlab.addons.repositories.FileExchangeRepository();
-
-    additionalInfoUrl = fex.getAddonDetailsURL(toolboxIdentifier);
-    addonHtmlInfo = webread(additionalInfoUrl);
-    pattern = '<span id="titleText">(.*?)</span>';
-    title = regexp(addonHtmlInfo, pattern, 'tokens', 'once');
-    if ~isempty(title)
-        toolboxName = title{1};
-    else
+    
+    try
+        additionalInfoUrl = fex.getAddonDetailsURL(toolboxIdentifier);
+        addonHtmlInfo = webread(additionalInfoUrl);
+        pattern = '<span id="titleText">(.*?)</span>';
+        title = regexp(addonHtmlInfo, pattern, 'tokens', 'once');
+        if ~isempty(title)
+            toolboxName = title{1};
+        else
+            toolboxName = string(missing);
+        end
+    catch
         toolboxName = string(missing);
     end
 end
