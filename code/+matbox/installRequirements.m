@@ -37,11 +37,12 @@ function installRequirements(toolboxFolder, mode, options)
                     "Verbose", options.Verbose)
 
             case 'FileExchange'
-                [packageUuid, version] = getFEXPackageSpecification( reqs(i).URI );
+                [packageUuid, title, version] = getFEXPackageSpecification( reqs(i).URI );
                 matbox.setup.internal.installFexPackage(...
                     packageUuid, ...
                     installationLocation, ...
-                    'Version', version, ...
+                    "Title", title, ...
+                    "Version", version, ...
                     "AddToPath", options.UpdateSearchPath, ...
                     "Verbose", options.Verbose);
 
@@ -54,7 +55,7 @@ function installRequirements(toolboxFolder, mode, options)
     end
 end
 
-function [packageUuid, version] = getFEXPackageSpecification(uri)
+function [packageUuid, title, version] = getFEXPackageSpecification(uri)
 % getFEXPackageSpecification - Get UUID and version for package
 %
 %   NB: This function relies on an undocumented api, and might break in the
@@ -67,6 +68,7 @@ function [packageUuid, version] = getFEXPackageSpecification(uri)
     splitUri = strsplit(uri, '/');
 
     packageNumber = regexp(splitUri{2}, '\d*(?=-)', 'match', 'once');
+    title = extractAfter(splitUri{2}, [packageNumber '-']);
     try
         packageInfo = webread(FEX_API_URL + num2str(packageNumber));
         packageUuid = packageInfo.uuid;

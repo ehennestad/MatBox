@@ -13,6 +13,7 @@ function packageTargetFolder = installFexPackage(toolboxIdentifier, installLocat
         toolboxIdentifier
         installLocation
         options.Name (1,1) string = missing
+        options.Title (1,1) string = missing
         options.Version (1,1) string = missing
         options.AddToPath (1,1) logical = true
         options.AddToPathWithSubfolders (1,1) logical = true
@@ -55,6 +56,9 @@ function packageTargetFolder = installFexPackage(toolboxIdentifier, installLocat
         if ismissing(toolboxName)
             if ismissing(options.Name)
                 toolboxName = retrieveToolboxName(toolboxIdentifier);
+                if ismissing(toolboxName)
+                    toolboxName = options.Title;
+                end
             else
                 toolboxName = options.Name;
             end
