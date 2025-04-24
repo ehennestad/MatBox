@@ -75,6 +75,7 @@ function repoTargetFolder = installGithubRepository(repositoryUrl, branchName, o
                 "specified installation location. Please update manually.", repoFolderLocation)
             return
         end
+        return
     end
 
     targetFolder = options.InstallationLocation;
