@@ -13,6 +13,7 @@ function packageTargetFolder = installFexPackage(toolboxIdentifier, installLocat
         toolboxIdentifier
         installLocation
         options.Name (1,1) string = missing
+        options.Title (1,1) string = missing
         options.Version (1,1) string = missing
         options.AddToPath (1,1) logical = true
         options.AddToPathWithSubfolders (1,1) logical = true
@@ -24,6 +25,9 @@ function packageTargetFolder = installFexPackage(toolboxIdentifier, installLocat
 
     if isInstalled
         matlab.addons.enableAddon(toolboxIdentifier, version)
+        if options.Verbose
+            fprintf('Requirement "%s" is already installed. Skipping...\n', options.Title)
+        end
 
     else % Download toolbox
         fex = matlab.addons.repositories.FileExchangeRepository();
@@ -55,6 +59,9 @@ function packageTargetFolder = installFexPackage(toolboxIdentifier, installLocat
         if ismissing(toolboxName)
             if ismissing(options.Name)
                 toolboxName = retrieveToolboxName(toolboxIdentifier);
+                if ismissing(toolboxName)
+                    toolboxName = options.Title;
+                end
             else
                 toolboxName = options.Name;
             end
@@ -84,7 +91,11 @@ function packageTargetFolder = installFexPackage(toolboxIdentifier, installLocat
 
         elseif endsWith(addonUrl, '/mltbx')
             [tempFilepath, C] = matbox.setup.internal.utility.tempsave(addonUrl, [toolboxIdentifier, '_temp.mltbx']);
-            matlab.addons.install(tempFilepath);
+            installedAddon = matlab.addons.install(tempFilepath);
+            if isempty(installedAddon)
+                fprintf(newline)
+                error('Failed to install "%s"...', toolboxName)
+            end
             packageTargetFolder = 'n/a'; % todo
         end
 
@@ -101,14 +112,18 @@ end
 
 function toolboxName = retrieveToolboxName(toolboxIdentifier)
     fex = matlab.addons.repositories.FileExchangeRepository();
-
-    additionalInfoUrl = fex.getAddonDetailsURL(toolboxIdentifier);
-    addonHtmlInfo = webread(additionalInfoUrl);
-    pattern = '<span id="titleText">(.*?)</span>';
-    title = regexp(addonHtmlInfo, pattern, 'tokens', 'once');
-    if ~isempty(title)
-        toolboxName = title{1};
-    else
+    
+    try
+        additionalInfoUrl = fex.getAddonDetailsURL(toolboxIdentifier);
+        addonHtmlInfo = webread(additionalInfoUrl);
+        pattern = '<span id="titleText">(.*?)</span>';
+        title = regexp(addonHtmlInfo, pattern, 'tokens', 'once');
+        if ~isempty(title)
+            toolboxName = title{1};
+        else
+            toolboxName = string(missing);
+        end
+    catch
         toolboxName = string(missing);
     end
 end
