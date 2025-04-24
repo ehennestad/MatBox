@@ -133,22 +133,35 @@ function wasSuccess = gitPull(folderPath)
             
             if status == 0
                 wasSuccess = true;
-                % Run setup if present after update
-                setupFile = matbox.setup.internal.findSetupFile(folderPath);
-                if isfile(setupFile)
-                    run(setupFile);
-                end
             else
-                warning('Git pull failed with message: %s\n.', cmdout);
+                warning('Git pull failed with message: %s.', cmdout);
             end
         end
     catch ME
-        warning(ME.identifier, 'Git pull failed with message: %s\n.', ME.message);
+        warning(ME.identifier, 'Git pull failed with message: %s.', ME.message);
+    end
+    
+    if wasSuccess
+        % Run setup if present after update
+        setupFile = matbox.setup.internal.findSetupFile(folderPath);
+        if isfile(setupFile)
+            run(setupFile);
+        end
     end
 end
 
 function needsUpdate = checkCommitHash(repoFolderLocation, repoName, ...
-        organization, branchName, repositoryUrl, options)
+        ownerName, branchName, repositoryUrl, options)
+% checkCommitHash - Check if the local commit hash matches remote commit hash
+    
+    arguments
+        repoFolderLocation (1,1) string
+        repoName (1,1) string
+        ownerName (1,1) string
+        branchName (1,1) string
+        repositoryUrl (1,1) string
+        options.Verbose (1,1) logical = true
+    end
     
     needsUpdate = false;
 
@@ -161,18 +174,20 @@ function needsUpdate = checkCommitHash(repoFolderLocation, repoName, ...
         currentCommitHash = ...
             matbox.setup.internal.github.api.getCurrentCommitID(...
             repoName, ...
-            'Organization', organization, ...
+            'Organization', ownerName, ...
             'BranchName', branchName);
         
         % Only update if commit hashes are different
         if strcmp(storedCommitHash, currentCommitHash)
             if options.Verbose
-                fprintf('Repository "%s" is already up to date (commit: %s).\n', repositoryUrl, storedCommitHash);
+                fprintf('Repository "%s" is already up to date (commit: %s).\n', ...
+                    repositoryUrl, storedCommitHash);
             end
         else
             needsUpdate = true;
             if options.Verbose
-                fprintf('Updating "%s" from commit %s to %s.\n', repositoryUrl, storedCommitHash, currentCommitHash);
+                fprintf('Updating "%s" from commit %s to %s.\n', ...
+                    repositoryUrl, storedCommitHash, currentCommitHash);
             end
         end
     catch ME
