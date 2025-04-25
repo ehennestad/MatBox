@@ -6,7 +6,7 @@
   </picture>
 </a>
 
-# MatBox: Efficient MATLAB Toolbox Development
+# MatBox: CI tools for  MATLAB Toolbox Development
 [![Version Number](https://img.shields.io/github/v/release/ehennestad/MatBox?label=version)](https://github.com/ehennestad/MatBox/releases/latest)
 [![View MatBox on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://se.mathworks.com/matlabcentral/fileexchange/180185-matbox)
 [![MATLAB Tests](.github/badges/tests.svg)](https://github.com/ehennestad/MatBox/actions/workflows/update.yml)
