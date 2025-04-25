@@ -18,6 +18,7 @@ function packageTargetFolder = installFexPackage(toolboxIdentifier, installLocat
         options.AddToPath (1,1) logical = true
         options.AddToPathWithSubfolders (1,1) logical = true
         options.Verbose (1,1) logical = true
+        options.AgreeToLicense (1,1) logical = false
     end
 
     % Check if toolbox is installed
@@ -91,7 +92,7 @@ function packageTargetFolder = installFexPackage(toolboxIdentifier, installLocat
 
         elseif endsWith(addonUrl, '/mltbx')
             [tempFilepath, C] = matbox.setup.internal.utility.tempsave(addonUrl, [toolboxIdentifier, '_temp.mltbx']);
-            installedAddon = matlab.addons.install(tempFilepath);
+            installedAddon = matlab.addons.install(tempFilepath, options.AgreeToLicense);
             if isempty(installedAddon)
                 fprintf(newline)
                 error('Failed to install "%s"...', toolboxName)
