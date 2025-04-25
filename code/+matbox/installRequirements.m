@@ -13,6 +13,7 @@ function installRequirements(toolboxFolder, mode, options)
         options.SaveSearchPath (1,1) logical = true
         options.InstallationLocation (1,1) string = matbox.setup.internal.getDefaultAddonFolder()
         options.Verbose (1,1) logical = true
+        options.AgreeToLicense (1,1) logical = false
     end
     
     % Parse mode/flags
@@ -44,7 +45,8 @@ function installRequirements(toolboxFolder, mode, options)
                     "Title", title, ...
                     "Version", version, ...
                     "AddToPath", options.UpdateSearchPath, ...
-                    "Verbose", options.Verbose);
+                    "Verbose", options.Verbose, ...
+                    "AgreeToLicense", options.AgreeToLicense);
 
             case 'Unknown'
                 continue
