@@ -1,9 +1,6 @@
 function installMatBox(mode, options)
 % installMatBox - Install MatBox from latest release or latest commit
 
-%   Todo:
-%   - If MatBox release has been updated on remote, should reinstall.
-
     arguments
         mode (1,1) string {mustBeMember(mode, ["release", "commit"])} = "release"
         options.InstallationLocation = userpath
@@ -40,6 +37,16 @@ end
 
 
 function installFromCommit(installationLocation)
+    
+    scriptPath = mfilename('fullpath');
+    projectFolder = extractBefore(scriptPath, fullfile('.github', 'actions'));
+    codeDirectory = fullfile(projectFolder, 'code');
+    
+    addpath(genpath(codeDirectory))
+    savepath()
+    
+    return
+    
     % Download latest zipped version of repo
     url = "https://github.com/ehennestad/MatBox/archive/refs/heads/main.zip";
     tempFilePath = websave(tempname, url);
