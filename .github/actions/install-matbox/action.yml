@@ -8,6 +8,12 @@ inputs:
 runs:
   using: "composite"
   steps:
+      - name: Show current work dir
+        run: pwd
+
+      - name: List current work dir
+        run: ls
+
       - name: Install MatBox
         uses: matlab-actions/run-command@v2
         with:
