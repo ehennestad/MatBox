@@ -7,19 +7,78 @@ name: Create new release
 on:
   push:
     tags: 
-      - 'v*'
+      - 'v[0-9]+.[0-9]+.[0-9]+' # Matches tags like v1.2.3
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number in major.minor.patch format, i.e 0.9.x'
+        required: true
+        type: string
 
 jobs:
   # This workflow contains:
-  # 1. a matrixed test job run across a bunch of releases of MATLAB
-  # 2. a reporting job that summarizes the tests, and updates release badge
+  # 1. a validation of the provided version number
+  # 2. a matrixed test job run across a bunch of releases of MATLAB
+  # 3. a reporting job that summarizes the tests, and updates release badge
+  
+  validate_version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.set_version.outputs.version }}
+      version_tag: ${{ steps.set_version.outputs.version_tag }}
+    steps:
+      - name: Check for retag
+        if: ${{ contains(github.event.head_commit.message, '[skip-ci]') }}
+        run: |
+          echo "Error: Commit message contains [skip-ci], skipping."
+          exit 1
+          
+      - name: Set version based on trigger type
+        id: set_version
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            # For manual trigger, use the input version
+            VERSION="${{ github.event.inputs.version }}"
+            # Validate format
+            if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "Error: Input for 'version' ('$VERSION') is not in the expected major.minor.patch format."
+              exit 1
+            fi
+            VERSION_TAG="v$VERSION"
+          else
+            # For tag trigger, use the tag name
+            VERSION_TAG="${{ github.ref_name }}"
+            # Remove 'v' prefix if present for the version number
+            VERSION="${VERSION_TAG#v}"
+            
+            # Validate format
+            if [[ ! "$VERSION_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              echo "Error: Tag name ('$VERSION_TAG') is not in the expected v*.*.* format."
+              exit 1
+            fi
+          fi
+          
+          echo "Using version: $VERSION (tag: $VERSION_TAG)"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version_tag=$VERSION_TAG" >> $GITHUB_OUTPUT
+
   test:
+    name: Run MATLAB tests (${{ matrix.MATLABVersion }})
+    needs: [validate_version]
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         MATLABVersion: [R2023a, R2023b, R2024a, R2024b]
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+        include:
+          - MATLABVersion: R2023a
+            pythonVersion: '3.10'
+          - MATLABVersion: R2023b
+            pythonVersion: '3.11'
+          - MATLABVersion: R2024a
+            pythonVersion: '3.11'
+          - MATLABVersion: R2024b
+            pythonVersion: '3.12'
 
     steps:
       # Checks-out the repository under $GITHUB_WORKSPACE, so the job can access it
@@ -29,7 +88,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.x'  # Use the latest version of Python 3
+          python-version: ${{ matrix.pythonVersion }}
           
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v2
@@ -65,9 +124,11 @@ jobs:
   # Generate a draft release based on the tag
   # Recreate the tag with the final version of files
   release:
-    needs: test
-    if: always()
+    needs: [test, validate_version]
     runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ needs.validate_version.outputs.version }} # needed?
+      VERSION_TAG: ${{ needs.validate_version.outputs.version_tag }}
 
     steps:
       # Use deploy key to push back to protected branch
@@ -91,7 +152,7 @@ jobs:
       - name: Generate tested with badge
         uses: matlab-actions/run-command@v2
         with:
-          command: addpath(genpath("tools")), createTestedWithBadgeforToolbox("${{  github.ref_name }}")     
+          command: addpath(genpath("tools")), createTestedWithBadgeforToolbox("${{ env.VERSION_TAG }}")     
           
       # Publish test results from all the releases
       - name: Publish test results
@@ -104,13 +165,13 @@ jobs:
       - name: Package toolbox
         uses: matlab-actions/run-command@v2
         with:
-          command: addpath(genpath("tools")), packageToolbox("specific","${{  github.ref_name }}")     
+          command: addpath(genpath("tools")), packageToolbox("specific","${{ env.VERSION_TAG }}")     
 
       # Define the versionNumber using underscores, as this is used in the MLTBX
       - name: Set version number
         id: set_version
         run: |
-          versionNumber=$(echo "${{ github.ref_name }}" | sed 's/\./_/g')
+          versionNumber=$(echo "${{ env.VERSION_TAG }}" | sed 's/\./_/g')
           echo "versionNumber=$versionNumber" >> $GITHUB_ENV
 
       # Save the MLTBX.
@@ -128,7 +189,7 @@ jobs:
           git config user.email "<>"
           git status
           git add code/Contents.m
-          git commit -m "Final checkins for release ${{  github.ref_name }}"
+          git commit -m "Final check-ins for release ${{ env.VERSION_TAG }} [skip-ci]"
           git fetch
           git push
 
@@ -142,8 +203,8 @@ jobs:
 
       - name: Push to gh-badges
         run: |
-          mkdir -p gh-badges/.github/badges/${{  github.ref_name }}
-          cp .github/badges/${{  github.ref_name }}/tested_with.json gh-badges/.github/badges/${{  github.ref_name }}/tested_with.json
+          mkdir -p gh-badges/.github/badges/${{ env.VERSION_TAG }}
+          cp .github/badges/${{ env.VERSION_TAG }}/tested_with.json gh-badges/.github/badges/${{ env.VERSION_TAG }}/tested_with.json
           cd gh-badges
                     
           git config user.name "${{ github.workflow }} by ${{ github.actor }}"
@@ -167,14 +228,14 @@ jobs:
           git config user.email "<>"
 
           # Delete the existing tag locally and remotely
-          git tag -d "${{ github.ref_name }}" 
-          git push origin --delete "${{ github.ref_name }}"
+          git tag -d "${{ env.VERSION_TAG }}" 
+          git push origin --delete "${{ env.VERSION_TAG }}"
         
           # Recreate the tag with a message, including [skip ci] to prevent CI workflows
-          git tag -a "${{ github.ref_name }}" -m "Release ${{ github.ref_name }} [skip ci]" 
+          git tag -a "${{ env.VERSION_TAG }}" -m "Release ${{ env.VERSION_TAG }} [skip ci]" 
         
           # Push the new tag to the remote repository
-          git push origin "${{ github.ref_name }}"
+          git push origin "${{ env.VERSION_TAG }}"
 
       # Create the release
       - name: Create GitHub release
@@ -182,6 +243,7 @@ jobs:
         with:
           draft: true        
           artifacts: "releases/MatBox_${{ env.versionNumber }}.mltbx"
+          tag: ${{ env.VERSION_TAG }}
           generateReleaseNotes: true
-          body: "![MATLAB Versions Tested](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fehennestad%2Fmatbox%2Fgh-badges%2F.github%2Fbadges%2F${{ github.ref_name }}%2Ftested_with.json)"
+          body: "![MATLAB Versions Tested](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fehennestad%2Fmatbox%2Fgh-badges%2F.github%2Fbadges%2F${{ env.VERSION_TAG }}%2Ftested_with.json)"
 
