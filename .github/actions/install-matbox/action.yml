@@ -8,17 +8,16 @@ inputs:
 runs:
   using: "composite"
   steps:
-      - name: Show current work dir
-        shell: bash
-        run: pwd
-
-      - name: List current work dir
-        shell: bash
-        run: ls
-
       - name: Install MatBox
         uses: matlab-actions/run-command@v2
         with:
           command: |
             addpath( "${{ github.action_path }}" )
             installMatBox( "${{ inputs.mode }}", "InstallationLocation", "/home/runner/" )
+      
+      - name: Confirm installation of MatBox
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            versionStr = matbox.toolboxversion();
+            assert(~isempty(versionStr), 'Failed to install MatBox.');
