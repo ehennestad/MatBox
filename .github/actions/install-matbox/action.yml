@@ -12,7 +12,4 @@ runs:
         uses: matlab-actions/run-command@v2
         with:
           command: |
-            websave('installMatBox.m', 'https://github.com/ehennestad/Matlab-Toolbox-Template/raw/refs/heads/main/tools/tasks/installMatBox.m');
-            installMatBox( "${{ inputs.mode }}" )
-            delete('installMatBox.m')
-            savepath()
+            installMatBox( "${{ inputs.mode }}", "InstallationLocation", "/home/runner/" )
