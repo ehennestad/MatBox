@@ -9,9 +9,11 @@ runs:
   using: "composite"
   steps:
       - name: Show current work dir
+        shell: bash
         run: pwd
 
       - name: List current work dir
+        shell: bash
         run: ls
 
       - name: Install MatBox
