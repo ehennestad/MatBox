@@ -1,0 +1,17 @@
+name: 'Install MatBox'
+description: 'Install MatBox in MATLAB on GitHub runner'
+inputs:
+  mode:  # mode of installation: release or commit, i.e install latest released version or use latest commit
+    description: 'Which installation mode to use'
+    required: true
+    default: 'release'
+runs:
+  using: "composite"
+  steps:
+      - name: Install MatBox
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            websave('installMatBox.m', 'https://github.com/ehennestad/Matlab-Toolbox-Template/raw/refs/heads/main/tools/tasks/installMatBox.m');
+            installMatBox( ${{ inputs.mode }} )
+            delete('installMatBox.m')
