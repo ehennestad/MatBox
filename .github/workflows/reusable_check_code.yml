@@ -35,7 +35,7 @@ jobs:
           ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
 
       - name: Set up MATLAB (${{ inputs.matlab_release }})
-        uses: matlab-actions/setup-matlab@v2
+        uses: matlab-actions/setup-matlab@v2.5.0
         with:
           release: ${{ inputs.matlab_release }}
 
