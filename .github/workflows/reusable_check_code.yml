@@ -24,7 +24,7 @@ jobs:
   # This workflow contains a single job called "check"
   check:
     name: Check code
-    runs-on: ubuntu-22.04 # bump to latest when setup-matlab #146 is fixed
+    runs-on: ubuntu-latest
 
     steps:
       # Check out the repository under $GITHUB_WORKSPACE, so the job can access it
@@ -35,7 +35,7 @@ jobs:
           ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
 
       - name: Set up MATLAB (${{ inputs.matlab_release }})
-        uses: matlab-actions/setup-matlab@v2.5.0
+        uses: matlab-actions/setup-matlab@v2
         with:
           release: ${{ inputs.matlab_release }}
 
