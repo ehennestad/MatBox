@@ -24,7 +24,7 @@ jobs:
   # This workflow contains a single job called "check"
   check:
     name: Check code
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04 # bump to latest when setup-matlab #146 is fixed
 
     steps:
       # Check out the repository under $GITHUB_WORKSPACE, so the job can access it
