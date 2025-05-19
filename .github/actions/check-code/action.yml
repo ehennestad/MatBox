@@ -1,0 +1,35 @@
+# This composite action is a work in progress
+# Should only be used in a job where MATLAB and MatBox is installed in previous steps
+
+name: 'Check code and upload report'
+description: 'Analyse code for code issues and upload code issues report to GitHub'
+
+inputs:
+  code_directory:
+    description: 'Which folder to run the code check on'
+    required: false
+    default: './code'
+  tools_directory:
+    description: 'Where the codecheckToolbox function is located'
+    required: false
+    default: './tools'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Check for MATLAB code issues
+      uses: matlab-actions/run-command@v2
+      if: always()
+      with:
+        command: |
+          addpath(genpath("${{ inputs.tools_directory }}"));
+          if exist("codecheckToolbox", "file")
+            codecheckToolbox();
+          else
+            matbox.tasks.codecheckToolbox(pwd);
+          end
+
+    - name: Upload SARIF file
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: docs/reports/code_issues.sarif
