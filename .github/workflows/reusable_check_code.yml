@@ -38,6 +38,7 @@ jobs:
         uses: matlab-actions/setup-matlab@v2
         with:
           release: ${{ inputs.matlab_release }}
+          cache: true
 
       - name: Install MatBox
         uses: ehennestad/matbox/.github/actions/install-matbox@add-reusable-test-workflow
