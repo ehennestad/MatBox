@@ -15,6 +15,9 @@ on:
         required: false
         type: string
         default: 'latest'
+      matlab_use_cache:
+        required: false
+        default: false
 
     secrets:
       commit_email_address:
@@ -44,7 +47,7 @@ jobs:
         uses: matlab-actions/setup-matlab@v2
         with:
           release: ${{ inputs.matlab_release }}
-          cache: true
+          cache: ${{ inputs.matlab_use_cache }}
 
       # Check for MATLAB code issues in the project.
       - name: Check for MATLAB code issues
