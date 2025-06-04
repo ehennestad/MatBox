@@ -6,6 +6,7 @@ runs:
   steps:
       # Commit updated SVG badges for the issues and tests (if changed)
       - name: Commit SVG badges if updated
+        shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
