@@ -14,7 +14,7 @@ on:
       matlab_release:
         required: false
         type: string
-        default: 'latest'        
+        default: 'latest'
 
     secrets:
       commit_email_address:
@@ -54,7 +54,7 @@ jobs:
             addpath(genpath( "${{ inputs.tools_directory }}" ));
             codecheckToolbox()
 
-      # Upload code issues report
+      # Upload code issues report to GitHub
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v3
         with:
