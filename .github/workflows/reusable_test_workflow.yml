@@ -65,6 +65,8 @@ jobs:
         with:
           command: |
             disp(pwd)
+            ls
+            ls tools/tasks
             addpath(genpath( "${{ inputs.code_directory }}" ));
             addpath(genpath( "${{ inputs.tools_directory }}" ));
             testToolbox()
