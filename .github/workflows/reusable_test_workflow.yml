@@ -21,8 +21,6 @@ on:
         default: false
 
     secrets:
-      commit_email_address:
-        required: true
       CODECOV_TOKEN:
         required: false
 
