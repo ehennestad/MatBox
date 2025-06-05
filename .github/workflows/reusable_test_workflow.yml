@@ -72,7 +72,6 @@ jobs:
         with:
           token: ${{ env.CODECOV_TOKEN }}
           files: docs/reports/codecoverage.xml
-          root_dir: ${{ inputs.code_directory }}
 
       - name: Save reports directory
         uses: actions/upload-artifact@v4
