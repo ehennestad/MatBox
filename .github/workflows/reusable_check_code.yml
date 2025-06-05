@@ -4,21 +4,14 @@ on:
   workflow_call:
     inputs:
       code_directory:
-        required: false
         type: string
         default: 'code'
       tools_directory:
-        required: false
         type: string
         default: 'tools'
       matlab_release:
-        required: false
         type: string
         default: 'latest'
-
-    secrets:
-      commit_email_address:
-        required: true
 
 jobs:
   # This workflow contains a single job called "check"
@@ -27,12 +20,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Check out the repository under $GITHUB_WORKSPACE, so the job can access it
-      # Check out the head-ref if PR, as we are going to push badges back to the PR branch
       - name: Check out repo
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
 
       - name: Set up MATLAB (${{ inputs.matlab_release }})
         uses: matlab-actions/setup-matlab@v2
@@ -49,19 +38,9 @@ jobs:
           code_directory: ${{ inputs.code_directory }}
           tools_directory: ${{ inputs.tools_directory }}
       
-      # Commit updated SVG badges for the issues (if changed)
       - name: Commit SVG badges if updated
-        if: always()
-        continue-on-error: true
-        run: |
-          git config user.name "${{ github.workflow }} by ${{ github.actor }}"
-          git config user.email "${{ secrets.commit_email_address }}"
-          git fetch 
-
-          if [[ $(git add .github/badges/* --dry-run | wc -l) -gt 0 ]]; then
-            git add .github/badges/*
-            git commit -m "Update code issues badge"
-            git push -f
-          else
-            echo "Nothing to commit"
-          fi
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: ehennestad/matbox/.github/actions/push-badges@add-reusable-test-workflow
+        with:
+          pr-ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref_name }}
+          pr-repo: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name || github.repository }}
