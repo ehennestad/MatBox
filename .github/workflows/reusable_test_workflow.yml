@@ -63,8 +63,8 @@ jobs:
         if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         uses: ehennestad/matbox/.github/actions/push-badges@add-reusable-test-workflow
         with:
-          pr-ref: ${{ github.event.pull_request.head.ref }}
-          pr-repo: ${{ github.event.pull_request.head.repo.full_name }}
+          pr-ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref_name }}
+          pr-repo: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name || github.repository }}
 
       - name: Upload code coverage report to Codecov
         uses: codecov/codecov-action@v5
