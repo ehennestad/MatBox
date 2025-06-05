@@ -1,0 +1,23 @@
+name: 'Install MatBox'
+description: 'Install MatBox in MATLAB on GitHub runner'
+inputs:
+  mode:  # mode of installation: release or commit, i.e install latest released version or use latest commit
+    description: 'Which installation mode to use'
+    required: true
+    default: 'commit'
+runs:
+  using: "composite"
+  steps:
+      - name: Install MatBox
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            addpath( "${{ github.action_path }}" )
+            installMatBox( "${{ inputs.mode }}" )
+      
+      - name: Confirm installation of MatBox
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            versionStr = matbox.toolboxversion();
+            assert(~isempty(versionStr), 'Failed to install MatBox.');

@@ -1,7 +1,6 @@
 function setup(mode, options)
 % setup - Setup/install a MATLAB package
 
-
 % Note: should be placed in the root level of the repository or adapted if located in another directory
  
     arguments (Repeating)
@@ -9,7 +8,7 @@ function setup(mode, options)
     end
 
     arguments
-        options.SavePathDef (1,1) logical = false 
+        options.SavePathDef (1,1) logical = false
     end
 
     mode = string(mode);
@@ -32,7 +31,6 @@ function setup(mode, options)
         savepath()
     end
 end
-
 
 function installMatBox()
     addonsTable = matlab.addons.installedAddons();
