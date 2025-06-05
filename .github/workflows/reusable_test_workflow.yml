@@ -64,6 +64,7 @@ jobs:
         if: always()
         with:
           command: |
+            addpath(genpath( "${{ inputs.code_directory }}" ));
             addpath(genpath( "${{ inputs.tools_directory }}" ));
             testToolbox()
 
