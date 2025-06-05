@@ -8,6 +8,7 @@ function testToolbox(projectRootDirectory, options)
         options.ReportSubdirectory (1,1) string = ""
         options.SourceFolderName (1,1) string = "code"
         options.ToolsFolderName (1,1) string = "tools"
+        options.CoverageRootFolder (1,1) string = missing
         options.CoverageFileList (1,:) string = string.empty
         options.CreateBadge (1,1) logical = true
         options.Verbosity (1,1) matlab.unittest.Verbosity = "Detailed"
@@ -60,12 +61,20 @@ function testToolbox(projectRootDirectory, options)
     runner = TestRunner.withTextOutput('OutputDetail', options.Verbosity);
 
     codecoverageFileName = fullfile(outputDirectory, "codecoverage.xml");
-
-    if isempty(options.CoverageFileList)
-        codecoverageFileList = dir(fullfile(codeFolder, '**', '*.m'));
-        codecoverageFileList = fullfile({codecoverageFileList.folder}, {codecoverageFileList.name});
-    else
+        
+    if ~isempty(options.CoverageFileList)
         codecoverageFileList = options.CoverageFileList;
+        if ~ismissing(options.CoverageRootFolder)
+            warning('Matbox:TestToolbox:IgnoredCoverageRootFolder', ...
+                'The value in CoverageRootFolder is ignored because CoverageFileList is provided.');
+        end
+    else
+        if ~ismissing(options.CoverageRootFolder)
+            mfileListing = dir(fullfile(options.CoverageRootFolder, '**', '*.m'));
+        else
+            mfileListing = dir(fullfile(codeFolder, '**', '*.m'));
+        end
+        codecoverageFileList = fullfile({mfileListing.folder}, {mfileListing.name});
     end
     
     if options.HtmlReports
