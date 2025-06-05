@@ -50,21 +50,13 @@ jobs:
           release: ${{ inputs.matlab_release }}
           cache: ${{ inputs.matlab_use_cache }}
 
-      # Check for MATLAB code issues in the project.
-      - name: Check for MATLAB code issues
-        uses: matlab-actions/run-command@v2
-        if: always()
+      - name: Install MatBox
+        uses: ./.github/actions/install-matbox
+      
+      - name: Check code and upload report
+        uses: ./.github/actions/check-code
         with:
-          command: |
-            addpath(genpath( "${{ inputs.tools_directory }}" ));
-            codecheckToolbox()
-
-      # Upload code issues report to GitHub
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          # Path to SARIF file relative to the root of the repository
-          sarif_file: docs/reports/code_issues.sarif
+          code_directory: '.'
       
       # Runs all tests in the project.
       - name: Run tests
@@ -75,22 +67,8 @@ jobs:
             addpath(genpath( "${{ inputs.tools_directory }}" ));
             testToolbox()
 
-      # Commit updated SVG badges for the issues and tests (if changed)
       - name: Commit SVG badges if updated
-        if: always()
-        continue-on-error: true
-        run: |
-          git config user.name "${{ github.workflow }} by ${{ github.actor }}"
-          git config user.email "${{ secrets.commit_email_address }}"
-          git fetch 
-
-          if [[ $(git add .github/badges/* --dry-run | wc -l) -gt 0 ]]; then
-            git add .github/badges/*
-            git commit -m "Update code issues and tests badges"
-            git push -f
-          else
-            echo "Nothing to commit"
-          fi
+        uses: ./.github/actions/push-badges
 
       - name: Upload code coverage report to Codecov
         uses: codecov/codecov-action@v4
