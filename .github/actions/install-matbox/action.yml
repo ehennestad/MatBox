@@ -4,7 +4,7 @@ inputs:
   mode:  # mode of installation: release or commit, i.e install latest released version or use latest commit
     description: 'Which installation mode to use'
     required: true
-    default: 'release'
+    default: 'commit'
 runs:
   using: "composite"
   steps:
