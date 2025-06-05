@@ -1,8 +1,13 @@
 function files = listMatFiles(rootDirectory)
     arguments
-        rootDirectory (1,1) string {mustBeFolder}
+        rootDirectory (1,:) string {mustBeFolder}
     end
 
-    fileListing = dir(fullfile(rootDirectory, "**", "*.m"));
-    files = fullfile(string({fileListing.folder}'),string({fileListing.name}'));
+    fileListing = cell(1, numel(rootDirectory));
+    for i = 1:numel(rootDirectory)
+        fileListing{i} = dir(fullfile(rootDirectory(i), "**", "*.m"));
+    end
+    fileListing = cat(1, fileListing{:});
+
+    files = string( fullfile({fileListing.folder}', {fileListing.name}') );
 end

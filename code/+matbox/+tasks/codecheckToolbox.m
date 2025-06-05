@@ -1,21 +1,17 @@
 function issues = codecheckToolbox(projectRootDir, options)
     arguments
         projectRootDir (1,1) string {mustBeFolder}
-        % Assumes this function is located in <rootDir>/dev
         options.CreateBadge (1,1) logical = true
         options.RequireIssuesResolved (1,1) logical = false
         options.SeverityThreshold (1,1) string ...
             {mustBeMember(options.SeverityThreshold, ["info", "warning", "error"])} = "warning"
         options.SaveReport (1,1) logical = true
         options.FilesToCheck (1,:) string = string.empty
+        options.FoldersToCheck (1,:) string = string.empty
     end
 
-    if isempty(options.FilesToCheck)
-        toolboxFileInfo = dir(fullfile(projectRootDir, "**", "*.m"));
-        filesToCheck = fullfile(string({toolboxFileInfo.folder}'),string({toolboxFileInfo.name}'));
-    else
-        filesToCheck = options.FilesToCheck;
-    end
+    filesToCheck = matbox.tasks.internal.resolveFiles(projectRootDir, ...
+        options.FoldersToCheck, options.FilesToCheck);
     
     if isempty(filesToCheck)
         error("MatBox:CodeIssues", "No files to check.")

@@ -26,7 +26,8 @@ runs:
           if exist("codecheckToolbox", "file")
             codecheckToolbox();
           else
-            matbox.tasks.codecheckToolbox("${{ inputs.code_directory }}");
+            matbox.tasks.codecheckToolbox(pwd, ...
+              "FoldersToCheck", "${{ inputs.code_directory }}");
           end
 
     - name: Upload SARIF file
