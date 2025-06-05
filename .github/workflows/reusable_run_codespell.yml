@@ -8,10 +8,6 @@ on:
         type: string
         default: '.codespellrc'
 
-    secrets:
-      commit_email_address:
-        required: true
-
 jobs:
   codespell:
     name: Check for spelling errors
