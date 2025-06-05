@@ -4,21 +4,20 @@ on:
   workflow_call:
     inputs:
       code_directory:
-        required: false
         type: string
         default: 'code'
       tools_directory:
-        required: false
         type: string
         default: 'tools'
       matlab_release:
-        required: false
         type: string
         default: 'latest'
       matlab_use_cache:
-        required: false
         type: boolean
         default: false
+      matlab_products:
+        type: string
+        default: ''
 
     secrets:
       CODECOV_TOKEN:
@@ -44,6 +43,7 @@ jobs:
         with:
           release: ${{ inputs.matlab_release }}
           cache: ${{ inputs.matlab_use_cache }}
+          products: ${{ inputs.matlab_products }}
 
       - name: Install MatBox
         uses: ehennestad/matbox/.github/actions/install-matbox@add-reusable-test-workflow
