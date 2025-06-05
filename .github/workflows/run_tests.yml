@@ -27,7 +27,7 @@ concurrency:
 jobs:
   call-workflow-test-toolbox:
     name: Test toolbox code
-    uses: ehennestad/matbox/.github/workflows/reusable_test_workflow.yml@add-reusable-test-workflow
+    uses: ehennestad/matbox/.github/workflows/reusable_test_workflow.yml@v0.9
     with:
       matlab_use_cache: true
     secrets:

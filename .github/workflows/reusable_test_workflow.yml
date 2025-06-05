@@ -46,23 +46,23 @@ jobs:
           products: ${{ inputs.matlab_products }}
 
       - name: Install MatBox
-        uses: ehennestad/matbox/.github/actions/install-matbox@add-reusable-test-workflow
+        uses: ehennestad/matbox/.github/actions/install-matbox@v0.9
 
       - name: Check code and upload report
-        uses: ehennestad/matbox/.github/actions/check-code@add-reusable-test-workflow
+        uses: ehennestad/matbox/.github/actions/check-code@v0.9
         with:
           code_directory: ${{ inputs.code_directory }}
           tools_directory: ${{ inputs.tools_directory }}
       
       - name: Run tests
-        uses: ehennestad/matbox/.github/actions/test-code@add-reusable-test-workflow
+        uses: ehennestad/matbox/.github/actions/test-code@v0.9
         with:
           code_directory: ${{ inputs.code_directory }}
           tools_directory: ${{ inputs.tools_directory }}
 
       - name: Commit SVG badges if updated
         if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-        uses: ehennestad/matbox/.github/actions/push-badges@add-reusable-test-workflow
+        uses: ehennestad/matbox/.github/actions/push-badges@v0.9
         with:
           pr-ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref_name }}
           pr-repo: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name || github.repository }}
