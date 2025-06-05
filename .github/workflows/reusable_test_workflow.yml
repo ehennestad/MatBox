@@ -32,13 +32,13 @@ jobs:
     name: Test toolbox code
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    env: # Assign secret to env to be able to use it in if: conditional below
+    env: # Assign secret to env to be able to use it in "if:" conditional below
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       
-      - name: Check out PR source branch (fork-aware)
+      - name: Check out repository
         uses: actions/checkout@v4
 
       - name: Set up MATLAB (${{ inputs.matlab_release }})
@@ -55,7 +55,6 @@ jobs:
         with:
           code_directory: '.'
       
-      # Runs all tests in the project.
       - name: Run tests
         uses: matlab-actions/run-command@v2
         if: always()
@@ -79,14 +78,12 @@ jobs:
           token: ${{ env.CODECOV_TOKEN }}
           files: docs/reports/codecoverage.xml
           
-      # Publish test results
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
           files: "docs/reports/test-results.xml"
           
-      # Save the contents of the reports directory as an artifact
       - name: Save reports directory
         uses: actions/upload-artifact@v4
         if: always()
