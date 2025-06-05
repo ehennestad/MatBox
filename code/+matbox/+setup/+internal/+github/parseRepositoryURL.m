@@ -1,5 +1,5 @@
-function [organization, repositoryName, branchName] = parseRepositoryURL(repoUrl)
-% parseRepositoryURL - Extract organization, repository name and branch name
+function [owner, repositoryName, branchName] = parseRepositoryURL(repoUrl)
+% parseRepositoryURL - Extract owner, repository name and branch name from URL
     
     arguments
         repoUrl (1,1) matlab.net.URI
@@ -13,7 +13,7 @@ function [organization, repositoryName, branchName] = parseRepositoryURL(repoUrl
     pathNames = repoUrl.Path;
     pathNames( cellfun('isempty', pathNames) ) = [];
 
-    organization = pathNames(1);
+    owner = pathNames(1);
     repositoryName = pathNames(2);
 
     branchName = string(missing);

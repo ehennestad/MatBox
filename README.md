@@ -6,13 +6,15 @@
   </picture>
 </a>
 
-# MatBox: Efficient MATLAB Toolbox Development
+# MatBox: CI tools for  MATLAB Toolbox Development
 [![Version Number](https://img.shields.io/github/v/release/ehennestad/MatBox?label=version)](https://github.com/ehennestad/MatBox/releases/latest)
 [![View MatBox on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://se.mathworks.com/matlabcentral/fileexchange/180185-matbox)
 [![MATLAB Tests](.github/badges/tests.svg)](https://github.com/ehennestad/MatBox/actions/workflows/update.yml)
 [![codecov](https://codecov.io/gh/ehennestad/MatBox/graph/badge.svg?token=6D7STF19X0)](https://codecov.io/gh/ehennestad/MatBox)
 [![MATLAB Code Issues](.github/badges/code_issues.svg)](https://github.com/ehennestad/MatBox/security/code-scanning)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://gitHub.com/ehennestad/MatBox/graphs/commit-activity)
+[![Release](https://img.shields.io/badge/MATLAB-%3E%3DR2023b-blue?logo=data:image/svg%2bxml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgd2lkdGg9IjEyIgogICBoZWlnaHQ9IjEwLjcyNSIKICAgdmlld0JveD0iMCAwIDEyIDEwLjcyNSIKICAgZmlsbD0ibm9uZSIKICAgdmVyc2lvbj0iMS4xIgogICBpZD0ic3ZnNCIKICAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZwogICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwMF8zMTRfMTY2KSIKICAgICBpZD0iZzIiCiAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTQsLTQuMDc1MjAwMSkiPgogICAgPHBhdGgKICAgICAgIGQ9Im0gNi4xNzUsMTEuNTc1MiBjIC0wLjYsLTAuNDUgLTEuMzUsLTAuOTc1IC0yLjE3NSwtMS41NzUgMC45NzUsLTAuMzc1IDEuOTUsLTAuNzUgMi45MjUsLTEuMTI1IGwgMS4yLDAuOSBjIC0wLjksMS4wNSAtMS41LDEuNDI1IC0xLjk1LDEuOCB6IG0gOC4wMjUsLTMuMTUgYyAtMC4yMjUsLTAuNiAtMC4zNzUsLTEuMiAtMC42LC0xLjggLTAuMjI1LC0wLjY3NSAtMC40NSwtMS4yNzUgLTAuODI1LC0xLjggLTAuMTUsLTAuMjI1IC0wLjQ1LC0wLjc1IC0wLjgyNSwtMC43NSAtMC4wNzUsMCAtMC4xNSwwLjA3NSAtMC4yMjUsMC4wNzUgLTAuMjI1LDAuMDc1IC0wLjUyNSwwLjUyNSAtMC42LDAuODI1IC0wLjIyNSwwLjM3NSAtMC42NzUsMC45NzUgLTAuOTc1LDEuMzUgLTAuMDc1LDAuMTUgLTAuMjI1LDAuMyAtMC4zLDAuMzc1IC0wLjIyNSwwLjE1IC0wLjQ1LDAuMzc1IC0wLjc1LDAuNTI1IC0wLjA3NSwwIC0wLjE1LDAuMDc1IC0wLjIyNSwwLjA3NSAtMC4yMjUsMCAtMC4zNzUsMC4xNSAtMC41MjUsMC4yMjUgLTAuMjI1LDAuMjI1IC0wLjQ1LDAuNTI1IC0wLjY3NSwwLjc1IDAsMC4wNzUgLTAuMDc1LDAuMTUgLTAuMTUsMC4yMjUgbCAxLjEyNSwwLjgyNSBjIDAuODI1LC0wLjk3NSAxLjgsLTEuOTUgMi40NzUsLTMuODI1IDAsMCAtMC4yMjUsMi4wMjUgLTIuMDI1LDQuMiAtMS4xMjUsMS4yNzUgLTIuMDI1LDEuOTUgLTIuMTc1LDIuMSAwLDAgMC4zLC0wLjA3NSAwLjYsMC4wNzUgMC42LDAuMjI1IDAuOSwxLjA1IDEuMTI1LDEuNjUgMC4xNSwwLjQ1IDAuMzc1LDAuODI1IDAuNTI1LDEuMjc1IDAuNiwtMC4xNSAwLjk3NSwtMC4zNzUgMS4zNSwtMC43NSAwLjM3NSwtMC4zNzUgMC43NSwtMC44MjUgMS4xMjUsLTEuMiAwLjY3NSwtMC44MjUgMS41LC0xLjg3NSAyLjU1LC0xLjM1IDAuMTUsMC4wNzUgMC4zNzUsMC4yMjUgMC40NSwwLjMgMC4yMjUsMC4xNSAwLjM3NSwwLjMgMC42LDAuNTI1IDAuMzc1LDAuMyAwLjUyNSwwLjUyNSAwLjgyNSwwLjY3NSAtMC43NSwtMS41IC0xLjI3NSwtMyAtMS44NzUsLTQuNTc1IHoiCiAgICAgICBmaWxsPSIjZmZmZmZmIgogICAgICAgaWQ9InBhdGgyIiAvPgogIDwvZz4KICA8ZGVmcwogICAgIGlkPSJkZWZzNCI+CiAgICA8Y2xpcFBhdGgKICAgICAgIGlkPSJjbGlwMF8zMTRfMTY2Ij4KICAgICAgPHJlY3QKICAgICAgICAgd2lkdGg9IjEyIgogICAgICAgICBoZWlnaHQ9IjEyIgogICAgICAgICBmaWxsPSIjZmZmZmZmIgogICAgICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSg0LDQpIgogICAgICAgICBpZD0icmVjdDQiCiAgICAgICAgIHg9IjAiCiAgICAgICAgIHk9IjAiIC8+CiAgICA8L2NsaXBQYXRoPgogIDwvZGVmcz4KPC9zdmc+Cg==&label=MATLAB&labelColor=C95C2E&color=2A5F98)](https://se.mathworks.com/products/new_products/release2022b.html)
+
 
 Matbox is a streamlined solution for managing MATLAB toolbox development, designed to simplify the entire lifecycle—from code checks and dependency management to cleaning, packaging, and continuous integration. With Matbox, you can automate tedious tasks like verifying code quality, handling external dependencies, ensuring compatibility, and bundling your toolbox for distribution.
 
@@ -60,5 +62,5 @@ fex://167901-iconbutton-app-component
 
 
 ## Requirements
-It is recommended to use MATLAB R2023a or later. Toolbox packaging will only work with R2023 or later, other functionality of the toolbox should work with older releases as well.
+It is recommended to use MATLAB R2023a or later. Toolbox packaging will only work with R2023a or later, other functionality of the toolbox should work with older releases as well.
 

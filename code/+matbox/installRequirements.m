@@ -8,12 +8,12 @@ function installRequirements(toolboxFolder, mode, options)
     end
     
     arguments
-        % Tentative, not implemented yet!
-        options.UseDefaultInstallationLocation (1,1) logical = true
+        %options.UseDefaultInstallationLocation (1,1) logical = true % Tentative, not implemented yet!
         options.UpdateSearchPath (1,1) logical = true
         options.SaveSearchPath (1,1) logical = true
         options.InstallationLocation (1,1) string = matbox.setup.internal.getDefaultAddonFolder()
         options.Verbose (1,1) logical = true
+        options.AgreeToLicenses (1,1) logical = false
     end
     
     % Parse mode/flags
@@ -32,18 +32,21 @@ function installRequirements(toolboxFolder, mode, options)
                 matbox.setup.internal.installGithubRepository( ...
                     repoUrl, ...
                     branchName, ...
+                    "InstallationLocation", options.InstallationLocation, ...
                     "AddToPath", options.UpdateSearchPath, ...
                     "Update", doUpdate, ...
                     "Verbose", options.Verbose)
 
             case 'FileExchange'
-                [packageUuid, version] = getFEXPackageSpecification( reqs(i).URI );
+                [packageUuid, title, version] = getFEXPackageSpecification( reqs(i).URI );
                 matbox.setup.internal.installFexPackage(...
                     packageUuid, ...
                     installationLocation, ...
-                    'Version', version, ...
+                    "Title", title, ...
+                    "Version", version, ...
                     "AddToPath", options.UpdateSearchPath, ...
-                    "Verbose", options.Verbose);
+                    "Verbose", options.Verbose, ...
+                    "AgreeToLicense", options.AgreeToLicenses);
 
             case 'Unknown'
                 continue
@@ -54,7 +57,7 @@ function installRequirements(toolboxFolder, mode, options)
     end
 end
 
-function [packageUuid, version] = getFEXPackageSpecification(uri)
+function [packageUuid, title, version] = getFEXPackageSpecification(uri)
 % getFEXPackageSpecification - Get UUID and version for package
 %
 %   NB: This function relies on an undocumented api, and might break in the
@@ -67,6 +70,7 @@ function [packageUuid, version] = getFEXPackageSpecification(uri)
     splitUri = strsplit(uri, '/');
 
     packageNumber = regexp(splitUri{2}, '\d*(?=-)', 'match', 'once');
+    title = extractAfter(splitUri{2}, [packageNumber '-']);
     try
         packageInfo = webread(FEX_API_URL + num2str(packageNumber));
         packageUuid = packageInfo.uuid;
