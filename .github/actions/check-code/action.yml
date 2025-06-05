@@ -31,5 +31,6 @@ runs:
 
     - name: Upload SARIF file
       uses: github/codeql-action/upload-sarif@v3
+      continue-on-error: true # Will fail for MATLAB release < R2023a
       with:
         sarif_file: docs/reports/code_issues.sarif
