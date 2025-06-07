@@ -1,0 +1,53 @@
+name: 'Validate Version'
+description: 'Validate version number format from tag or input'
+
+inputs:
+  version:
+    description: 'Version number (for manual triggers)'
+    required: false
+  ref_name:
+    description: 'GitHub ref name (for tag triggers)'
+    required: false
+
+outputs:
+  version_number:
+    description: 'Validated version number (without v prefix)'
+    value: ${{ steps.set_version.outputs.version_number }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Check for retag
+      if: ${{ contains(github.event.head_commit.message, '[skip-ci]') }}
+      shell: bash
+      run: |
+        echo "Error: Commit message contains [skip-ci], skipping."
+        exit 1
+        
+    - name: Set version based on trigger type
+      id: set_version
+      shell: bash
+      run: |
+        if [[ -n "${{ inputs.version }}" ]]; then
+          # For manual trigger, use the input version
+          VERSION_NUMBER="${{ inputs.version }}"
+          # Validate format
+          if [[ ! "$VERSION_NUMBER" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Error: Input for 'version' ('$VERSION_NUMBER') is not in the expected major.minor.patch format."
+            exit 1
+          fi
+        else
+          # For tag trigger, use the tag name
+          TAG_NAME="${{ inputs.ref_name }}"
+          # Remove 'v' prefix if present for the version number
+          VERSION_NUMBER="${TAG_NAME#v}"
+          
+          # Validate format
+          if [[ ! "$TAG_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Error: Tag name ('$TAG_NAME') is not in the expected v*.*.* format."
+            exit 1
+          fi
+        fi
+        
+        echo "Using version number: $VERSION_NUMBER"
+        echo "version_number=$VERSION_NUMBER" >> $GITHUB_OUTPUT
