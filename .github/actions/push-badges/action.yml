@@ -12,33 +12,33 @@ inputs:
 runs:
   using: "composite"
   steps:
-      # Check out the actual source branch in a separate working tree
-      - name: Checkout PR branch for pushing badges
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ inputs.pr-ref }}
-          repository: ${{ inputs.pr-repo }}
-          path: pr-branch
+    # Check out the actual source branch in a separate working tree
+    - name: Checkout PR branch for pushing badges
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.pr-ref }}
+        repository: ${{ inputs.pr-repo }}
+        path: pr-branch
 
-      # Copy generated files to actual branch
-      - name: Copy badges to PR branch
-        shell: bash
-        run: |
-          cp -r .github/badges/* pr-branch/.github/badges/ 2>/dev/null || echo "No badges to copy"
+    # Copy generated files to actual branch
+    - name: Copy badges to PR branch
+      shell: bash
+      run: |
+        cp -r .github/badges/* pr-branch/.github/badges/ 2>/dev/null || echo "No badges to copy"
 
-      # Commit updated SVG badges for the issues and tests (if changed)
-      - name: Commit and push SVG badges if updated
-        working-directory: pr-branch
-        shell: bash
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git fetch 
+    # Commit updated SVG badges for the issues and tests (if changed)
+    - name: Commit and push SVG badges if updated
+      working-directory: pr-branch
+      shell: bash
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git fetch 
 
-          if [[ $(git add .github/badges/* --dry-run | wc -l) -gt 0 ]]; then
-            git add .github/badges
-            git commit -m "Update GitHub badges"
-            git push origin HEAD
-          else
-            echo "Nothing to commit"
-          fi
+        if [[ $(git add .github/badges/* --dry-run | wc -l) -gt 0 ]]; then
+          git add .github/badges
+          git commit -m "Update GitHub badges"
+          git push origin HEAD
+        else
+          echo "Nothing to commit"
+        fi
