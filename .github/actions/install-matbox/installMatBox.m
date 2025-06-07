@@ -38,8 +38,10 @@ function installFromCommit()
     
     scriptPath = mfilename('fullpath');
     projectFolder = extractBefore(scriptPath, fullfile('.github', 'actions'));
+
+    % We only want to add the code folder to MATLAB's path here to avoid  
+    % potential path conflicts with task functions in the tools folder.
     codeDirectory = fullfile(projectFolder, 'code');
-    
     addpath(genpath(codeDirectory))
     savepath()
 end
