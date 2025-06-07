@@ -10,6 +10,14 @@ inputs:
   tools_directory:
     description: 'Where the testToolbox function is located'
     default: './tools'
+  report_subdirectory:
+    description: 'Subdirectory for test reports'
+    required: false
+    default: ''
+  create_badge:
+    description: 'Whether to create a badge'
+    required: false
+    default: 'true'
 
 runs:
   using: "composite"
@@ -21,15 +29,20 @@ runs:
         command: |
           addpath(genpath("${{ inputs.tools_directory }}"));
           if exist("testToolbox", "file")
-            testToolbox();
+            testToolbox(...
+                "ReportSubdirectory", "${{ inputs.report_subdirectory }}", ...
+                "CreateBadge", strcmp(${{ inputs.create_badge }}, 'true'));
           else
             matbox.tasks.testToolbox(pwd, ...
                 "SourceFolderName", "${{ inputs.code_directory }}", ...
-                "ToolsFolderName", "${{ inputs.tools_directory }}");
+                "ToolsFolderName", "${{ inputs.tools_directory }}", ...
+                "ReportSubdirectory", "${{ inputs.report_subdirectory }}", ...
+                "CreateBadge", strcmp(${{ inputs.create_badge }}, 'true'));
           end
 
     - name: Publish test results
       uses: EnricoMi/publish-unit-test-result-action@v2
       if: always()
       with:
-        files: "docs/reports/test-results.xml"
+        check_name: ${{ inputs.report_subdirectory != '' && format('Test Results ({0})', inputs.report_subdirectory) || 'Test Results' }}
+        files: "docs/reports/**/test-results.xml"
