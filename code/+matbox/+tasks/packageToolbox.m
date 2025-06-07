@@ -82,6 +82,8 @@ function newVersion = packageToolbox(projectRootDirectory, releaseType, versionS
     % https://github.com/ehennestad/MatBox/issues/21
     matbox.toolbox.internal.fixRequiredAdditionalSoftware(initialOutputFile, finalOutputFile)
 
+    fprintf('Exported MLTBX to %s\n', finalOutputFile)
+
     if ~nargout
         clear newVersion
     end
