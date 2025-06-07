@@ -4,15 +4,15 @@ on:
   workflow_call:
     inputs:
       code_directory:
-        description: Path to directory with code. Code Analysis will run on the contents of the specified folder (and subfolders)
+        description: Path to the directory containing code. Code analysis will run on the contents of this folder and its subfolders.
         type: string
         default: 'code'
       tools_directory:
-        description: Path to directory with (CI) tools. Used for finding customized MatBox tasks
+        description: Path to the directory containing CI tools. Used for locating customized MatBox tasks.
         type: string
         default: 'tools'
       matlab_release:
-        description: Name of MATLAB Release to use for running code analysis
+        description: MATLAB release to use when running code analysis.
         type: string
         default: 'latest'
 
