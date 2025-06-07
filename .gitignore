@@ -1,0 +1,7 @@
+*
+!.gitignore
+!README.md
+!.github
+!.github/badges
+!.github/badges/*
+!.github/badges/**/*
