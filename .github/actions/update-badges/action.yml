@@ -45,10 +45,13 @@ runs:
         git init
         git remote add origin https://github.com/${{ github.repository }}.git
         git checkout --orphan gh-badges
-        echo "# GitHub Badges" > README.md
-        git add README.md
-        git config user.name "${{ github.workflow }} by ${{ github.actor }}"
-        git config user.email "<>"
+        
+        # Copy initialization files
+        cp ${{ github.action_path }}/gh-badges-init/* .
+        
+        git add .
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git commit -m "Initialize gh-badges branch"
         git push origin gh-badges
         
