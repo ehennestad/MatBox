@@ -4,18 +4,23 @@ on:
   workflow_call:
     inputs:
       code_directory:
+        description: Path to directory with code. Code coverage and code analysis will run on the contents of the specified folder (and subfolders)
         type: string
         default: 'code'
       tools_directory:
+        description: Path to directory with (ci) tools or tests. Used for finding unit tests and running customized MatBox tasks
         type: string
         default: 'tools'
       matlab_release:
+        description: Name of MATLAB Release to use for running test suites and code analysis
         type: string
         default: 'latest'
       matlab_use_cache:
+        description: Whether to cache the MATLAB installation for faster subsequent setup
         type: boolean
         default: false
       matlab_products:
+        description: Optional list of MATLAB products to install
         type: string
         default: ''
 
