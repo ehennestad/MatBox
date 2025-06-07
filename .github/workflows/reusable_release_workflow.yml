@@ -153,7 +153,7 @@ jobs:
       - name: Save packaged toolbox
         uses: actions/upload-artifact@v4
         with:
-          name: MatBox${{ steps.package.outputs.version_underscore }}.mltbx
+          name: ${{ steps.package.outputs.toolbox_name }}${{ steps.package.outputs.version_underscore }}.mltbx
           path: ${{ steps.package.outputs.mltbx_path }}
           
       # Create GitHub release

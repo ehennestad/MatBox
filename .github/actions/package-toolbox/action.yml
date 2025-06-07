@@ -21,6 +21,9 @@ outputs:
   version_underscore:
     description: 'Version number with underscores for file naming'
     value: ${{ steps.set_version.outputs.version_underscore }}
+  toolbox_name:
+    description: 'Name of the toolbox from MLToolboxInfo.json'
+    value: ${{ steps.set_version.outputs.toolbox_name }}
 
 runs:
   using: "composite"
@@ -43,5 +46,7 @@ runs:
       shell: bash
       run: |
         versionUnderscore=$(echo "${{ inputs.version_number }}" | sed 's/\./_/g')
+        toolboxName=$(jq -r '.ToolboxOptions.ToolboxName' "${{ inputs.tools_directory }}/MLToolboxInfo.json")
         echo "version_underscore=$versionUnderscore" >> $GITHUB_OUTPUT
-        echo "mltbx_path=releases/MatBox_${versionUnderscore}.mltbx" >> $GITHUB_OUTPUT
+        echo "toolbox_name=$toolboxName" >> $GITHUB_OUTPUT
+        echo "mltbx_path=releases/${toolboxName}_${versionUnderscore}.mltbx" >> $GITHUB_OUTPUT
