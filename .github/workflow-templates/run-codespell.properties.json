@@ -1,0 +1,8 @@
+{
+    "name": "Codespell Workflow",
+    "description": "Check code for common misspellings using Codespell",
+    "iconName": "octicon pencil",
+    "categories": [
+        "code-quality"
+    ]
+}

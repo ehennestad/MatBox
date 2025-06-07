@@ -1,9 +1,13 @@
+# NB: Will only process "skip" and "ignore-words-list" from the codespell 
+# config file if provided
+
 name: Run codespell
 
 on:
   workflow_call:
     inputs:
       config_file:
+        description: 'Relative path to a codespell config file'
         required: false
         type: string
         default: '.codespellrc'
