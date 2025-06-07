@@ -49,4 +49,4 @@ runs:
         toolboxName=$(jq -r '.ToolboxOptions.ToolboxName' "${{ inputs.tools_directory }}/MLToolboxInfo.json")
         echo "version_underscore=$versionUnderscore" >> $GITHUB_OUTPUT
         echo "toolbox_name=$toolboxName" >> $GITHUB_OUTPUT
-        echo "mltbx_path=releases/${toolboxName}_${versionUnderscore}.mltbx" >> $GITHUB_OUTPUT
+        echo "mltbx_path=releases/${toolboxName}_v${versionUnderscore}.mltbx" >> $GITHUB_OUTPUT
