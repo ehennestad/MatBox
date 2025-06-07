@@ -20,7 +20,7 @@ runs:
       with:
         command: |
           addpath(genpath("${{ inputs.tools_directory }}"));
-          versionNumberStr = "v${{ inputs.version_number }}"
+          versionNumberStr = "v${{ inputs.version_number }}";
           if exist("createTestedWithBadgeforToolbox", "file")
             createTestedWithBadgeforToolbox(versionNumberStr);
           else
