@@ -27,19 +27,30 @@ runs:
             matbox.tasks.createTestedWithBadgeforToolbox(versionNumberStr, pwd);
           end
           
-    - name: Checkout gh-badges branch
+    - name: Check if gh-badges branch exists
+      id: check_branch
+      shell: bash
+      run: |
+        if git ls-remote --heads origin gh-badges | grep -q gh-badges; then
+          echo "branch_exists=true" >> $GITHUB_OUTPUT
+          echo "gh-badges branch exists"
+        else
+          echo "branch_exists=false" >> $GITHUB_OUTPUT
+          echo "gh-badges branch does not exist"
+        fi
+
+    - name: Checkout existing gh-badges branch
+      if: steps.check_branch.outputs.branch_exists == 'true'
       uses: actions/checkout@v4
-      continue-on-error: true
-      id: checkout_badges
       with:
         ref: gh-badges
         path: gh-badges
 
     - name: Create gh-badges branch if it doesn't exist
-      if: steps.checkout_badges.outcome == 'failure'
+      if: steps.check_branch.outputs.branch_exists == 'false'
       shell: bash
       run: |
-        echo "gh-badges branch doesn't exist, creating it..."
+        echo "Creating gh-badges branch..."
         mkdir -p gh-badges
         cd gh-badges
         git init
