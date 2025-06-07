@@ -1,0 +1,47 @@
+name: 'Package MATLAB Toolbox'
+description: 'Package a MATLAB toolbox with specified version'
+
+inputs:
+  version_number:
+    description: 'Version number to use for packaging'
+    required: true
+  code_directory:
+    description: 'Directory containing the MATLAB code to package'
+    required: false
+    default: 'code'
+  tools_directory:
+    description: 'Directory containing packaging tools'
+    required: false
+    default: 'tools'
+
+outputs:
+  mltbx_path:
+    description: 'Path to the packaged MLTBX file'
+    value: ${{ steps.set_version.outputs.mltbx_path }}
+  version_underscore:
+    description: 'Version number with underscores for file naming'
+    value: ${{ steps.set_version.outputs.version_underscore }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Package toolbox
+      uses: matlab-actions/run-command@v2
+      with:
+        command: |
+          addpath(genpath("${{ inputs.tools_directory }}"));
+          versionNumberStr = "v${{ inputs.version_number }}";
+          if exist("packageToolbox", "file")
+            packageToolbox("specific", versionNumberStr);
+          else
+            matbox.tasks.packageToolbox(pwd, "specific", versionNumberStr, ...
+              'SourceFolderName', "${{ inputs.code_directory }}");
+          end
+          
+    - name: Set version number
+      id: set_version
+      shell: bash
+      run: |
+        versionUnderscore=$(echo "${{ inputs.version_number }}" | sed 's/\./_/g')
+        echo "version_underscore=$versionUnderscore" >> $GITHUB_OUTPUT
+        echo "mltbx_path=releases/MatBox_${versionUnderscore}.mltbx" >> $GITHUB_OUTPUT
