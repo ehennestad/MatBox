@@ -1,0 +1,28 @@
+name: Analyse code
+
+on:
+  push:
+    branches: [ $default-branch ]
+    
+  pull_request:
+    branches: [ $default-branch ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  reuse-workflow-check-code:
+    name: Run code analyser
+    uses: ehennestad/matbox/.github/workflows/reusable_check_code.yml@v0.9
+    with:
+      # Path to directory with code. Code Analysis will run on the contents of 
+      # the specified folder (and subfolders)
+      code_directory: code
+      
+      # Path to directory with (CI) tools. Used for finding customized MatBox 
+      # tasks
+      tools_directory: tools
+      
+      # Name of MATLAB Release to use for running code analysis
+      matlab_release: latest

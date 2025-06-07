@@ -1,0 +1,37 @@
+name: Test code
+
+on:
+  push:
+    branches: [ $default-branch ]
+    
+  pull_request:
+    branches: [ $default-branch ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  reuse-workflow-test-code:
+    name: Test code
+    uses: ehennestad/matbox/.github/workflows/reusable_test_workflow.yml@v0.9
+    with:
+      # Path to directory with code. Code coverage and code analysis will run 
+      # on the contents of the specified folder (and subfolders)
+      code_directory: code
+      
+      # Path to directory with (CI) tools or tests. Used for finding unit tests
+      # and running customized MatBox tasks
+      tools_directory: tools
+
+      # Name of MATLAB Release to use for running test suites and code analysis
+      matlab_release: latest
+      
+      # Whether to cache the MATLAB installation for faster subsequent setups
+      matlab_use_cache: false
+      
+      # Optional list of MATLAB products to install. Example if adding multiple 
+      # products (use ">" and one product per line):
+      # matlab_products: >
+      #   Image_Processing_Toolbox
+      #   Statistics_and_Machine_Learning_Toolbox
