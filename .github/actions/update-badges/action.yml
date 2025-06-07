@@ -54,7 +54,7 @@ runs:
         mkdir -p gh-badges
         cd gh-badges
         git init
-        git remote add origin https://github.com/${{ github.repository }}.git
+        git remote add origin https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
         git checkout --orphan gh-badges
         
         # Copy initialization files
