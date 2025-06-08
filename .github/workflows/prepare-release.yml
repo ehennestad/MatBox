@@ -33,7 +33,7 @@ jobs:
       # JSON array of MATLAB versions to test. If empty (default), versions will be
       # automatically determined from MLToolboxInfo.json. Example for manual override:
       # matlab_versions: '["R2023a", "R2023b", "R2024a"]'
-      matlab_versions: '[]'
+      matlab_versions: '["R2023a", "R2023b", "R2024a"]'
       
       # JSON object mapping MATLAB versions to Python versions. Use this to override
       # specific Python versions for certain MATLAB releases. Only specify versions
