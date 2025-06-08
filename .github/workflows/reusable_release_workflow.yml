@@ -42,6 +42,7 @@ on:
 
 jobs:
   validate_version:
+    name: Validate version number
     runs-on: ubuntu-latest
     outputs:
       version_number: ${{ steps.validate.outputs.version_number }}
@@ -66,6 +67,7 @@ jobs:
           ref_name: ${{ inputs.ref_name }}
 
   build_matrix:
+    name: Build release test matrix
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.build_matrix.outputs.matrix }}
@@ -130,6 +132,7 @@ jobs:
           path: docs/reports
 
   release:
+    name: Package toolbox and create draft release
     needs: [test, validate_version]
     runs-on: ubuntu-latest
     outputs:
