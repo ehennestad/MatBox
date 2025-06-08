@@ -9,11 +9,21 @@ inputs:
   matlab_versions_fallback:
     description: 'Fallback MATLAB versions if auto-detection fails'
     required: false
-    default: '["R2023a", "R2023b", "R2024a", "R2024b"]'
+    default: '["R2021a", "R2021b", "R2022a", "R2022b", "R2023a", "R2023b", "R2024a", "R2024b"]'
   python_versions:
     description: 'JSON object mapping MATLAB versions to Python versions'
     required: false
-    default: '{"R2023a": "3.10", "R2023b": "3.11", "R2024a": "3.11", "R2024b": "3.12"}'
+    default: > 
+        '{
+        "R2021a": "3.8", 
+        "R2021b": "3.9", 
+        "R2022a": "3.9", 
+        "R2022b": "3.10", 
+        "R2023a": "3.10", 
+        "R2023b": "3.11", 
+        "R2024a": "3.11", 
+        "R2024b": "3.12"
+        }'
 
 outputs:
   matrix:
@@ -31,15 +41,29 @@ runs:
       shell: bash
       run: |
         # Read min and max MATLAB releases from MLToolboxInfo.json
-        min_release=$(jq -r '.ToolboxOptions.MinimumMatlabRelease' "${{ inputs.tools_directory }}/MLToolboxInfo.json")
+        min_release_raw=$(jq -r '.ToolboxOptions.MinimumMatlabRelease' "${{ inputs.tools_directory }}/MLToolboxInfo.json")
         max_release=$(jq -r '.ToolboxOptions.MaximumMatlabRelease' "${{ inputs.tools_directory }}/MLToolboxInfo.json")
+        
+        # Set minimum release to R2021a if not specified or if specified release is older
+        min_release="R2021a"
+        if [ "$min_release_raw" != "null" ] && [ "$min_release_raw" != "" ]; then
+          # Compare releases to ensure we don't go below R2021a
+          min_year=${min_release_raw:1:4}
+          min_letter=${min_release_raw:5:1}
+          
+          # If the specified minimum is R2021a or newer, use it
+          if [ $min_year -gt 2021 ] || ([ $min_year -eq 2021 ] && [ "$min_letter" != "a" ]); then
+            min_release="$min_release_raw"
+          fi
+        fi
         
         # If max_release is empty or null, get the latest MATLAB release
         if [ "$max_release" = "null" ] || [ "$max_release" = "" ]; then
           max_release=$(curl -s "https://ssd.mathworks.com/supportfiles/ci/matlab-release/v0/latest")
         fi
         
-        echo "Min release: $min_release"
+        echo "Min release from MLToolboxInfo: $min_release_raw"
+        echo "Min release for GitHub Actions: $min_release"
         echo "Max release: $max_release"
         
         # Generate MATLAB releases between min and max
