@@ -104,7 +104,7 @@ jobs:
           release: ${{ matrix.MATLABVersion }}
 
       - name: Install MatBox
-        uses: ehennestad/matbox/.github/actions/install-matbox@v0.9
+        uses: ehennestad/matbox/.github/actions/install-matbox@make-release-workflow-reusable
 
       # Runs all tests in the project.  Put results in a version specific subdirectory
       - name: Run tests
