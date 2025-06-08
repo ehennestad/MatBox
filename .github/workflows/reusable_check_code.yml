@@ -15,7 +15,10 @@ on:
         description: MATLAB release to use when running code analysis.
         type: string
         default: 'latest'
-
+      matlab_use_cache:
+        description: Whether to cache the MATLAB installation for faster subsequent setups.
+        type: boolean
+        default: false
 jobs:
   # This workflow contains a single job called "check"
   check:
@@ -30,7 +33,7 @@ jobs:
         uses: matlab-actions/setup-matlab@v2
         with:
           release: ${{ inputs.matlab_release }}
-          cache: true
+          cache: ${{ inputs.matlab_use_cache }}
 
       - name: Install MatBox
         uses: ehennestad/matbox/.github/actions/install-matbox@v0.9
