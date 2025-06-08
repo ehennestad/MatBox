@@ -126,6 +126,8 @@ jobs:
   release:
     needs: [test, validate_version]
     runs-on: ubuntu-latest
+    outputs:
+      toolbox_name: ${{ steps.package.outputs.toolbox_name }}
     steps:
       - name: Checkout repository using deploy key
         uses: actions/checkout@v4
@@ -166,7 +168,7 @@ jobs:
       - name: Save packaged toolbox
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.package.outputs.toolbox_name }}${{ steps.package.outputs.version_underscore }}.mltbx
+          name: ${{ steps.package.outputs.toolbox_name }}.mltbx
           path: ${{ steps.package.outputs.mltbx_path }}
           
       # Create GitHub release
@@ -176,3 +178,57 @@ jobs:
           version_number: ${{ needs.validate_version.outputs.version_number }}
           mltbx_path: ${{ steps.package.outputs.mltbx_path }}
           version_underscore: ${{ steps.package.outputs.version_underscore }}
+
+  verify_installation:
+    name: Verify toolbox installation (${{ matrix.os }})
+    needs: [release, validate_version]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    
+    steps:
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v2
+        
+      - name: Download packaged toolbox
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.release.outputs.toolbox_name }}.mltbx
+        
+      - name: Install and verify toolbox
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            % Get the MLTBX file name
+            mltbxFiles = dir('*.mltbx');
+            if isempty(mltbxFiles)
+                error('No MLTBX file found');
+            end
+            mltbxFile = mltbxFiles(1).name;
+            
+            % Install the toolbox
+            fprintf('Installing toolbox: %s\n', mltbxFile);
+            agreeToLicense = true;
+            installedToolbox = matlab.addons.install(mltbxFile, agreeToLicense);
+            
+            % Verify installation
+            fprintf('Toolbox installed successfully:\n');
+            fprintf('  Name: %s\n', installedToolbox.Name);
+            fprintf('  Version: %s\n', installedToolbox.Version);
+            fprintf('  Identifier: %s\n', installedToolbox.Identifier);
+            
+            % Try to access toolbox directory (if applicable)
+            try
+                tbxDir = toolboxdir(installedToolbox.Name);
+                if ~isempty(tbxDir) && isfolder(tbxDir)
+                    fprintf('  Toolbox directory: %s\n', tbxDir);
+                else
+                    fprintf('  Toolbox directory not found or not applicable\n');
+                end
+            catch ME
+                fprintf('  Could not access toolbox directory: %s\n', ME.message);
+            end
+
+            fprintf('Verification completed successfully on %s\n', computer);
