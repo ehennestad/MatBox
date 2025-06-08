@@ -162,6 +162,7 @@ jobs:
         with:
           name: ${{ steps.package.outputs.toolbox_name }}.mltbx
           path: ${{ steps.package.outputs.mltbx_path }}
+          retention-days: 1
 
       # Create GitHub release
       - name: Create GitHub release

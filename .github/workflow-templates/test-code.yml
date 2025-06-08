@@ -3,9 +3,15 @@ name: Test code
 on:
   push:
     branches: [ $default-branch ]
-    
+    paths-ignore:
+      - '*md'
+      - '.github/**'
+
   pull_request:
     branches: [ $default-branch ]
+    paths-ignore:
+      - '*md'
+      - '.github/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
