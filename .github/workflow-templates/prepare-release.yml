@@ -1,0 +1,55 @@
+name: Prepare toolbox release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number in major.minor.patch format'
+        required: true
+        type: string
+
+jobs:
+  reuse-workflow-release:
+    name: Prepare toolbox release
+    uses: ehennestad/matbox/.github/workflows/reusable_release_workflow.yml@make-release-workflow-reusable
+    with:
+      # Do not change
+      version: ${{ inputs.version }}
+      
+      # Do not change
+      ref_name: ${{ github.ref_name }}
+      
+      # Path to directory containing source code. This directory will be packaged
+      # into the toolbox. Important: This should not be a namespace directory
+      code_directory: code
+      
+      # Path to directory containing tools and MLToolboxInfo.json. Used for finding
+      # unit tests, running customized MatBox tasks, and determining toolbox metadata
+      tools_directory: tools
+      
+      # JSON array of MATLAB versions to test. If empty (default), versions will be
+      # automatically determined from MLToolboxInfo.json. Example for manual override:
+      # matlab_versions: '["R2023a", "R2023b", "R2024a"]'
+      matlab_versions: '[]'
+      
+      # JSON object mapping MATLAB versions to Python versions. Use this to override
+      # specific Python versions for certain MATLAB releases. Only specify versions
+      # you want to override - others will use latest supported release from 
+      # https://se.mathworks.com/support/requirements/python-compatibility.html
+      # Example:
+      # python_versions: '{"R2024a": "3.10", "R2024b": "3.11"}'
+      python_versions: '{}'
+      
+      # Whether Python is needed for testing. Set to true if your toolbox requires
+      # Python functionality. When false, Python setup is skipped and only MATLAB
+      # versions are included in the test matrix
+      needs_python: false
+      
+    secrets:
+      # SSH deploy key for pushing to protected branches. Required for creating
+      # releases and updating badges. Generate an SSH key pair and add the public
+      # key as a deploy key with write access, then add the private key as this secret
+      DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
