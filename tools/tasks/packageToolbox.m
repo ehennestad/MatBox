@@ -1,4 +1,4 @@
-function packageToolbox(releaseType, versionString)
+function [newVersion, mltbxPath] = packageToolbox(releaseType, versionString)
     arguments
         releaseType {mustBeTextScalar,mustBeMember(releaseType,["build","major","minor","patch","specific"])} = "build"
         versionString {mustBeTextScalar} = "";
@@ -6,5 +6,5 @@ function packageToolbox(releaseType, versionString)
     installMatBox()
     projectRootDir = matboxtools.projectdir();
     addpath(genpath(projectRootDir))
-    matbox.tasks.packageToolbox(projectRootDir, releaseType, versionString)
+    [newVersion, mltbxPath] = matbox.tasks.packageToolbox(projectRootDir, releaseType, versionString);
 end
