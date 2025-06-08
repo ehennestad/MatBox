@@ -1,4 +1,4 @@
-function newVersion = packageToolbox(projectRootDirectory, releaseType, versionString, options)
+function [newVersion, mltbxPath] = packageToolbox(projectRootDirectory, releaseType, versionString, options)
 % packageToolbox Package a new version of a toolbox. Package a new version
 % of the toolbox based on the toolbox packaging (.prj) file in current
 % working directory. MLTBX file is put in ./release directory.
@@ -84,6 +84,11 @@ function newVersion = packageToolbox(projectRootDirectory, releaseType, versionS
     % Hopefully temporary fix for MATLAB bug. See issue #21
     % https://github.com/ehennestad/MatBox/issues/21
     matbox.toolbox.internal.fixRequiredAdditionalSoftware(initialOutputFile, finalOutputFile)
+
+    fprintf('Exported MLTBX to %s\n', finalOutputFile)
+
+    % Return the MLTBX path
+    mltbxPath = finalOutputFile;
 
     if ~nargout
         clear newVersion
