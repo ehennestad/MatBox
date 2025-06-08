@@ -1,0 +1,127 @@
+name: 'Build Test Matrix'
+description: 'Determine MATLAB versions from toolbox info and build test matrix with Python versions'
+
+inputs:
+  tools_directory:
+    description: 'Directory containing MLToolboxInfo.json'
+    required: false
+    default: 'tools'
+  matlab_versions_fallback:
+    description: 'Fallback MATLAB versions if auto-detection fails'
+    required: false
+    default: '["R2023a", "R2023b", "R2024a", "R2024b"]'
+  python_versions:
+    description: 'JSON object mapping MATLAB versions to Python versions'
+    required: false
+    default: '{"R2023a": "3.10", "R2023b": "3.11", "R2024a": "3.11", "R2024b": "3.12"}'
+
+outputs:
+  matrix:
+    description: 'Test matrix with MATLAB and Python versions'
+    value: ${{ steps.build.outputs.matrix }}
+  matlab_versions:
+    description: 'Determined MATLAB versions array'
+    value: ${{ steps.determine.outputs.matlab_versions }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Determine MATLAB versions from toolbox info
+      id: determine
+      shell: bash
+      run: |
+        # Read min and max MATLAB releases from MLToolboxInfo.json
+        min_release=$(jq -r '.ToolboxOptions.MinimumMatlabRelease' "${{ inputs.tools_directory }}/MLToolboxInfo.json")
+        max_release=$(jq -r '.ToolboxOptions.MaximumMatlabRelease' "${{ inputs.tools_directory }}/MLToolboxInfo.json")
+        
+        # If max_release is empty or null, get the latest MATLAB release
+        if [ "$max_release" = "null" ] || [ "$max_release" = "" ]; then
+          max_release=$(curl -s "https://ssd.mathworks.com/supportfiles/ci/matlab-release/v0/latest")
+        fi
+        
+        echo "Min release: $min_release"
+        echo "Max release: $max_release"
+        
+        # Generate MATLAB releases between min and max
+        generate_matlab_releases() {
+          local min_release=$1
+          local max_release=$2
+          
+          # Extract year and letter from releases (e.g., R2023a -> 2023, a)
+          min_year=${min_release:1:4}
+          min_letter=${min_release:5:1}
+          max_year=${max_release:1:4}
+          max_letter=${max_release:5:1}
+          
+          releases=""
+          
+          for year in $(seq $min_year $max_year); do
+            if [ $year -eq $min_year ] && [ $year -eq $max_year ]; then
+              # Same year - use range from min to max letter
+              start_letter=$min_letter
+              end_letter=$max_letter
+            elif [ $year -eq $min_year ]; then
+              # First year - start from min letter, go to 'b'
+              start_letter=$min_letter
+              end_letter="b"
+            elif [ $year -eq $max_year ]; then
+              # Last year - start from 'a', go to max letter
+              start_letter="a"
+              end_letter=$max_letter
+            else
+              # Middle years - include both 'a' and 'b'
+              start_letter="a"
+              end_letter="b"
+            fi
+            
+            # Add releases for this year
+            if [ "$start_letter" = "a" ]; then
+              if [ -n "$releases" ]; then releases="$releases,"; fi
+              releases="$releases\"R${year}a\""
+              if [ "$end_letter" = "b" ]; then
+                releases="$releases,\"R${year}b\""
+              fi
+            elif [ "$start_letter" = "b" ]; then
+              if [ -n "$releases" ]; then releases="$releases,"; fi
+              releases="$releases\"R${year}b\""
+            fi
+          done
+          
+          echo "[$releases]"
+        }
+        
+        matlab_versions=$(generate_matlab_releases "$min_release" "$max_release")
+        echo "Generated MATLAB versions: $matlab_versions"
+        echo "matlab_versions=$matlab_versions" >> $GITHUB_OUTPUT
+
+    - name: Build test matrix
+      id: build
+      shell: bash
+      run: |
+        # Use determined MATLAB versions or fall back to input
+        matlab_versions='${{ steps.determine.outputs.matlab_versions }}'
+        if [ "$matlab_versions" = "" ] || [ "$matlab_versions" = "null" ]; then
+          matlab_versions='${{ inputs.matlab_versions_fallback }}'
+          echo "Using fallback MATLAB versions: $matlab_versions"
+        else
+          echo "Using determined MATLAB versions: $matlab_versions"
+        fi
+        
+        python_versions='${{ inputs.python_versions }}'
+        
+        # Build the matrix include section dynamically
+        include_items=""
+        for version in $(echo $matlab_versions | jq -r '.[]'); do
+          python_version=$(echo $python_versions | jq -r --arg v "$version" '.[$v]')
+          if [ "$python_version" != "null" ]; then
+            if [ -n "$include_items" ]; then
+              include_items="$include_items,"
+            fi
+            include_items="$include_items{\"MATLABVersion\":\"$version\",\"pythonVersion\":\"$python_version\"}"
+          fi
+        done
+        
+        # Create the full matrix
+        matrix="{\"MATLABVersion\":$matlab_versions,\"include\":[$include_items]}"
+        echo "Generated matrix: $matrix"
+        echo "matrix=$matrix" >> $GITHUB_OUTPUT

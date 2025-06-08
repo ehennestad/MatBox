@@ -22,7 +22,7 @@ on:
       matlab_versions:
         type: string
         default: '["R2023a", "R2023b", "R2024a", "R2024b"]'
-        description: 'JSON array of MATLAB versions to test'
+        description: 'JSON array of MATLAB versions to test (optional - will be determined from MLToolboxInfo.json if not provided)'
       python_versions:
         type: string
         default: '{"R2023a": "3.10", "R2023b": "3.11", "R2024a": "3.11", "R2024b": "3.12"}'
@@ -57,23 +57,30 @@ jobs:
           version: ${{ inputs.version }}
           ref_name: ${{ inputs.ref_name }}
 
+  build_matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.build_matrix.outputs.matrix }}
+      matlab_versions: ${{ steps.build_matrix.outputs.matlab_versions }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Build test matrix
+        id: build_matrix
+        uses: ehennestad/matbox/.github/actions/build-test-matrix@make-release-workflow-reusable
+        with:
+          tools_directory: ${{ inputs.tools_directory }}
+          matlab_versions_fallback: ${{ inputs.matlab_versions }}
+          python_versions: ${{ inputs.python_versions }}
+
   test:
     name: Run MATLAB tests (${{ matrix.MATLABVersion }})
-    needs: [validate_version]
+    needs: [validate_version, build_matrix]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        MATLABVersion: ${{ fromJSON(inputs.matlab_versions) }}
-        include:
-          - MATLABVersion: R2023a
-            pythonVersion: '3.10'
-          - MATLABVersion: R2023b
-            pythonVersion: '3.11'
-          - MATLABVersion: R2024a
-            pythonVersion: '3.11'
-          - MATLABVersion: R2024b
-            pythonVersion: '3.12'
+      matrix: ${{ fromJSON(needs.build_matrix.outputs.matrix) }}
 
     steps:
       # Checks-out the repository under $GITHUB_WORKSPACE, so the job can access it
@@ -134,7 +141,7 @@ jobs:
           merge-multiple: true
           
       # Generate badge
-      - name: Generate tested with badge
+      - name: Generate "tested with" badge
         uses: ehennestad/matbox/.github/actions/update-badges@make-release-workflow-reusable
         with:
           version_number: ${{ needs.validate_version.outputs.version_number }}

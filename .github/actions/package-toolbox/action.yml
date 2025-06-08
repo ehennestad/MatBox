@@ -29,17 +29,21 @@ runs:
   using: "composite"
   steps:
     - name: Package toolbox
+      id: package
       uses: matlab-actions/run-command@v2
       with:
         command: |
           addpath(genpath("${{ inputs.tools_directory }}"));
           versionNumberStr = "v${{ inputs.version_number }}";
           if exist("packageToolbox", "file")
-            packageToolbox("specific", versionNumberStr);
+            [~, mltbxPath] = packageToolbox("specific", versionNumberStr);
           else
-            matbox.tasks.packageToolbox(pwd, "specific", versionNumberStr, ...
+            [~, mltbxPath] = matbox.tasks.packageToolbox(pwd, "specific", versionNumberStr, ...
               'SourceFolderName', "${{ inputs.code_directory }}");
           end
+          
+          % Write the MLTBX path to a file for the next step
+          matbox.utility.filewrite('mltbx_path.txt', mltbxPath);
           
     - name: Set version number
       id: set_version
@@ -47,6 +51,7 @@ runs:
       run: |
         versionUnderscore=$(echo "${{ inputs.version_number }}" | sed 's/\./_/g')
         toolboxName=$(jq -r '.ToolboxOptions.ToolboxName' "${{ inputs.tools_directory }}/MLToolboxInfo.json")
+        mltbxPath=$(cat mltbx_path.txt)
         echo "version_underscore=$versionUnderscore" >> $GITHUB_OUTPUT
         echo "toolbox_name=$toolboxName" >> $GITHUB_OUTPUT
-        echo "mltbx_path=releases/${toolboxName}_v${versionUnderscore}.mltbx" >> $GITHUB_OUTPUT
+        echo "mltbx_path=$mltbxPath" >> $GITHUB_OUTPUT
