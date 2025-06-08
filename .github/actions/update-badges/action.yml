@@ -15,6 +15,13 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Download test reports
+      uses: actions/download-artifact@v4
+      with:
+        pattern: reports-*
+        path: docs/reports
+        merge-multiple: true
+        
     - name: Generate tested with badge
       uses: matlab-actions/run-command@v2
       with:

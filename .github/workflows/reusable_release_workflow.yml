@@ -44,7 +44,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        
+
       - name: Check for MLToolboxInfo.json
         run: |
           if [ ! -f "${{ inputs.tools_directory }}/MLToolboxInfo.json" ]; then
@@ -53,7 +53,7 @@ jobs:
             exit 1
           fi
           echo "MLToolboxInfo.json found in ${{ inputs.tools_directory }} directory"
-        
+
       - name: Validate version
         id: validate
         uses: ehennestad/matbox/.github/actions/validate-version@make-release-workflow-reusable
@@ -69,7 +69,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        
+
       - name: Build test matrix
         id: build_matrix
         uses: ehennestad/matbox/.github/actions/build-test-matrix@make-release-workflow-reusable
@@ -97,7 +97,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.pythonVersion }}
-          
+
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v2
         with:
@@ -132,29 +132,21 @@ jobs:
       - name: Checkout repository using deploy key
         uses: actions/checkout@v4
         with:
-          ref: refs/heads/main
           ssh-key: ${{ secrets.DEPLOY_KEY }}
-          
+
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v2
-             
+
       - name: Install MatBox
         uses: ehennestad/matbox/.github/actions/install-matbox@make-release-workflow-reusable
-      
-      # Download test reports
-      - uses: actions/download-artifact@v4
-        with:
-          pattern: reports-*
-          path: docs/reports
-          merge-multiple: true
-          
+
       # Generate badge
       - name: Generate "tested with" badge
         uses: ehennestad/matbox/.github/actions/update-badges@make-release-workflow-reusable
         with:
           version_number: ${{ needs.validate_version.outputs.version_number }}
           tools_directory: ${{ inputs.tools_directory }}
-          
+
       # Package toolbox
       - name: Package toolbox
         id: package
@@ -170,7 +162,7 @@ jobs:
         with:
           name: ${{ steps.package.outputs.toolbox_name }}.mltbx
           path: ${{ steps.package.outputs.mltbx_path }}
-          
+
       # Create GitHub release
       - name: Create GitHub release
         uses: ehennestad/matbox/.github/actions/create-github-release@make-release-workflow-reusable
@@ -187,16 +179,16 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-    
+
     steps:
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v2
-        
+
       - name: Download packaged toolbox
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.release.outputs.toolbox_name }}.mltbx
-        
+
       - name: Install and verify toolbox
         uses: matlab-actions/run-command@v2
         with:
@@ -218,17 +210,5 @@ jobs:
             fprintf('  Name: %s\n', installedToolbox.Name);
             fprintf('  Version: %s\n', installedToolbox.Version);
             fprintf('  Identifier: %s\n', installedToolbox.Identifier);
-            
-            % Try to access toolbox directory (if applicable)
-            try
-                tbxDir = toolboxdir(installedToolbox.Name);
-                if ~isempty(tbxDir) && isfolder(tbxDir)
-                    fprintf('  Toolbox directory: %s\n', tbxDir);
-                else
-                    fprintf('  Toolbox directory not found or not applicable\n');
-                end
-            catch ME
-                fprintf('  Could not access toolbox directory: %s\n', ME.message);
-            end
 
             fprintf('Verification completed successfully on %s\n', computer);
