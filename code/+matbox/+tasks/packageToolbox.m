@@ -63,6 +63,9 @@ function [newVersion, mltbxPath] = packageToolbox(projectRootDirectory, releaseT
     finalOutputFile = toolboxOptions.OutputFile;
     initialOutputFile = strrep(finalOutputFile, '.mltbx', '_initial.mltbx');
     toolboxOptions.OutputFile = initialOutputFile;
+    if ~isfolder( fileparts(toolboxOptions.OutputFile) )
+        mkdir( fileparts(toolboxOptions.OutputFile) );
+    end
     matlab.addons.toolbox.packageToolbox(toolboxOptions);
     mltbxCleanupObj = onCleanup(@() delete(initialOutputFile));
 
