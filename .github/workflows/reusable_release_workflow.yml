@@ -21,12 +21,16 @@ on:
         description: 'Directory containing tools'
       matlab_versions:
         type: string
-        default: '["R2023a", "R2023b", "R2024a", "R2024b"]'
+        default: '[]'
         description: 'JSON array of MATLAB versions to test (optional - will be determined from MLToolboxInfo.json if not provided)'
       python_versions:
         type: string
-        default: '{"R2023a": "3.10", "R2023b": "3.11", "R2024a": "3.11", "R2024b": "3.12"}'
+        default: ''
         description: 'JSON object mapping MATLAB versions to Python versions'
+      needs_python:
+        type: boolean
+        default: false
+        description: 'Whether Python is needed for testing (controls if Python versions are included in test matrix)'
     secrets:
       DEPLOY_KEY:
         required: true
@@ -71,8 +75,9 @@ jobs:
         uses: ehennestad/matbox/.github/actions/build-test-matrix@make-release-workflow-reusable
         with:
           tools_directory: ${{ inputs.tools_directory }}
-          matlab_versions_fallback: ${{ inputs.matlab_versions }}
+          matlab_versions: ${{ inputs.matlab_versions }}
           python_versions: ${{ inputs.python_versions }}
+          include_python: ${{ inputs.needs_python }}
 
   test:
     name: Run MATLAB tests (${{ matrix.MATLABVersion }})
@@ -88,6 +93,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Python
+        if: ${{ inputs.needs_python }}
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.pythonVersion }}
