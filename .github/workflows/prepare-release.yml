@@ -3,7 +3,7 @@ name: Prepare toolbox release
 on:
   push:
     tags:
-      - 'v*'
+      - 'v[0-9]+.[0-9]+.[0-9]+' # Matches tags like v1.2.3
   workflow_dispatch:
     inputs:
       version:
@@ -12,8 +12,8 @@ on:
         type: string
 
 jobs:
-  reuse-workflow-release:
-    name: Prepare toolbox release
+  release:
+    name: Prepare toolbox release (MatBox)
     uses: ehennestad/matbox/.github/workflows/reusable_release_workflow.yml@make-release-workflow-reusable
     with:
       # Do not change
