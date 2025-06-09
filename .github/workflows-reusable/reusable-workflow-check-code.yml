@@ -1,0 +1,52 @@
+name: Analyse code
+
+on:
+  workflow_call:
+    inputs:
+      code_directory:
+        description: Path to the directory containing code. Code analysis will run on the contents of this folder and its subfolders.
+        type: string
+        default: 'code'
+      tools_directory:
+        description: Path to the directory containing CI tools. Used for locating customized MatBox tasks.
+        type: string
+        default: 'tools'
+      matlab_release:
+        description: MATLAB release to use when running code analysis.
+        type: string
+        default: 'latest'
+      matlab_use_cache:
+        description: Whether to cache the MATLAB installation for faster subsequent setups.
+        type: boolean
+        default: false
+jobs:
+  # This workflow contains a single job called "check"
+  check:
+    name: Check code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up MATLAB (${{ inputs.matlab_release }})
+        uses: matlab-actions/setup-matlab@v2
+        with:
+          release: ${{ inputs.matlab_release }}
+          cache: ${{ inputs.matlab_use_cache }}
+
+      - name: Install MatBox
+        uses: ehennestad/matbox/.github/actions/install-matbox@v0.9
+
+      - name: Check code and upload report
+        uses: ehennestad/matbox/.github/actions/check-code@v0.9
+        with:
+          code_directory: ${{ inputs.code_directory }}
+          tools_directory: ${{ inputs.tools_directory }}
+      
+      - name: Commit SVG badges if updated
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: ehennestad/matbox/.github/actions/push-badges@v0.9
+        with:
+          pr-ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.ref || github.ref_name }}
+          pr-repo: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name || github.repository }}
