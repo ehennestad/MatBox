@@ -179,7 +179,6 @@ jobs:
         with:
           version_number: ${{ needs.validate_version.outputs.version_number }}
           mltbx_path: ${{ steps.package.outputs.mltbx_path }}
-          version_underscore: ${{ steps.package.outputs.version_underscore }}
 
   verify_installation:
     name: Verify toolbox installation (${{ matrix.os }})
