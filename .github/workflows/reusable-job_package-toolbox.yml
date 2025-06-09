@@ -1,0 +1,78 @@
+name: Reusable Job - Package Toolbox
+
+on:
+  workflow_call:
+    inputs:
+      version_number:
+        type: string
+        required: true
+        description: 'Version number for the release'
+      code_directory:
+        type: string
+        default: 'code'
+        description: 'Directory containing source code'
+      tools_directory:
+        type: string
+        default: 'tools'
+        description: 'Directory containing tools'
+    secrets:
+      DEPLOY_KEY:
+        required: true
+        description: 'SSH deploy key for pushing to protected branches'
+    outputs:
+      toolbox_name:
+        description: 'Name of the packaged toolbox'
+        value: ${{ jobs.release.outputs.toolbox_name }}
+      mltbx_path:
+        description: 'Path to the packaged MLTBX file'
+        value: ${{ jobs.release.outputs.mltbx_path }}
+
+jobs:
+  release:
+    name: Package toolbox and create draft release
+    runs-on: ubuntu-latest
+    outputs:
+      toolbox_name: ${{ steps.package.outputs.toolbox_name }}
+      mltbx_path: ${{ steps.package.outputs.mltbx_path }}
+    steps:
+      - name: Checkout repository using deploy key
+        uses: actions/checkout@v4
+        with:
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v2
+
+      - name: Install MatBox
+        uses: ehennestad/matbox/.github/actions/install-matbox@make-release-workflow-reusable
+
+      # Generate badge
+      - name: Generate "tested with" badge
+        uses: ehennestad/matbox/.github/actions/update-badges@make-release-workflow-reusable
+        with:
+          version_number: ${{ inputs.version_number }}
+          tools_directory: ${{ inputs.tools_directory }}
+
+      # Package toolbox
+      - name: Package toolbox
+        id: package
+        uses: ehennestad/matbox/.github/actions/package-toolbox@make-release-workflow-reusable
+        with:
+          version_number: ${{ inputs.version_number }}
+          code_directory: ${{ inputs.code_directory }}
+          tools_directory: ${{ inputs.tools_directory }}
+
+      # Save the MLTBX.
+      - name: Save packaged toolbox
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.package.outputs.toolbox_name }}.mltbx
+          path: ${{ steps.package.outputs.mltbx_path }}
+          retention-days: 1
+
+      # Create GitHub release
+      - name: Create GitHub release
+        uses: ehennestad/matbox/.github/actions/create-github-release@make-release-workflow-reusable
+        with:
+          version_number: ${{ inputs.version_number }}
+          mltbx_path: ${{ steps.package.outputs.mltbx_path }}

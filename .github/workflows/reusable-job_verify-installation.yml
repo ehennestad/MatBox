@@ -1,0 +1,55 @@
+name: Reusable Job - Verify Installation
+
+on:
+  workflow_call:
+    inputs:
+      toolbox_name:
+        type: string
+        required: true
+        description: 'Name of the toolbox to verify'
+      os_matrix:
+        type: string
+        default: '["ubuntu-latest", "windows-latest", "macos-latest"]'
+        description: 'JSON array of operating systems to test on'
+
+jobs:
+  verify_installation:
+    name: Verify toolbox installation (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ fromJSON(inputs.os_matrix) }}
+
+    steps:
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v2
+
+      - name: Download packaged toolbox
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.toolbox_name }}.mltbx
+
+      - name: Install and verify toolbox
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            % Get the MLTBX file name
+            mltbxFiles = dir('*.mltbx');
+            if isempty(mltbxFiles)
+                error('No MLTBX file found');
+            end
+            mltbxFile = mltbxFiles(1).name;
+            
+            % Install the toolbox
+            fprintf('Installing toolbox: %s\n', mltbxFile);
+            agreeToLicense = true;
+            installedToolbox = matlab.addons.install(mltbxFile, agreeToLicense);
+            
+            % Verify installation
+            fprintf('Toolbox installed successfully:\n');
+            fprintf('  Name: %s\n', installedToolbox.Name);
+            fprintf('  Version: %s\n', installedToolbox.Version);
+            fprintf('  Identifier: %s\n', installedToolbox.Identifier);
+
+            fprintf('Verification completed successfully on %s\n', computer);
