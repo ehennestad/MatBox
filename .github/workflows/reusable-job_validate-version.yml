@@ -1,4 +1,4 @@
-name: Reusable Job - Validate Version
+name: Validate version number
 
 on:
   workflow_call:

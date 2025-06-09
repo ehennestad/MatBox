@@ -1,4 +1,4 @@
-name: Reusable Job - Verify Installation
+name: Verify toolbox installation
 
 on:
   workflow_call:

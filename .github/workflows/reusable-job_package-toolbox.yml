@@ -1,4 +1,4 @@
-name: Reusable Job - Package Toolbox
+name: Package toolbox
 
 on:
   workflow_call:

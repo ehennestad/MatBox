@@ -1,4 +1,4 @@
-name: Reusable Job - Run Tests
+name: Run Tests
 
 on:
   workflow_call:
@@ -52,7 +52,7 @@ jobs:
       - name: Install MatBox
         uses: ehennestad/matbox/.github/actions/install-matbox@make-release-workflow-reusable
 
-      # Runs all tests in the project.  Put results in a version specific subdirectory
+      # Run all tests in the project.  Put results in a version specific subdirectory
       - name: Run tests
         uses: ehennestad/matbox/.github/actions/test-code@make-release-workflow-reusable
         with:
