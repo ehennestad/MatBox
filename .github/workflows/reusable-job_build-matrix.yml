@@ -1,4 +1,13 @@
-name: Reusable Job - Build Matrix
+name: Build test matrix
+
+# Build matrix variables for running tests across different MATLAB releases.
+# Will return a json with the following variables:
+#   - MATLABVersion
+#   - pythonVersion (if needs_python == true)
+# The pythonVersion will be the latest compatible python version for each 
+# MATLAB release.
+# See also:
+#   .github/actions/build-test-matrix/action.yml
 
 on:
   workflow_call:
