@@ -1,0 +1,93 @@
+# Should only be used in a job where MATLAB and MatBox is installed in previous steps
+
+name: 'Update "tested with" badge'
+description: 'Generate the "tested with" badge for a release and push to `gh-badges` branch'
+
+inputs:
+  version_number:
+    description: 'Version number for the release'
+    required: true
+  tools_directory:
+    description: 'Directory containing badge tools'
+    required: false
+    default: 'tools'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Download test reports
+      uses: actions/download-artifact@v4
+      with:
+        pattern: reports-*
+        path: docs/reports
+        merge-multiple: true
+        
+    - name: Generate tested with badge
+      uses: matlab-actions/run-command@v2
+      with:
+        command: |
+          addpath(genpath("${{ inputs.tools_directory }}"));
+          versionNumberStr = "v${{ inputs.version_number }}";
+          if exist("createTestedWithBadgeforToolbox", "file")
+            createTestedWithBadgeforToolbox(versionNumberStr);
+          else
+            matbox.tasks.createTestedWithBadgeforToolbox(versionNumberStr, pwd);
+          end
+          
+    - name: Check if gh-badges branch exists
+      id: check_branch
+      shell: bash
+      run: |
+        if git ls-remote --heads origin gh-badges | grep -q gh-badges; then
+          echo "branch_exists=true" >> $GITHUB_OUTPUT
+          echo "gh-badges branch exists"
+        else
+          echo "branch_exists=false" >> $GITHUB_OUTPUT
+          echo "gh-badges branch does not exist"
+        fi
+
+    - name: Checkout existing gh-badges branch
+      if: steps.check_branch.outputs.branch_exists == 'true'
+      uses: actions/checkout@v4
+      with:
+        ref: gh-badges
+        path: gh-badges
+
+    - name: Create gh-badges branch if it doesn't exist
+      if: steps.check_branch.outputs.branch_exists == 'false'
+      shell: bash
+      run: |
+        echo "Creating gh-badges branch..."
+        mkdir -p gh-badges
+        cd gh-badges
+        git init
+        git remote add origin https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git
+        git checkout --orphan gh-badges
+        
+        # Copy initialization files
+        cp ${{ github.action_path }}/gh-badges-init/* .
+        
+        git add .
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git commit -m "Initialize gh-badges branch"
+        git push origin gh-badges
+        
+    - name: Push to gh-badges
+      shell: bash
+      run: |
+        mkdir -p gh-badges/.github/badges/v${{ inputs.version_number }}
+        cp .github/badges/v${{ inputs.version_number }}/tested_with.json gh-badges/.github/badges/v${{ inputs.version_number }}/tested_with.json
+        cd gh-badges
+                  
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+        # Only proceed with commit and push if changes are detected
+        if [[ $(git add .github/badges/* --dry-run | wc -l) -gt 0 ]]; then
+          git add .github/badges/*
+          git commit -m "Update tested with badge for release"
+          git push origin gh-badges
+        else
+          echo "Nothing to commit"
+        fi

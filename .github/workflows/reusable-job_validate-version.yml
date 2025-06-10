@@ -1,0 +1,47 @@
+name: Validate version number
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        type: string
+        required: false
+        description: 'Version number in major.minor.patch format (for manual triggers)'
+      ref_name:
+        type: string
+        required: false
+        description: 'GitHub ref name (for tag triggers)'
+      tools_directory:
+        type: string
+        default: 'tools'
+        description: 'Directory containing tools'
+    outputs:
+      version_number:
+        description: 'Validated version number'
+        value: ${{ jobs.validate_version.outputs.version_number }}
+
+jobs:
+  validate_version:
+    name: Validate version number
+    runs-on: ubuntu-latest
+    outputs:
+      version_number: ${{ steps.validate.outputs.version_number }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for MLToolboxInfo.json
+        run: |
+          if [ ! -f "${{ inputs.tools_directory }}/MLToolboxInfo.json" ]; then
+            echo "Error: MLToolboxInfo.json not found in ${{ inputs.tools_directory }} directory"
+            echo "This file is required for the release workflow to function properly"
+            exit 1
+          fi
+          echo "MLToolboxInfo.json found in ${{ inputs.tools_directory }} directory"
+
+      - name: Validate version
+        id: validate
+        uses: ehennestad/matbox/.github/actions/validate-version@make-release-workflow-reusable
+        with:
+          version: ${{ inputs.version }}
+          ref_name: ${{ inputs.ref_name }}

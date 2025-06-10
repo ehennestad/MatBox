@@ -1,0 +1,10 @@
+{
+    "name": "Prepare toolbox release",
+    "description": "Test toolbox code across supported MATLAB releases, package toolbox and create a draft release on GitHub. This workflow supports modular replacement for individual jobs.",
+    "iconName": "octicon gift",
+    "categories": [
+        "testing",
+        "utilities",
+        "MATLAB"
+    ]
+}

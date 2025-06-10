@@ -12,8 +12,8 @@ on:
         type: string
 
 jobs:
-  release:
-    name: Prepare toolbox release (MatBox)
+  reuse-workflow-release:
+    name: Prepare toolbox release
     uses: ehennestad/matbox/.github/workflows/reusable_release_workflow.yml@make-release-workflow-reusable
     with:
       # Do not change
@@ -33,8 +33,14 @@ jobs:
       # JSON array of MATLAB versions to test. If empty (default), versions will be
       # automatically determined from MLToolboxInfo.json. Example for manual override:
       # matlab_versions: '["R2023a", "R2023b", "R2024a"]'
-      matlab_versions: '["R2023a", "R2023b", "R2024a"]'
+      matlab_versions: '[]'
       
+      # Optional list of MATLAB products to install. Example if adding multiple 
+      # products (use ">" and one product per line):
+      # matlab_products: >
+      #   Image_Processing_Toolbox
+      #   Statistics_and_Machine_Learning_Toolbox
+
       # JSON object mapping MATLAB versions to Python versions. Use this to override
       # specific Python versions for certain MATLAB releases. Only specify versions
       # you want to override - others will use latest supported release from 
@@ -46,7 +52,7 @@ jobs:
       # Whether Python is needed for testing. Set to true if your toolbox requires
       # Python functionality. When false, Python setup is skipped and only MATLAB
       # versions are included in the test matrix
-      needs_python: true
+      needs_python: false
       
     secrets:
       # SSH deploy key for pushing to protected branches. Required for creating

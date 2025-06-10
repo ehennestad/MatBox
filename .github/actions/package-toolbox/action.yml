@@ -1,0 +1,52 @@
+name: 'Package MATLAB Toolbox'
+description: 'Package a MATLAB toolbox with specified version'
+
+inputs:
+  version_number:
+    description: 'Version number to use for packaging'
+    required: true
+  code_directory:
+    description: 'Directory containing the MATLAB code to package'
+    required: false
+    default: 'code'
+  tools_directory:
+    description: 'Directory containing packaging tools'
+    required: false
+    default: 'tools'
+
+outputs:
+  mltbx_path:
+    description: 'Path to the packaged MLTBX file'
+    value: ${{ steps.set_version.outputs.mltbx_path }}
+  toolbox_name:
+    description: 'Name of the toolbox from MLToolboxInfo.json'
+    value: ${{ steps.set_version.outputs.toolbox_name }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Package toolbox
+      id: package
+      uses: matlab-actions/run-command@v2
+      with:
+        command: |
+          addpath(genpath("${{ inputs.tools_directory }}"));
+          versionNumberStr = "v${{ inputs.version_number }}";
+          if exist("packageToolbox", "file")
+            [~, mltbxPath] = packageToolbox("specific", versionNumberStr);
+          else
+            [~, mltbxPath] = matbox.tasks.packageToolbox(pwd, "specific", versionNumberStr, ...
+              'SourceFolderName', "${{ inputs.code_directory }}");
+          end
+          
+          % Write the MLTBX path to a file for the next step
+          matbox.utility.filewrite('mltbx_path.txt', mltbxPath);
+          
+    - name: Set version number
+      id: set_version
+      shell: bash
+      run: |
+        toolboxName=$(jq -r '.ToolboxOptions.ToolboxName' "${{ inputs.tools_directory }}/MLToolboxInfo.json")
+        mltbxPath=$(cat mltbx_path.txt)
+        echo "toolbox_name=$toolboxName" >> $GITHUB_OUTPUT
+        echo "mltbx_path=$mltbxPath" >> $GITHUB_OUTPUT

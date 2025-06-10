@@ -1,0 +1,26 @@
+name: Create new release
+
+# Run workflow when a tag is created
+on:
+  push:
+    tags: 
+      - 'v[0-9]+.[0-9]+.[0-9]+' # Matches tags like v1.2.3
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number in major.minor.patch format, i.e 0.9.x'
+        required: true
+        type: string
+
+jobs:
+  release:
+    uses: ehennestad/matbox/.github/workflows/reusable_release_workflow.yml@make-release-workflow-reusable
+    with:
+      version: ${{ github.event.inputs.version }}
+      ref_name: ${{ github.ref_name }}
+      code_directory: 'code'
+      tools_directory: 'tools'
+      matlab_versions: '["R2023a", "R2023b", "R2024a", "R2024b"]'
+      python_versions: '{"R2023a": "3.10", "R2023b": "3.11", "R2024a": "3.11", "R2024b": "3.12"}'
+    secrets:
+      DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}

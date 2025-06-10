@@ -1,0 +1,243 @@
+name: 'Build Test Matrix'
+description: 'Determine MATLAB versions from toolbox info and build test matrix with Python versions'
+
+inputs:
+  tools_directory:
+    description: 'Directory containing MLToolboxInfo.json'
+    required: false
+    default: 'tools'
+  matlab_versions:
+    description: 'MATLAB versions to test (overrides auto-detection from MLToolboxInfo.json)'
+    required: false
+    default: '[]'
+  python_versions:
+    description: 'JSON object mapping MATLAB versions to Python versions (overrides for specific versions only)'
+    required: false
+    default: '{}'
+  include_python:
+    description: 'Whether to include Python versions in the test matrix'
+    required: false
+    default: 'true'
+
+outputs:
+  matrix:
+    description: 'Test matrix with MATLAB and Python versions'
+    value: ${{ steps.build.outputs.matrix }}
+  matlab_versions:
+    description: 'Determined MATLAB versions array'
+    value: ${{ steps.determine.outputs.matlab_versions }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Determine MATLAB versions from toolbox info
+      id: determine
+      shell: bash
+      run: |
+        # Load configuration from config.json
+        config_file="${{ github.action_path }}/config.json"
+        config_min_release=$(jq -r '.minimumMatlabRelease' "$config_file")
+        config_max_release=$(jq -r '.maximumMatlabRelease' "$config_file")
+        
+        # Get the latest MATLAB release from MathWorks API (this is our ceiling)
+        latest_matlab_release=$(curl -s "https://ssd.mathworks.com/supportfiles/ci/matlab-release/v0/latest")
+        echo "Latest MATLAB release from MathWorks API: $latest_matlab_release"
+        
+        # Read min and max MATLAB releases from MLToolboxInfo.json
+        min_release_raw=$(jq -r '.ToolboxOptions.MinimumMatlabRelease' "${{ inputs.tools_directory }}/MLToolboxInfo.json")
+        max_release_raw=$(jq -r '.ToolboxOptions.MaximumMatlabRelease' "${{ inputs.tools_directory }}/MLToolboxInfo.json")
+        
+        # Determine minimum release (use config default if not specified or if older than config minimum)
+        min_release="$config_min_release"
+        if [ "$min_release_raw" != "null" ] && [ "$min_release_raw" != "" ]; then
+          # Compare releases to ensure we don't go below config minimum
+          min_year=${min_release_raw:1:4}
+          min_letter=${min_release_raw:5:1}
+          config_min_year=${config_min_release:1:4}
+          config_min_letter=${config_min_release:5:1}
+          
+          # If the specified minimum is newer than config minimum, use it
+          if [ $min_year -gt $config_min_year ] || ([ $min_year -eq $config_min_year ] && [ "$min_letter" \> "$config_min_letter" ]); then
+            min_release="$min_release_raw"
+          fi
+        fi
+        
+        # Determine maximum release (use latest from API as ceiling)
+        max_release="$latest_matlab_release"
+        if [ "$max_release_raw" != "null" ] && [ "$max_release_raw" != "" ]; then
+          # Compare with latest release to enforce ceiling
+          max_year=${max_release_raw:1:4}
+          max_letter=${max_release_raw:5:1}
+          latest_year=${latest_matlab_release:1:4}
+          latest_letter=${latest_matlab_release:5:1}
+          
+          # If the specified maximum is older than latest, use the specified one
+          if [ $max_year -lt $latest_year ] || ([ $max_year -eq $latest_year ] && [ "$max_letter" \< "$latest_letter" ]); then
+            max_release="$max_release_raw"
+          fi
+        fi
+        
+        echo "Min release from MLToolboxInfo: $min_release_raw"
+        echo "Min release for GitHub Actions: $min_release"
+        echo "Max release from MLToolboxInfo: $max_release_raw"
+        echo "Max release for GitHub Actions: $max_release (capped at $latest_matlab_release)"
+        
+        # Generate MATLAB releases between min and max
+        generate_matlab_releases() {
+          local min_release=$1
+          local max_release=$2
+          
+          # Extract year and letter from releases (e.g., R2023a -> 2023, a)
+          min_year=${min_release:1:4}
+          min_letter=${min_release:5:1}
+          max_year=${max_release:1:4}
+          max_letter=${max_release:5:1}
+          
+          releases=""
+          
+          for year in $(seq $min_year $max_year); do
+            if [ $year -eq $min_year ] && [ $year -eq $max_year ]; then
+              # Same year - use range from min to max letter
+              start_letter=$min_letter
+              end_letter=$max_letter
+            elif [ $year -eq $min_year ]; then
+              # First year - start from min letter, go to 'b'
+              start_letter=$min_letter
+              end_letter="b"
+            elif [ $year -eq $max_year ]; then
+              # Last year - start from 'a', go to max letter
+              start_letter="a"
+              end_letter=$max_letter
+            else
+              # Middle years - include both 'a' and 'b'
+              start_letter="a"
+              end_letter="b"
+            fi
+            
+            # Add releases for this year
+            if [ "$start_letter" = "a" ]; then
+              if [ -n "$releases" ]; then releases="$releases,"; fi
+              releases="$releases\"R${year}a\""
+              if [ "$end_letter" = "b" ]; then
+                releases="$releases,\"R${year}b\""
+              fi
+            elif [ "$start_letter" = "b" ]; then
+              if [ -n "$releases" ]; then releases="$releases,"; fi
+              releases="$releases\"R${year}b\""
+            fi
+          done
+          
+          echo "[$releases]"
+        }
+        
+        matlab_versions=$(generate_matlab_releases "$min_release" "$max_release")
+        echo "Generated MATLAB versions: $matlab_versions"
+        echo "matlab_versions=$matlab_versions" >> $GITHUB_OUTPUT
+
+    - name: Build test matrix
+      id: build
+      shell: bash
+      run: |
+        # Check if input MATLAB versions are provided
+        input_matlab_versions='${{ inputs.matlab_versions }}'
+        if [ "$input_matlab_versions" != "" ] && [ "$input_matlab_versions" != "null" ] && [ "$input_matlab_versions" != "[]" ]; then
+          # Use input MATLAB versions but filter them by config min/max limits
+          config_file="${{ github.action_path }}/config.json"
+          config_min_release=$(jq -r '.minimumMatlabRelease' "$config_file")
+          
+          # Get the latest MATLAB release from MathWorks API (this is our ceiling)
+          latest_matlab_release=$(curl -s "https://ssd.mathworks.com/supportfiles/ci/matlab-release/v0/latest")
+          
+          # Function to compare MATLAB releases
+          is_version_in_range() {
+            local version=$1
+            local min_release=$2
+            local max_release=$3
+            
+            # Extract year and letter from version
+            version_year=${version:1:4}
+            version_letter=${version:5:1}
+            
+            # Extract min release components
+            min_year=${min_release:1:4}
+            min_letter=${min_release:5:1}
+            
+            # Extract max release components  
+            max_year=${max_release:1:4}
+            max_letter=${max_release:5:1}
+            
+            # Check if version is >= min_release
+            if [ $version_year -lt $min_year ] || ([ $version_year -eq $min_year ] && [ "$version_letter" \< "$min_letter" ]); then
+              return 1
+            fi
+            
+            # Check if version is <= max_release
+            if [ $version_year -gt $max_year ] || ([ $version_year -eq $max_year ] && [ "$version_letter" \> "$max_letter" ]); then
+              return 1
+            fi
+            
+            return 0
+          }
+          
+          # Filter input versions to only include those within config limits
+          filtered_versions=""
+          for version in $(echo $input_matlab_versions | jq -r '.[]'); do
+            if is_version_in_range "$version" "$config_min_release" "$latest_matlab_release"; then
+              if [ -n "$filtered_versions" ]; then
+                filtered_versions="$filtered_versions,"
+              fi
+              filtered_versions="$filtered_versions\"$version\""
+            else
+              echo "Excluding $version (outside config range $config_min_release to $latest_matlab_release)"
+            fi
+          done
+          
+          matlab_versions="[$filtered_versions]"
+          echo "Using input MATLAB versions (filtered by config limits): $matlab_versions"
+        else
+          # Use auto-determined MATLAB versions from previous step
+          matlab_versions='${{ steps.determine.outputs.matlab_versions }}'
+          echo "Using auto-determined MATLAB versions: $matlab_versions"
+        fi
+        
+        # Check if Python should be included in the matrix
+        include_python='${{ inputs.include_python }}'
+        
+        if [ "$include_python" = "true" ]; then
+          # Load Python versions from config file
+          config_file="${{ github.action_path }}/config.json"
+          config_python_versions=$(jq -c '.pythonVersions' "$config_file")
+          
+          # Merge input python_versions overrides with config defaults
+          input_python_versions='${{ inputs.python_versions }}'
+          if [ "$input_python_versions" != "" ] && [ "$input_python_versions" != "null" ] && [ "$input_python_versions" != "{}" ]; then
+            # Merge input overrides with config defaults
+            python_versions=$(echo "$config_python_versions $input_python_versions" | jq -s '.[0] * .[1]')
+            echo "Using config Python versions with input overrides: $python_versions"
+          else
+            python_versions="$config_python_versions"
+            echo "Using config Python versions: $python_versions"
+          fi
+          
+          # Build the matrix include section dynamically
+          include_items=""
+          for version in $(echo $matlab_versions | jq -r '.[]'); do
+            python_version=$(echo $python_versions | jq -r --arg v "$version" '.[$v]')
+            if [ "$python_version" != "null" ]; then
+              if [ -n "$include_items" ]; then
+                include_items="$include_items,"
+              fi
+              include_items="$include_items{\"MATLABVersion\":\"$version\",\"pythonVersion\":\"$python_version\"}"
+            fi
+          done
+          
+          # Create the full matrix with Python versions
+          matrix="{\"MATLABVersion\":$matlab_versions,\"include\":[$include_items]}"
+        else
+          # Create matrix without Python versions
+          matrix="{\"MATLABVersion\":$matlab_versions}"
+          echo "Python versions excluded from matrix"
+        fi
+        
+        echo "Generated matrix: $matrix"
+        echo "matrix=$matrix" >> $GITHUB_OUTPUT

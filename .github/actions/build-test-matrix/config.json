@@ -1,0 +1,15 @@
+{
+  "minimumMatlabRelease": "R2021a",
+  "maximumMatlabRelease": "latest",
+  "pythonVersions": {
+    "R2021a": "3.8",
+    "R2021b": "3.9",
+    "R2022a": "3.9",
+    "R2022b": "3.10",
+    "R2023a": "3.10",
+    "R2023b": "3.11",
+    "R2024a": "3.11",
+    "R2024b": "3.12",
+    "R2025a": "3.12"
+  }
+}

@@ -1,0 +1,223 @@
+name: Reusable Release Workflow
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        type: string
+        required: false
+        description: 'Version number in major.minor.patch format (for manual triggers)'
+      ref_name:
+        type: string
+        required: false
+        description: 'GitHub ref name (for tag triggers)'
+      code_directory:
+        type: string
+        default: 'code'
+        description: 'Directory containing source code'
+      tools_directory:
+        type: string
+        default: 'tools'
+        description: 'Directory containing tools'
+      matlab_products:
+        description: Optional list of MATLAB products to install.
+        type: string
+        default: ''
+      matlab_versions:
+        type: string
+        default: '[]'
+        description: 'JSON array of MATLAB versions to test (optional - will be determined from MLToolboxInfo.json if not provided)'
+      python_versions:
+        type: string
+        default: ''
+        description: 'JSON object mapping MATLAB versions to Python versions'
+      needs_python:
+        type: boolean
+        default: false
+        description: 'Whether Python is needed for testing (controls if Python versions are included in test matrix)'
+    secrets:
+      DEPLOY_KEY:
+        required: true
+        description: 'SSH deploy key for pushing to protected branches'
+
+jobs:
+  validate_version:
+    name: Validate version number
+    runs-on: ubuntu-latest
+    outputs:
+      version_number: ${{ steps.validate.outputs.version_number }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for MLToolboxInfo.json
+        run: |
+          if [ ! -f "${{ inputs.tools_directory }}/MLToolboxInfo.json" ]; then
+            echo "Error: MLToolboxInfo.json not found in ${{ inputs.tools_directory }} directory"
+            echo "This file is required for the release workflow to function properly"
+            exit 1
+          fi
+          echo "MLToolboxInfo.json found in ${{ inputs.tools_directory }} directory"
+
+      - name: Validate version
+        id: validate
+        uses: ehennestad/matbox/.github/actions/validate-version@make-release-workflow-reusable
+        with:
+          version: ${{ inputs.version }}
+          ref_name: ${{ inputs.ref_name }}
+
+  build_matrix:
+    name: Build release test matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.build_matrix.outputs.matrix }}
+      matlab_versions: ${{ steps.build_matrix.outputs.matlab_versions }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build test matrix
+        id: build_matrix
+        uses: ehennestad/matbox/.github/actions/build-test-matrix@make-release-workflow-reusable
+        with:
+          tools_directory: ${{ inputs.tools_directory }}
+          matlab_versions: ${{ inputs.matlab_versions }}
+          python_versions: ${{ inputs.python_versions }}
+          include_python: ${{ inputs.needs_python }}
+
+  test:
+    name: Run MATLAB tests (${{ matrix.MATLABVersion }})
+    needs: [validate_version, build_matrix]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.build_matrix.outputs.matrix) }}
+
+    steps:
+      # Checks-out the repository under $GITHUB_WORKSPACE, so the job can access it
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        if: ${{ inputs.needs_python }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.pythonVersion }}
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v2
+        with:
+          release: ${{ matrix.MATLABVersion }}
+          products: ${{ inputs.matlab_products }}
+
+
+      - name: Install MatBox
+        uses: ehennestad/matbox/.github/actions/install-matbox@make-release-workflow-reusable
+
+      # Runs all tests in the project.  Put results in a version specific subdirectory
+      - name: Run tests
+        uses: ehennestad/matbox/.github/actions/test-code@make-release-workflow-reusable
+        with:
+          code_directory: ${{ inputs.code_directory }}
+          tools_directory: ${{ inputs.tools_directory }}
+          report_subdirectory: ${{ matrix.MATLABVersion }}
+          create_badge: false
+
+      # Save the contents of the report directory from each release into an artifact.
+      - name: Save report directory
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reports-${{ matrix.MATLABVersion }}
+          path: docs/reports
+
+  release:
+    name: Package toolbox and create draft release
+    needs: [test, validate_version]
+    runs-on: ubuntu-latest
+    outputs:
+      toolbox_name: ${{ steps.package.outputs.toolbox_name }}
+    steps:
+      - name: Checkout repository using deploy key
+        uses: actions/checkout@v4
+        with:
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v2
+
+      - name: Install MatBox
+        uses: ehennestad/matbox/.github/actions/install-matbox@make-release-workflow-reusable
+
+      # Generate badge
+      - name: Generate "tested with" badge
+        uses: ehennestad/matbox/.github/actions/update-badges@make-release-workflow-reusable
+        with:
+          version_number: ${{ needs.validate_version.outputs.version_number }}
+          tools_directory: ${{ inputs.tools_directory }}
+
+      # Package toolbox
+      - name: Package toolbox
+        id: package
+        uses: ehennestad/matbox/.github/actions/package-toolbox@make-release-workflow-reusable
+        with:
+          version_number: ${{ needs.validate_version.outputs.version_number }}
+          code_directory: ${{ inputs.code_directory }}
+          tools_directory: ${{ inputs.tools_directory }}
+
+      # Save the MLTBX.
+      - name: Save packaged toolbox
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.package.outputs.toolbox_name }}.mltbx
+          path: ${{ steps.package.outputs.mltbx_path }}
+          retention-days: 1
+
+      # Create GitHub release
+      - name: Create GitHub release
+        uses: ehennestad/matbox/.github/actions/create-github-release@make-release-workflow-reusable
+        with:
+          version_number: ${{ needs.validate_version.outputs.version_number }}
+          mltbx_path: ${{ steps.package.outputs.mltbx_path }}
+
+  verify_installation:
+    name: Verify toolbox installation (${{ matrix.os }})
+    needs: [release, validate_version]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Set up MATLAB
+        uses: matlab-actions/setup-matlab@v2
+
+      - name: Download packaged toolbox
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.release.outputs.toolbox_name }}.mltbx
+
+      - name: Install and verify toolbox
+        uses: matlab-actions/run-command@v2
+        with:
+          command: |
+            % Get the MLTBX file name
+            mltbxFiles = dir('*.mltbx');
+            if isempty(mltbxFiles)
+                error('No MLTBX file found');
+            end
+            mltbxFile = mltbxFiles(1).name;
+            
+            % Install the toolbox
+            fprintf('Installing toolbox: %s\n', mltbxFile);
+            agreeToLicense = true;
+            installedToolbox = matlab.addons.install(mltbxFile, agreeToLicense);
+            
+            % Verify installation
+            fprintf('Toolbox installed successfully:\n');
+            fprintf('  Name: %s\n', installedToolbox.Name);
+            fprintf('  Version: %s\n', installedToolbox.Version);
+            fprintf('  Identifier: %s\n', installedToolbox.Identifier);
+
+            fprintf('Verification completed successfully on %s\n', computer);

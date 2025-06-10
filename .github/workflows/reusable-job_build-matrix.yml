@@ -1,0 +1,57 @@
+name: Build test matrix
+
+# Build matrix variables for running tests across different MATLAB releases.
+# Will return a json with the following variables:
+#   - MATLABVersion
+#   - pythonVersion (if needs_python == true)
+# The pythonVersion will be the latest compatible python version for each 
+# MATLAB release.
+# See also:
+#   .github/actions/build-test-matrix/action.yml
+
+on:
+  workflow_call:
+    inputs:
+      tools_directory:
+        type: string
+        default: 'tools'
+        description: 'Directory containing tools'
+      matlab_versions:
+        type: string
+        default: '[]'
+        description: 'JSON array of MATLAB versions to test (optional - will be determined from MLToolboxInfo.json if not provided)'
+      python_versions:
+        type: string
+        default: ''
+        description: 'JSON object mapping MATLAB versions to Python versions'
+      needs_python:
+        type: boolean
+        default: false
+        description: 'Whether Python is needed for testing (controls if Python versions are included in test matrix)'
+    outputs:
+      matrix:
+        description: 'Test matrix JSON'
+        value: ${{ jobs.build_matrix.outputs.matrix }}
+      matlab_versions:
+        description: 'MATLAB versions array'
+        value: ${{ jobs.build_matrix.outputs.matlab_versions }}
+
+jobs:
+  build_matrix:
+    name: Build release test matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.build_matrix.outputs.matrix }}
+      matlab_versions: ${{ steps.build_matrix.outputs.matlab_versions }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build test matrix
+        id: build_matrix
+        uses: ehennestad/matbox/.github/actions/build-test-matrix@make-release-workflow-reusable
+        with:
+          tools_directory: ${{ inputs.tools_directory }}
+          matlab_versions: ${{ inputs.matlab_versions }}
+          python_versions: ${{ inputs.python_versions }}
+          include_python: ${{ inputs.needs_python }}

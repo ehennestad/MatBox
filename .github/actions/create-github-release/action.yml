@@ -1,0 +1,64 @@
+name: 'Create GitHub Release'
+description: 'Create a GitHub release with packaged toolbox'
+
+inputs:
+  version_number:
+    description: 'Version number for the release'
+    required: true
+  mltbx_path:
+    description: 'Path to the MLTBX file'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Commit updated Contents.m file
+      shell: bash
+      continue-on-error: true
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git status
+        git add code/Contents.m
+        git commit -m "Final check-ins for release v${{ inputs.version_number }} [skip-ci]"
+        git fetch
+        git push
+        
+    - name: Update tag
+      shell: bash
+      if: always()
+      continue-on-error: true
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+        # Delete the existing tag locally if it exists
+        if git tag -l "v${{ inputs.version_number }}" | grep -q "v${{ inputs.version_number }}"; then
+          echo "Deleting existing local tag v${{ inputs.version_number }}"
+          git tag -d "v${{ inputs.version_number }}"
+        else
+          echo "Local tag v${{ inputs.version_number }} does not exist"
+        fi
+        
+        # Delete the existing tag remotely if it exists
+        if git ls-remote --tags origin | grep -q "refs/tags/v${{ inputs.version_number }}"; then
+          echo "Deleting existing remote tag v${{ inputs.version_number }}"
+          git push origin --delete "v${{ inputs.version_number }}"
+        else
+          echo "Remote tag v${{ inputs.version_number }} does not exist"
+        fi
+      
+        # Create the tag with a message, including [skip ci] to prevent CI workflows
+        git tag -a "v${{ inputs.version_number }}" -m "Release v${{ inputs.version_number }} [skip ci]" 
+      
+        # Push the new tag to the remote repository
+        git push origin "v${{ inputs.version_number }}"
+        
+    - name: Create GitHub release
+      uses: ncipollo/release-action@v1
+      with:
+        draft: true        
+        artifacts: "${{ inputs.mltbx_path }}"
+        tag: "v${{ inputs.version_number }}"
+        generateReleaseNotes: true
+        body: "![MATLAB Versions Tested](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2F${{ github.repository }}%2Fgh-badges%2F.github%2Fbadges%2Fv${{ inputs.version_number }}%2Ftested_with.json)"
