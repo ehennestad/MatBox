@@ -22,6 +22,9 @@ function requirements = getRequirements(packageRootDirectory)
 
     isEmpty = cellfun('isempty', requirements);
     requirements(isEmpty) = [];
+    
+    isComment = cellfun(@(str) startsWith(str, "#"), requirements);
+    requirements(isComment) = [];
 
     requirements = parseRequirements(requirements);
 end
