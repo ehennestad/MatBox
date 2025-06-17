@@ -7,7 +7,7 @@ function testToolbox(projectRootDirectory, options)
         options.HtmlReports (1,1) logical = false
         options.ReportSubdirectory (1,1) string = ""
         options.SourceFolderName (1,1) string = "code"
-        options.ToolsFolderName (1,1) string = "tools"
+        options.TestsFolderName (1,1) string = missing
         options.CoverageRootFolder (1,1) string = missing
         options.CoverageFileList (1,:) string = string.empty
         options.CreateBadge (1,1) logical = true
@@ -22,7 +22,11 @@ function testToolbox(projectRootDirectory, options)
     import matlab.unittest.plugins.codecoverage.CoberturaFormat;
     import matlab.unittest.selectors.HasTag;
     
-    testFolder = fullfile(projectRootDirectory, options.ToolsFolderName, "tests");
+    if ~options.TestsFolderName
+        testFolder = fullfile(projectRootDirectory, options.TestsFolderName);
+    else
+        testFolder = fullfile(projectRootDirectory, "tools", "tests"); % Backwards compatibility - todo: remove
+    end
     codeFolder = fullfile(projectRootDirectory, options.SourceFolderName);
     oldpath = addpath(genpath(testFolder), genpath(codeFolder));
     finalize = onCleanup(@()(path(oldpath)));
