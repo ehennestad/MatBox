@@ -24,8 +24,7 @@ runs:
             testToolbox();
           else
             matbox.tasks.testToolbox(pwd, ...
-                "SourceFolderName", "${{ inputs.code_directory }}", ...
-                "ToolsFolderName", "${{ inputs.tools_directory }}");
+                "SourceFolderName", "${{ inputs.code_directory }}");
           end
 
     - name: Publish test results
