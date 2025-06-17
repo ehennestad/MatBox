@@ -22,7 +22,7 @@ function testToolbox(projectRootDirectory, options)
     import matlab.unittest.plugins.codecoverage.CoberturaFormat;
     import matlab.unittest.selectors.HasTag;
     
-    if ~options.TestsFolderName
+    if ~ismissing(options.TestsFolderName)
         testFolder = fullfile(projectRootDirectory, options.TestsFolderName);
     else
         testFolder = fullfile(projectRootDirectory, "tools", "tests"); % Backwards compatibility - todo: remove
