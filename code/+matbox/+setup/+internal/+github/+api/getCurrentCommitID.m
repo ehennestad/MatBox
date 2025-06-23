@@ -23,10 +23,18 @@ function [commitID, commitDetails] = getCurrentCommitID(repositoryName, options)
     % commitID = data.sha;
 
     % More specific api call to only get the sha-1 hash:
-    requestOpts = weboptions();
-    requestOpts.HeaderFields = {'Accept', 'application/vnd.github.sha'};
+    customHeaders = {'Accept', 'application/vnd.github.sha'};
+    requestOpts =  matbox.setup.internal.github.api.getGithubWebOptions(customHeaders);
 
-    data = webread(apiURL, requestOpts);
+    try
+        data = webread(apiURL, requestOpts);
+    catch ME
+        if contains(ME.message, 'rate limit')
+            error('GitHub API rate limit exceeded. Consider using a GITHUB_TOKEN environment variable.');
+        else
+            rethrow(ME);
+        end
+    end
     commitID = char(data');
 
     if nargout == 2
