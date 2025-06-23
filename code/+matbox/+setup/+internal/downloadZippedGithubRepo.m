@@ -12,12 +12,17 @@ function repoFolder = downloadZippedGithubRepo(githubUrl, targetFolder, updateFl
     [~, ~, fileType] = fileparts(githubUrl);
     tempFilepath = [tempname, fileType];
     
+    % Get web options with GitHub authentication if available
+    options = matbox.setup.internal.github.api.getGithubWebOptions();
+    
     % Download the file containing the addon toolbox
     try
-        tempFilepath = websave(tempFilepath, githubUrl);
+        tempFilepath = websave(tempFilepath, githubUrl, options);
         fileCleanupObj = onCleanup( @(fname) delete(tempFilepath) );
     catch ME
-        if throwErrorIfFails
+        if contains(ME.message, 'rate limit')
+            error('GitHub API rate limit exceeded. Consider using a GITHUB_TOKEN environment variable.');
+        elseif throwErrorIfFails
             rethrow(ME)
         end
     end

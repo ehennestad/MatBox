@@ -23,15 +23,10 @@ function reposStruct = getOrganizationRepositories(organizationName)
     % GitHub API endpoint for organization repositories
     url = ['https://api.github.com/orgs/' organizationName '/repos'];
     
-    % Create the web options with the authorization header
-    options = weboptions('HeaderFields', {'Authorization', ['token ' token]}, ...
-                         'ContentType', 'json', ...
-                         'UserAgent', 'MATLAB WebClient', ...
-                         'Timeout', 15);
-
-    if isempty(token)
-        options.HeaderFields = [];
-    end
+    % Get web options with GitHub authentication if available
+    options =  matbox.setup.internal.github.api.getGithubWebOptions();
+    options.Timeout = 15;
+    options.ContentType = 'json';
     
     % Fetch repositories information from GitHub
     data = webread(url, options);
