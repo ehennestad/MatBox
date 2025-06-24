@@ -31,7 +31,7 @@ function toolboxOptions = createToolboxOptions(projectRootDirectory, versionNumb
     end
 
     % Initialize the ToolboxOptions from the code folder and initial metadata
-    toolboxFolder = fullfile(projectRootDirectory, "code");
+    toolboxFolder = fullfile(projectRootDirectory, options.SourceFolderName);
     opts = matlab.addons.toolbox.ToolboxOptions(toolboxFolder, identifier, toolboxInfo);
     
     % Set the toolbox version
