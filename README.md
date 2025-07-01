@@ -149,12 +149,6 @@ A: See "Basic Usage" above.
 
 ---
 
-## 🤝 Contributing
-
-Please see [CONTRIBUTING.md](.github/CONTRIBUTING.md).
-
----
-
 ## 📝 License
 
 This project is available under the MIT License. See [LICENSE](LICENSE).
