@@ -14,7 +14,7 @@ end
 
 %% === TASKS ===
 
-function test(~)
+function testTask(~)
     % TEST Run tests for the toolbox
     disp("Running tests with MatBox...");
     if exist('tools/tasks/testToolbox.m', 'file')
@@ -26,7 +26,7 @@ function test(~)
     end
 end
 
-function package(~)
+function packageTask(~)
     % PACKAGE Package the MATLAB toolbox
     disp("Packaging toolbox with MatBox...");
     if exist('tools/tasks/packageToolbox.m', 'file')
@@ -37,7 +37,7 @@ function package(~)
     end
 end
 
-function installRequirements(~)
+function installRequirementsTask(~)
     % INSTALLREQS Install requirements from requirements.txt
     disp("Installing requirements...");
     if exist('code/+matbox/installRequirements.m', 'file')
