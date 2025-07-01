@@ -17,18 +17,20 @@ function repoTargetFolder = installGithubRepository(repositoryUrl, branchName, o
         repositoryUrl (1,1) string
         branchName (1,1) string = "main"
         options.Update (1,1) logical = false
+        options.UseGit (1,1) logical = false
         options.InstallationLocation (1,1) string = matbox.setup.internal.getDefaultAddonFolder()
         options.AddToPath (1,1) logical = true
         options.AddToPathWithSubfolders (1,1) logical = true
         options.Verbose (1,1) logical = true
     end
 
-    % Branch name might be set to missing from upstream callers
-    % Todo: Should default to "default" and use git api to resolve name of
-    % default branch
-    if ismissing(branchName); branchName = "main"; end
-
-    [ownerName, repositoryName] = matbox.setup.internal.github.parseRepositoryURL(repositoryUrl);
+    [ownerName, repositoryName] = ...
+        matbox.setup.internal.github.parseRepositoryURL(repositoryUrl);
+    
+    if ismissing(branchName) % - Get default branchname
+        branchName = matbox.setup.internal.github.api.getDefaultBranch(...
+            ownerName, repositoryName);
+    end
     
     [repoExists, repoFolderLocation] = ...
         matbox.setup.internal.pathtool.lookForRepository(repositoryName, branchName);
