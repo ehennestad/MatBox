@@ -82,6 +82,53 @@ MatBox is a streamlined solution for managing MATLAB toolbox development: automa
 
 ---
 
+## 🔧 Customizing Tasks
+
+MatBox lets you override or extend its default behavior by adding custom task functions to your repository’s `tools/` directory. This is especially useful if you want to:
+
+- Run additional CI steps (like linting, style checks, or artifact generation)
+- Customize how tests or packaging are run for your toolbox
+- Add project-specific setup or teardown logic
+
+### How it Works
+
+When a workflow or CI job calls a MatBox task (like `matbox.tasks.testToolbox`), it will check if a function with the same name exists in your `tools/` directory and use that version instead of the built-in one.
+
+**For example:**  
+If you create a `tools/testToolbox.m` file, your version will run instead of the default MatBox test task.
+
+### Example: Custom Test Task
+
+```matlab
+% File: tools/testToolbox.m
+
+function testToolbox(varargin)
+    % Project-specific test setup (optional)
+    disp('Running custom project tests...');
+    % Call the core MatBox test task (optional)
+    matbox.tasks.testToolbox(pwd, varargin{:});
+    % Add any extra steps here
+end
+```
+
+### Other Common Task Overrides
+
+You can override any task by creating a function with the same name as the task in your `tools/` directory, e.g.:
+
+- `testToolbox.m` &ensp;→&ensp; Custom test runner
+- `packageToolbox.m` &ensp;→&ensp; Custom packaging logic
+- `codecheckToolbox.m` &ensp;→&ensp; Custom code analysis
+
+### Best Practices
+
+- Call the original MatBox task from your override if you want to extend (not replace) its behavior.
+- Use the `tools/` directory to keep custom CI logic organized and version-controlled.
+- Document your custom tasks for future contributors!
+
+For practical examples, see the [openMINDS-MATLAB-UI](https://github.com/ehennestad/openMINDS-MATLAB-UI/tree/main/tools/tasks) repository.
+
+---
+
 ## 🏁 Example Repositories
 
 - [dropbox-sdk-matlab](https://github.com/ehennestad/dropbox-sdk-matlab)
