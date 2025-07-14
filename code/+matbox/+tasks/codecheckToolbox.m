@@ -8,6 +8,7 @@ function issues = codecheckToolbox(projectRootDir, options)
         options.SaveReport (1,1) logical = true
         options.FilesToCheck (1,:) string = string.empty
         options.FoldersToCheck (1,:) string = string.empty
+        options.ShowIssues (1,1) logical = false
     end
 
     filesToCheck = matbox.tasks.internal.resolveFiles(projectRootDir, ...
@@ -42,22 +43,20 @@ function issues = codecheckToolbox(projectRootDir, options)
             export(issues, fullfile(reportDirectory, 'code_issues'));
         end
     end
-    fprintf("Checked %d files with %d issue(s).\n", ...
-        numel(filesToCheck), issueCount.Total)
+
+    displayIssuesSummary(filesToCheck, issueCount)
 
     if options.CreateBadge
         createCodeIssuesBadge(issueCount, projectRootDir) % Local function
     end
 
-    if issueCount.Total > 0
+    if issueCount.Total > 0 && options.ShowIssues
         if verLessThan('matlab','9.13') %#ok<VERLESSMATLAB>
             % pre R2022b, run checkcode without a RHS argument to display issues
             checkcode(filesToCheck)
         else
             % R2022b and later, just display issues
-            if ~nargout
-                disp(issues)
-            end
+            displayIssuesTable(issues.Issues)
         end
 
         % Throw error if unresolved issues are present at specified severity
@@ -99,4 +98,27 @@ function ME = throwUnresolvedCodeIssuesException()
         );
 
     throw(ME)
+end
+
+function displayIssuesSummary(filesToCheck, issueCount)
+    fprintf("Checked %d files with %d issue(s).\n", ...
+        numel(filesToCheck), issueCount.Total)
+    fprintf( ...
+        "  Errors: %d\n" + ...
+        "  Warnings: %d\n" + ...
+        "  Info: %d\n", issueCount.Error, issueCount.Warning, issueCount.Info);
+end
+
+function displayIssuesTable(issuesTable)
+    skipVars = [...
+        "Fixability", ...
+        "CheckID", ...
+        "LineStart", ...
+        "LineEnd", ...
+        "ColumnStart", ...
+        "ColumnEnd", ...
+        "FullFilename"];
+    issuesTable = removevars(issuesTable, skipVars);
+
+    disp(issuesTable)
 end
