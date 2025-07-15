@@ -11,7 +11,7 @@ function testToolbox(projectRootDirectory, options)
         options.CoverageRootFolder (1,1) string = missing
         options.CoverageFileList (1,:) string = string.empty
         options.CreateBadge (1,1) logical = true
-        options.Verbosity (1,1) matlab.unittest.Verbosity = "Detailed"
+        options.Verbosity (1,1) matlab.unittest.Verbosity = "Terse"
     end
     
     import matlab.unittest.TestSuite;
@@ -61,8 +61,8 @@ function testToolbox(projectRootDirectory, options)
             suite = suite.selectIf(~HasTag("Graphical"));
         end
     end
-
-    runner = TestRunner.withTextOutput('OutputDetail', options.Verbosity);
+    
+    runner = TestRunner.withTextOutput('Verbosity', options.Verbosity);
 
     codecoverageFileName = fullfile(outputDirectory, "codecoverage.xml");
         
@@ -101,7 +101,9 @@ function testToolbox(projectRootDirectory, options)
         createTestResultBadge(results, projectRootDirectory) % local function
     end
     
-    results.assertSuccess()
+    displayTestResultSummary(results)
+
+    results.assertSuccess();
 end
 
 function createTestResultBadge(results, projectRootDirectory)
@@ -121,4 +123,15 @@ function createTestResultBadge(results, projectRootDirectory)
         message = sprintf("%d/%d passed", numPassedTests, numTests);
     end
     matbox.utility.createBadgeSvg("tests", message, color, projectRootDirectory)
+end
+
+function displayTestResultSummary(testResults)
+    fprintf(['Test result summary:\n', ...
+        '   %d Passed, %d Failed, %d Incomplete.\n', ...
+        '   %.04f seconds testing time.\n'], ...
+        sum([testResults.Passed]), ...
+        sum([testResults.Failed]), ...
+        sum([testResults.Incomplete]), ...
+        sum([testResults.Duration]) ...
+        )
 end
