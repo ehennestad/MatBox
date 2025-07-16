@@ -25,7 +25,12 @@ function S = getRequiredAdditionalSoftwareStructForToolboxOptions(githubRepo)
 
     for iAddon = 1:numAddons
         [owner, name, branchName] = matbox.setup.internal.github.parseRepositoryURL(githubRepo(iAddon));
-        if ismissing(branchName); branchName = "main"; end
+
+        if ismissing(branchName) % - Get default branchname
+            branchName = matbox.setup.internal.github.api.getDefaultBranch(...
+                ownerName, repositoryName);
+        end
+
         S(iAddon).Name = name;
         S(iAddon).Platform = platformNames(1);
 
