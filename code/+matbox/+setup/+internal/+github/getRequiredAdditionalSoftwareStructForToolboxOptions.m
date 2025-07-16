@@ -28,7 +28,7 @@ function S = getRequiredAdditionalSoftwareStructForToolboxOptions(githubRepo)
 
         if ismissing(branchName) % - Get default branchname
             branchName = matbox.setup.internal.github.api.getDefaultBranch(...
-                ownerName, repositoryName);
+                owner, name);
         end
 
         S(iAddon).Name = name;
