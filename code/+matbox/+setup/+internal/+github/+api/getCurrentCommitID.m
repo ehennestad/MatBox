@@ -30,7 +30,13 @@ function [commitID, commitDetails] = getCurrentCommitID(repositoryName, options)
         data = webread(apiURL, requestOpts);
     catch ME
         if contains(ME.message, 'rate limit')
-            error('GitHub API rate limit exceeded. Consider using a GITHUB_TOKEN environment variable.');
+            if isempty(getenv("GITHUB_TOKEN"))
+                error(['GitHub API rate limit exceeded. Consider using ', ...
+                    'a GITHUB_TOKEN environment variable.']);
+            else
+                error(['GitHub API rate limit exceeded. The following ', ...
+                    'GitHub token was used: %s\n'], getenv("GITHUB_TOKEN"))
+            end
         else
             rethrow(ME);
         end
