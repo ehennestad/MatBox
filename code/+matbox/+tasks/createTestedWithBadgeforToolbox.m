@@ -11,23 +11,38 @@ function createTestedWithBadgeforToolbox(versionNumber, projectRootDirectory)
     
     releasesTestedWith = "";
     releasesFailed = 0;
+
     % Go through the R2* directories and extract the failed test info
-    releaseDirectoryInfo = dir(fullfile(projectRootDirectory, "docs", "reports"));
-    % Select only folders
-    releaseDirectoryInfo = releaseDirectoryInfo([releaseDirectoryInfo.isdir]);
-    % with a name like R2*
-    releaseDirectoryInfo = releaseDirectoryInfo(startsWith(string({releaseDirectoryInfo.name}), "R2", "IgnoreCase", true));
+    testResultsListing = dir(fullfile(projectRootDirectory, ...
+        "docs", "reports", "**", "test-results.xml"));
+
+    assert( ~isempty(testResultsListing), ...
+        'MATBOX:BadgeCreation:NoTestResultsFound', ...
+        'No test results were found\n' )
+    
+    testResultFolders = string({testResultsListing.folder});
+    releaseNames = getReleaseNamesFromFolderPaths(testResultFolders);
+
+    assert(all(startsWith(releaseNames, "R2")), ...
+        'MATBOX:BadgeCreation:ReleaseDetectionFailed', ...
+        'Failed to detect release names for one or more test results.')
 
     % Sort releases newest to oldest
-    [~, ix] = sort(string({releaseDirectoryInfo.name}), "descend");
-    releaseDirectoryInfo = releaseDirectoryInfo(ix);
+    [~, sortedIndices] = sort(releaseNames);
+    testResultsListing = testResultsListing(sortedIndices);
+
+    testResultFiles = string(...
+        fullfile({testResultsListing.folder}, {testResultsListing.name}) ...
+        );
     
-    % go through the directories and check if tests passed
-    for iReleaseDirectoryInfo = 1:numel(releaseDirectoryInfo)
-        releaseName = string(releaseDirectoryInfo(iReleaseDirectoryInfo).name);
-        testresultsFilename = fullfile(releaseDirectoryInfo(iReleaseDirectoryInfo).folder, releaseName, "test-results.xml");
+    % Go through the directories and check if tests passed
+    for i = 1:numel(testResultFiles)
+        releaseName = releaseNames(i);
+        currentFile = testResultFiles(i);
+        
         % Read the test results file
-        testResults = readstruct(testresultsFilename);
+        testResults = readstruct(currentFile);
+        
         % If no tests failed, errors, or were skipped, then add it to the list
         if sum([testResults.testsuite.errorsAttribute]) == 0 ...
            && sum([testResults.testsuite.failuresAttribute]) == 0 ...
@@ -57,4 +72,10 @@ function createTestedWithBadgeforToolbox(versionNumber, projectRootDirectory)
         matbox.utility.writeBadgeJSONFile("tested with", releasesTestedWith, badgecolor,...
             "OutputFolder", outputDirectory)
     end
+end
+
+function result = getReleaseNamesFromFolderPaths(folderPaths)
+    [~, folderNames] = fileparts( folderPaths );
+    releaseNames = regexp(folderNames, 'R\d{4}[ab]', 'match');
+    result = [releaseNames{:}];
 end
