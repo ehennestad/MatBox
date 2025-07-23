@@ -76,6 +76,7 @@ end
 
 function result = getReleaseNamesFromFolderPaths(folderPaths)
     [~, folderNames] = fileparts( folderPaths );
-    releaseNames = regexp(folderNames, 'R\d{4}[ab]', 'match');
+    releaseNames = regexp(folderPaths, 'R\d{4}[ab]', 'match');
     result = [releaseNames{:}];
+    disp(result)
 end
