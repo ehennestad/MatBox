@@ -59,6 +59,14 @@ function [newVersion, mltbxPath] = packageToolbox(projectRootDirectory, releaseT
     % Write contents header
     matbox.utility.updateContentsHeader(sourceFolderPath, contentHeader);
 
+    % Due to a "bug" in MATLAB, if a folder does not contain any m-files,
+    % the packaging fails. To work around this we temporarily create empty
+    % m-files in any affected folder, and add these file(s) to the
+    % ToolboxFiles. The files are deleted before the actual packaging and
+    % that causes a warning, which we therefore ignore here:
+    warnState = warning('off', 'MATLAB:toolbox_packaging:packaging:FilesDoNotExistWarning');
+    cleanupObj = onCleanup(@(ws) warning(warnState));
+
     % Generate initial MLTBX with additional software specified
     finalOutputFile = toolboxOptions.OutputFile;
     initialOutputFile = strrep(finalOutputFile, '.mltbx', '_initial.mltbx');
@@ -75,9 +83,6 @@ function [newVersion, mltbxPath] = packageToolbox(projectRootDirectory, releaseT
     if ~isfolder( fileparts(toolboxOptions.OutputFile) )
         mkdir( fileparts(toolboxOptions.OutputFile) );
     end
-
-    warnState = warning('off', 'MATLAB:toolbox_packaging:packaging:FilesDoNotExistWarning');
-    cleanupObj = onCleanup(@(ws) warning(warnState));
 
     matlab.addons.toolbox.packageToolbox(toolboxOptions);
 

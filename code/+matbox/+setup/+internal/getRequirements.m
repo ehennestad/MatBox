@@ -13,7 +13,7 @@ function requirements = getRequirements(packageRootDirectory)
     requirementsFilePath = fullfile(packageRootDirectory, 'requirements.txt');
     
     if ~isfile(requirementsFilePath)
-        error("SetupTools:RequirementsFileNotFound", ...
+        error("MatBox:Setup:RequirementsFileNotFound", ...
             'No requirements file was found in the given toolbox folder')
     end
 
