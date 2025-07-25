@@ -56,6 +56,7 @@ function toolboxOptions = createToolboxOptions(projectRootDirectory, versionNumb
     % Populate required addons from requirements file
     try
         requirements = matbox.setup.internal.getRequirements(projectRootDirectory);
+        opts = addRequirementsToToolboxOptions(opts, requirements);
     catch ME
         if strcmp(ME.identifier, "MatBox:Setup:RequirementsFileNotFound")
             % Pass, no requirements
@@ -64,21 +65,22 @@ function toolboxOptions = createToolboxOptions(projectRootDirectory, versionNumb
         end
     end
 
-    try
-        isGithubRequirement = strcmp({requirements.Type}, 'GitHub');
-        opts.RequiredAdditionalSoftware = ...
-            matbox.setup.internal.github.getRequiredAdditionalSoftwareStructForToolboxOptions( {requirements(isGithubRequirement).URI} );
-    
-        isFexRequirement = strcmp({requirements.Type}, 'FileExchange');
-        opts.RequiredAddons = ...
-            matbox.setup.internal.fex.getToolboxRequiredAddonStruct( {requirements(isFexRequirement).URI} );
-    catch ME
-        rethrow(ME)
-    end
     % Specify name for output .mltbx file.
     versionNumber = strrep(opts.ToolboxVersion, '.', '_');
     outputFileName = sprintf('%s_v%s.mltbx', MLTBX_NAME, versionNumber);
     opts.OutputFile = fullfile(projectRootDirectory, "releases", outputFileName);
 
     toolboxOptions = opts;
+end
+
+function opts = addRequirementsToToolboxOptions(opts, requirements)
+    % Add GitHub repository requirements as Additional Software 
+    isGithubRequirement = strcmp({requirements.Type}, 'GitHub');
+    opts.RequiredAdditionalSoftware = ...
+        matbox.setup.internal.github.getRequiredAdditionalSoftwareStructForToolboxOptions( {requirements(isGithubRequirement).URI} );
+
+    % Add FileExchange requirements as Addons
+    isFexRequirement = strcmp({requirements.Type}, 'FileExchange');
+    opts.RequiredAddons = ...
+        matbox.setup.internal.fex.getToolboxRequiredAddonStruct( {requirements(isFexRequirement).URI} );
 end
