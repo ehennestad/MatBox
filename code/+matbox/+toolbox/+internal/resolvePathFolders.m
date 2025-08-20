@@ -14,7 +14,7 @@ function [toolboxPathFolders, cleanupObj] = resolvePathFolders(projectRootDirect
 %
 %   options (struct) - Optional name-value pair arguments:
 %       - SourceFolderName (string): The name of the folder containing
-%         source code within `projectRootDirectory`. Default is "code".
+%         source code within `projectRootDirectory`. Default is "src".
 %       - PathFolders (string array): A custom list of path folders. If
 %         empty, folders within `SourceFolderName` are used.
 %
@@ -36,7 +36,7 @@ function [toolboxPathFolders, cleanupObj] = resolvePathFolders(projectRootDirect
 
     arguments
         projectRootDirectory (1,1) string {mustBeFolder}
-        options.SourceFolderName (1,1) string = "code"
+        options.SourceFolderName (1,1) string = "src"
         options.PathFolders (1,:) string = string.empty
     end
     
