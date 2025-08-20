@@ -23,7 +23,7 @@ function [newVersion, mltbxPath] = packageToolbox(projectRootDirectory, releaseT
         releaseType {mustBeTextScalar,mustBeMember(releaseType,["build","major","minor","patch","specific"])} = "build"
         versionString {mustBeTextScalar} = "";
         options.ToolboxShortName (1,1) string = missing
-        options.SourceFolderName = "code"
+        options.SourceFolderName = "src"
         options.IgnorePatterns (1,:) string = string.empty
         options.PathFolders (1,:) string = string.empty
     end
