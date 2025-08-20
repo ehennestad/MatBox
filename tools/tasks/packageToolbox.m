@@ -6,5 +6,7 @@ function [newVersion, mltbxPath] = packageToolbox(releaseType, versionString)
     installMatBox()
     projectRootDir = matboxtools.projectdir();
     addpath(genpath(projectRootDir))
-    [newVersion, mltbxPath] = matbox.tasks.packageToolbox(projectRootDir, releaseType, versionString);
+    [newVersion, mltbxPath] = matbox.tasks.packageToolbox(...
+        projectRootDir, releaseType, versionString, ...
+        "SourceFolderName", "code");
 end
