@@ -8,7 +8,7 @@ function toolboxOptions = createToolboxOptions(projectRootDirectory, versionNumb
         projectRootDirectory (1,1) string {mustBeFolder}
         versionNumber (1,1) string {mustBeValidVersionNumber(versionNumber)}
         options.ToolboxShortName (1,1) string = missing
-        options.SourceFolderName (1,1) string = "code"
+        options.SourceFolderName (1,1) string = "src"
         options.IgnorePatterns (1,:) string = string.empty
         options.PathFolders (1,:) string = string.empty
     end
