@@ -21,6 +21,6 @@ jobs:
       source_directory: code
       tests_directory: tools/tests
       tools_directory: tools
-
+      needs_python: true
     secrets:
       DEPLOY_KEY: ${{ secrets.DEPLOY_KEY }}
