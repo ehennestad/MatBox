@@ -8,7 +8,7 @@
         "AuthorCompany": "",
         "Summary": "A MATLAB toolbox to simplify the development lifecycle",
         "Description": "Matbox is a streamlined solution for managing MATLAB toolbox development, designed to simplify the entire lifecycle—from code checks and dependency management to cleaning, packaging, and continuous integration",
-        "MinimumMatlabRelease": "R2022b",
+        "MinimumMatlabRelease": "R2023a",
         "MaximumMatlabRelease": ""
     }
 }
