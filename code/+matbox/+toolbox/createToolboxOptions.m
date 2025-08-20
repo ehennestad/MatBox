@@ -56,7 +56,9 @@ function toolboxOptions = createToolboxOptions(projectRootDirectory, versionNumb
     % Populate required addons from requirements file
     try
         requirements = matbox.setup.internal.getRequirements(projectRootDirectory);
-        opts = addRequirementsToToolboxOptions(opts, requirements);
+        if ~isempty(requirements)
+            opts = addRequirementsToToolboxOptions(opts, requirements);
+        end
     catch ME
         if strcmp(ME.identifier, "MatBox:Setup:RequirementsFileNotFound")
             % Pass, no requirements
