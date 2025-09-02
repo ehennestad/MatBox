@@ -29,7 +29,7 @@ function [toolboxOptions, identifier, toolboxInfo] = readToolboxInfo(projectRoot
         iOptionName = pathOptions(iPathOption);
         if isfield(toolboxOptions, iOptionName)
             iOptionValue = toolboxOptions.(iOptionName);
-            if ~startsWith(iOptionValue, projectRootDir)
+            if ~isempty(iOptionValue) && ~startsWith(iOptionValue, projectRootDir)
                 toolboxOptions.(iOptionName) = fullfile(projectRootDir, iOptionValue);
             end
         end
