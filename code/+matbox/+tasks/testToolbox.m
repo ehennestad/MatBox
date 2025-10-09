@@ -4,7 +4,7 @@ function testToolbox(projectRootDirectory, options)
 
     arguments
         projectRootDirectory (1,1) string {mustBeFolder}
-        options.HtmlReports (1,1) logical = false
+        options.HtmlReports (1,1) logical = true
         options.ReportSubdirectory (1,1) string = ""
         options.SourceFolderName (1,1) string = "src"
         options.TestsFolderName (1,1) string = "tests"
@@ -78,14 +78,15 @@ function testToolbox(projectRootDirectory, options)
         codecoverageFileList = fullfile({mfileListing.folder}, {mfileListing.name});
     end
     
+    
+    codeCoverageFormats = [CoberturaFormat(codecoverageFileName)];
     if options.HtmlReports
         htmlReport = CoverageReport(outputDirectory, 'MainFile', "codecoverage.html");
-        p = CodeCoveragePlugin.forFile(codecoverageFileList, "Producing", htmlReport);
-        runner.addPlugin(p)
-    else
-        runner.addPlugin(XMLPlugin.producingJUnitFormat(fullfile(outputDirectory,'test-results.xml')));
-        runner.addPlugin(CodeCoveragePlugin.forFile(codecoverageFileList, 'Producing', CoberturaFormat(codecoverageFileName)));
+        codeCoverageFormats(end+1) = htmlReport;
     end
+    runner.addPlugin(XMLPlugin.producingJUnitFormat(fullfile(outputDirectory,'test-results.xml')));
+    runner.addPlugin(CodeCoveragePlugin.forFile(codecoverageFileList, 'Producing', codeCoverageFormats));
+       
     
     results = runner.run(suite);
 
