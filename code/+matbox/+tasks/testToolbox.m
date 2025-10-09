@@ -12,6 +12,8 @@ function testToolbox(projectRootDirectory, options)
         options.CoverageFileList (1,:) string = string.empty
         options.CreateBadge (1,1) logical = true
         options.Verbosity (1,1) matlab.unittest.Verbosity = "Terse"
+        options.HasTag (1,1) string = ""
+        options.ExcludeTags (1,:) string = string.empty
     end
     
     import matlab.unittest.TestSuite;
@@ -58,7 +60,17 @@ function testToolbox(projectRootDirectory, options)
             suite = suite.selectIf(~HasTag("Graphical"));
         end
     end
-    
+
+    if options.HasTag ~= ""
+        suite = suite.selectIf(options.HasTag);
+    end
+
+    if ~isempty(options.ExcludeTags)
+        for i = 1:numel(options.ExcludeTags)
+            suite = suite.selectIf(~HasTag(options.ExcludeTags(i)));
+        end
+    end
+
     runner = TestRunner.withTextOutput('Verbosity', options.Verbosity);
 
     codecoverageFileName = fullfile(outputDirectory, "codecoverage.xml");
