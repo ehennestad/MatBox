@@ -62,7 +62,7 @@ function testToolbox(projectRootDirectory, options)
     end
 
     if options.HasTag ~= ""
-        suite = suite.selectIf(options.HasTag);
+        suite = suite.selectIf(HasTag(options.HasTag));
     end
 
     if ~isempty(options.ExcludeTags)
