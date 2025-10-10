@@ -4,7 +4,7 @@ function testToolbox(projectRootDirectory, options)
 
     arguments
         projectRootDirectory (1,1) string {mustBeFolder}
-        options.HtmlReports (1,1) logical = true
+        options.HtmlReports (1,1) logical = false
         options.ReportSubdirectory (1,1) string = ""
         options.SourceFolderName (1,1) string = "src"
         options.TestsFolderName (1,1) string = "tests"
