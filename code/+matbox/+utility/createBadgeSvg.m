@@ -36,13 +36,8 @@ function createBadgeSvg(label, message, color, projectRootDirectory, options)
 
     filePath = fullfile(options.OutputFolder, name + ".svg");
     fid = fopen(filePath, "wt");
-    try
-        fwrite(fid, char(badgeSvg));
-    catch e
-        fclose(fid);
-        rethrow e
-    end
-    fclose(fid);
+    fileCleanup = onCleanup(@() fclose(fid));
     
+    fwrite(fid, char(badgeSvg));
     fprintf('Saved badge to %s\n', filePath)
 end
