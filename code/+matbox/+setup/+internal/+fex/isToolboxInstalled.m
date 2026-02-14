@@ -33,7 +33,11 @@ function [tf, versionString, toolboxFolder] = isToolboxInstalled(toolboxIdentifi
         end
 
         tf = true;
-        toolboxFolder = retrieveInstallationFolderForAddOn(toolboxIdentifier, versionString);
+        try
+            toolboxFolder = retrieveInstallationFolderForAddOn(toolboxIdentifier, versionString);
+        catch
+            toolboxFolder = ""; % Internal function does not list all add-ons
+        end
     end
 
     if nargout < 2
