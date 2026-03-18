@@ -30,6 +30,7 @@ function createTestedWithBadgeforToolbox(versionNumber, projectRootDirectory)
     % Sort releases newest to oldest
     [~, sortedIndices] = sort(releaseNames);
     testResultsListing = testResultsListing(sortedIndices);
+    releaseNames = releaseNames(sortedIndices);
 
     testResultFiles = string(...
         fullfile({testResultsListing.folder}, {testResultsListing.name}) ...
@@ -75,8 +76,6 @@ function createTestedWithBadgeforToolbox(versionNumber, projectRootDirectory)
 end
 
 function result = getReleaseNamesFromFolderPaths(folderPaths)
-    [~, folderNames] = fileparts( folderPaths );
-    releaseNames = regexp(folderPaths, 'R\d{4}[ab]', 'match');
-    result = [releaseNames{:}];
-    disp(result)
+    releaseNames = regexp(cellstr(folderPaths), 'R\d{4}[ab]', 'match');
+    result = string([releaseNames{:}]);
 end
