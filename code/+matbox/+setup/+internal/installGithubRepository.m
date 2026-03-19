@@ -85,6 +85,10 @@ function repoTargetFolder = installGithubRepository(repositoryUrl, branchName, o
     if ~isfolder(repoTargetFolder); mkdir(repoTargetFolder); end
 
     % Download repository
+    if options.Verbose
+        fprintf('Please wait, downloading "%s"...', repositoryUrl)
+    end
+
     downloadUrl = sprintf( '%s/archive/refs/heads/%s.zip', repositoryUrl, branchName );
     repoTargetFolder = matbox.setup.internal.downloadZippedGithubRepo(downloadUrl, repoTargetFolder, true, true);
 
@@ -92,7 +96,7 @@ function repoTargetFolder = installGithubRepository(repositoryUrl, branchName, o
         repoTargetFolder, repositoryName, ownerName, branchName)
 
     if options.Verbose
-        fprintf('Installed "%s".\n', repositoryUrl)
+        fprintf('Done.\n')
     end
 
     % Run setup.m if present.
