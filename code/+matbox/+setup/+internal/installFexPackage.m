@@ -1,10 +1,16 @@
-function packageTargetFolder = installFexPackage(toolboxIdentifier, installLocation, options)
+function [packageTargetFolder, installationMethod] = installFexPackage(toolboxIdentifier, installLocation, options)
 % installFexPackage - Install a FileExchange package
 %
 %   This function installs a package from FileExchange. If the package is
 %   already present, it is added to the path, otherwise it is downloaded.
 %
-%   installFexPackage(toolboxIdentifier, installLocation)
+%   [folder, method] = installFexPackage(toolboxIdentifier, installLocation)
+%
+%   Output:
+%       packageTargetFolder - Path to the installed package folder, or
+%           string(missing) for mltbx packages (managed by MATLAB)
+%       installationMethod  - "folder" for zip-extracted packages,
+%           "mltbx" for MATLAB toolbox packages
 
 %   Todo:
 %   [ ] Separate method for downloading
@@ -22,10 +28,12 @@ function packageTargetFolder = installFexPackage(toolboxIdentifier, installLocat
     end
 
     % Check if toolbox is installed
-    [isInstalled, version] = matbox.setup.internal.fex.isToolboxInstalled(toolboxIdentifier, options.Version);
+    [isInstalled, version, toolboxFolder] = matbox.setup.internal.fex.isToolboxInstalled(toolboxIdentifier, options.Version);
 
     if isInstalled
         matlab.addons.enableAddon(toolboxIdentifier, version)
+        packageTargetFolder = toolboxFolder;
+        installationMethod = "mltbx";
         if options.Verbose
             fprintf('Requirement "%s" is already installed. Skipping...\n', options.Title)
         end
@@ -80,6 +88,7 @@ function packageTargetFolder = installFexPackage(toolboxIdentifier, installLocat
             [tempFilepath, C] = matbox.setup.internal.utility.tempsave(addonUrl, [toolboxIdentifier, '_temp.zip']);
 
             packageTargetFolder = fullfile(installLocation, toolboxName);
+            installationMethod = "folder";
             if ~isfolder(packageTargetFolder); mkdir(packageTargetFolder); end
             unzip(tempFilepath, packageTargetFolder);
             if options.AddToPath
@@ -97,7 +106,8 @@ function packageTargetFolder = installFexPackage(toolboxIdentifier, installLocat
                 fprintf(newline)
                 error('Failed to install "%s"...', toolboxName)
             end
-            packageTargetFolder = 'n/a'; % todo
+            packageTargetFolder = string(missing);
+            installationMethod = "mltbx";
         end
 
         delete(C)
@@ -106,7 +116,9 @@ function packageTargetFolder = installFexPackage(toolboxIdentifier, installLocat
         end
 
         if ~nargout
-            clear packageTargetFolder
+            clear packageTargetFolder installationMethod
+        elseif nargout == 1
+            clear installationMethod
         end
     end
 end
