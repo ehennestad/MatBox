@@ -15,7 +15,7 @@ classdef PyNamespaceTest < matlab.unittest.TestCase
         function setupMethod(testCase)
         end
     end
-    
+
     methods (Test)
 
         function testPipUninstall(testCase)
