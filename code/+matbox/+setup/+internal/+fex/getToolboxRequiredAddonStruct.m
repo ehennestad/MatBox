@@ -19,13 +19,13 @@ function S = getToolboxRequiredAddonStruct(fexURI)
     numAddons = numel(fexURI);
 
     fieldNames = ["Name", "Identifier", "EarliestVersion", "LatestVersion", "DownloadURL"];
-    
+
     S = cell2struct( repmat({""}, 1, numel(fieldNames)), cellstr(fieldNames), 2 );
     S = repmat(S, 1, numAddons);
 
     for iAddon = 1:numAddons
         [addonUuid, version] = matbox.setup.internal.fex.parseFileExchangeURI(fexURI(iAddon));
-        
+
         addonMetadata = matbox.setup.internal.fex.getAddonMetadata(addonUuid);
 
         S(iAddon).Name = addonMetadata.name;

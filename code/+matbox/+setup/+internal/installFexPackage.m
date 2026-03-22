@@ -46,10 +46,10 @@ function [packageTargetFolder, installationMethod] = installFexPackage(toolboxId
         else
             versionStr = options.Version;
         end
-    
+
         % Get download url for addon / package
         addonUrl = fex.getAddonURL(toolboxIdentifier, versionStr);
-        
+
         if endsWith(addonUrl, '.xml')
             % Todo: Install in MATLAB's Addon folder
 
@@ -75,7 +75,7 @@ function [packageTargetFolder, installationMethod] = installFexPackage(toolboxId
                 toolboxName = options.Name;
             end
         end
-        
+
         if options.Verbose
             if ismissing(toolboxName)
                 fprintf('Please wait, installing "<missing name>"...')
@@ -125,7 +125,7 @@ end
 
 function toolboxName = retrieveToolboxName(toolboxIdentifier)
     fex = matlab.addons.repositories.FileExchangeRepository();
-    
+
     try
         additionalInfoUrl = fex.getAddonDetailsURL(toolboxIdentifier);
         addonHtmlInfo = webread(additionalInfoUrl);

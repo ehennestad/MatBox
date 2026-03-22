@@ -6,27 +6,27 @@ function installRequirements(toolboxFolder, mode, options)
     arguments (Repeating)
         mode string {mustBeMember(mode, ["force", "f", "update", "u"])}
     end
-    
+
     arguments
-        %options.UseDefaultInstallationLocation (1,1) logical = true % Tentative, not implemented yet!
+        % options.UseDefaultInstallationLocation (1,1) logical = true % Tentative, not implemented yet!
         options.UpdateSearchPath (1,1) logical = true
         options.SaveSearchPath (1,1) logical = true
         options.InstallationLocation (1,1) string = matbox.setup.internal.getDefaultAddonFolder()
         options.Verbose (1,1) logical = true
         options.AgreeToLicenses (1,1) logical = false
     end
-    
+
     % Parse mode/flags
     mode = string(mode);
     doUpdate = any(strcmp(mode, 'update')) || any( strcmp(mode, 'u') );
-    
+
     installationLocation = options.InstallationLocation;
     if ~isfolder(installationLocation); mkdir(installationLocation); end
-        
+
     reqs = matbox.setup.internal.getRequirements(toolboxFolder);
     for i = 1:numel(reqs)
         switch reqs(i).Type
-            
+
             case 'GitHub'
                 [repoUrl, branchName] = parseGitHubUrl(reqs(i).URI);
                 matbox.setup.internal.installGithubRepository( ...
@@ -66,7 +66,7 @@ function [packageUuid, title, version] = getFEXPackageSpecification(uri)
     version = "latest"; % Initialize default value
 
     FEX_API_URL = "https://addons.mathworks.com/registry/v1/";
-    
+
     splitUri = strsplit(uri, '/');
 
     packageNumber = regexp(splitUri{2}, '\d*(?=-)', 'match', 'once');

@@ -2,7 +2,7 @@ function newVersion = updateVersionNumber(previousVersion, releaseType, versionS
 % updateVersionNumber - Utility function to update a version number
 %
 % Adapted from: https://github.com/mathworks/climatedatastore/blob/main/buildUtilities/packageToolbox.m
-    
+
     arguments
         previousVersion string {mustBeTextScalar} = "";
         releaseType {mustBeTextScalar,mustBeMember(releaseType,["build","major","minor","patch","specific"])} = "build"
@@ -21,7 +21,7 @@ function newVersion = updateVersionNumber(previousVersion, releaseType, versionS
     if numel(versionParts) == 3
         versionParts(4) = "0";
     end
-    
+
     switch lower(releaseType)
         case "major"
             versionParts(1) = string(str2double(versionParts(1)) + 1);

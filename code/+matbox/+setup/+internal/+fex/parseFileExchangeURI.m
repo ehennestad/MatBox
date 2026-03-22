@@ -3,20 +3,20 @@ function [packageUuid, version] = parseFileExchangeURI(uri)
 %
 %   NB: This function relies on an undocumented api, and might break in the
 %   future.
-    
+
     arguments
         uri (1,:) string
     end
-    
+
     FEX_API_URL = "https://addons.mathworks.com/registry/v1/";
-    
+
     packageUuid = repmat("", 1, numel(uri));
     version = repmat("latest", 1, numel(uri)); % Initialize default value
 
     for i = 1:numel(uri)
-    
+
         splitUri = strsplit(uri(i), '/');
-    
+
         packageNumber = regexp(splitUri{2}, '\d*(?=-)', 'match', 'once');
         try
             packageInfo = webread(FEX_API_URL + num2str(packageNumber));
@@ -29,7 +29,7 @@ function [packageUuid, version] = parseFileExchangeURI(uri)
                     rethrow(ME)
             end
         end
-    
+
         if numel(splitUri) == 3
             version = string( splitUri{3} );
             assert( any(strcmp(packageInfo.versions, version) ), ...

@@ -30,7 +30,7 @@ function pipInstall(packageName, options)
 
     arguments
         packageName (1,1) string
-        options.Update (1,1) logical = false 
+        options.Update (1,1) logical = false
     end
 
     pythonExecutable = matbox.py.getPythonExecutable();

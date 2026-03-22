@@ -1,15 +1,15 @@
 function [owner, repositoryName, branchName] = parseRepositoryURL(repoUrl)
 % parseRepositoryURL - Extract owner, repository name and branch name from URL
-    
+
     arguments
         repoUrl (1,1) matlab.net.URI
     end
-    
+
     if repoUrl.Host ~= "github.com"
         error("MATBOX:GitHub:InvalidRepositoryURL", ...
             "Please make sure the repository URL's host name is 'github.com'")
     end
-    
+
     pathNames = repoUrl.Path;
     pathNames( cellfun('isempty', pathNames) ) = [];
 

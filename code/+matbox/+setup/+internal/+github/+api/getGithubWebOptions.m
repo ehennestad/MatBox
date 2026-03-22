@@ -6,22 +6,22 @@ function options = getGithubWebOptions(customHeaders)
     %
     % Outputs:
     %   options - weboptions object with authentication headers if token is available
-    
+
     arguments
         customHeaders = {}
     end
-    
+
     % Get GITHUB_TOKEN from environment variables
     token = getenv('GITHUB_TOKEN');
-    
+
     % Initialize options
     options = weboptions('UserAgent', 'MATLAB WebClient');
-    
+
     % Add custom headers if provided
     if ~isempty(customHeaders)
         options.HeaderFields = customHeaders;
     end
-    
+
     % Add authentication header if token is available
     if ~isempty(token)
         if isempty(options.HeaderFields)
