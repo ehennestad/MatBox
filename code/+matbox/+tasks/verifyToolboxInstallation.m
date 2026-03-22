@@ -8,7 +8,7 @@ function verifyToolboxInstallation(mltbxFile)
     fprintf('Installing toolbox: %s\n', mltbxFile);
     agreeToLicense = true;
     installedToolbox = matlab.addons.install(mltbxFile, agreeToLicense);
-    
+
     % Verify installation
     fprintf('Toolbox installed successfully:\n');
     fprintf('  Name: %s\n', installedToolbox.Name);

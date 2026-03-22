@@ -1,5 +1,5 @@
 function addToIgnore(word, ignoreFilePath)
-    
+
     [~, ~, fileExt] = fileparts(ignoreFilePath);
 
     if strcmp(fileExt, '.codespell_ignore')
@@ -9,7 +9,7 @@ function addToIgnore(word, ignoreFilePath)
         else
             fileContent = '';
         end
-        
+
     elseif strcmp(fileExt, '.codespellrc')
         if isfile(ignoreFilePath)
             fileContent = fileread(ignoreFilePath);

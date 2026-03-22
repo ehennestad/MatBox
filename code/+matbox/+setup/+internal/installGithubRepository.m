@@ -26,19 +26,19 @@ function repoTargetFolder = installGithubRepository(repositoryUrl, branchName, o
 
     [ownerName, repositoryName] = ...
         matbox.setup.internal.github.parseRepositoryURL(repositoryUrl);
-    
+
     if ismissing(branchName) % - Get default branchname
         branchName = matbox.setup.internal.github.api.getDefaultBranch(...
             ownerName, repositoryName);
     end
-    
+
     [repoExists, repoFolderLocation] = ...
         matbox.setup.internal.pathtool.lookForRepository(repositoryName, branchName);
 
     if repoExists
         isUpdateNeeded = options.Update;
         repoTargetFolder = repoFolderLocation;
-        
+
         if options.Update % Handle repository update
             if isGitRepository(repoFolderLocation)
                 wasSuccess = gitPull(repoFolderLocation);
@@ -125,7 +125,7 @@ end
 function wasSuccess = gitPull(folderPath)
 % gitPull - Try to do a repository pull using git
     wasSuccess = false;
-    
+
     % Try to use git commands to update the repository
     try
         if exist("gitrepo", "file")
@@ -136,13 +136,13 @@ function wasSuccess = gitPull(folderPath)
             currentDir = pwd;
             cd(folderPath);
             workDirCleanup = onCleanup(@() cd(currentDir));
-            
+
             % Try to use git pull to update the repository
             [status, cmdout] = system('git pull');
-            
+
             % Return to original directory
             clear workDirCleanup
-            
+
             if status == 0
                 wasSuccess = true;
             else
@@ -152,7 +152,7 @@ function wasSuccess = gitPull(folderPath)
     catch ME
         warning(ME.identifier, 'Git pull failed with message: %s.', ME.message);
     end
-    
+
     if wasSuccess
         % Run setup if present after update
         setupFile = matbox.setup.internal.findSetupFile(folderPath);
@@ -165,7 +165,7 @@ end
 function needsUpdate = checkCommitHash(repoFolderLocation, repoName, ...
         ownerName, branchName, repositoryUrl, options)
 % checkCommitHash - Check if the local commit hash matches remote commit hash
-    
+
     arguments
         repoFolderLocation (1,1) string
         repoName (1,1) string
@@ -174,21 +174,21 @@ function needsUpdate = checkCommitHash(repoFolderLocation, repoName, ...
         repositoryUrl (1,1) string
         options.Verbose (1,1) logical = true
     end
-    
+
     needsUpdate = false;
 
     % Check if commit hash has changed before updating
     try
         % Read the stored commit hash
         storedCommitHash = matbox.setup.internal.github.readCommitHash(repoFolderLocation);
-        
+
         % Get the current commit hash from GitHub API
         currentCommitHash = ...
             matbox.setup.internal.github.api.getCurrentCommitID(...
             repoName, ...
             'Owner', ownerName, ...
             'BranchName', branchName);
-        
+
         % Only update if commit hashes are different
         if strcmp(storedCommitHash, currentCommitHash)
             if options.Verbose

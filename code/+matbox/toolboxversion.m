@@ -7,9 +7,9 @@ function versionStr = toolboxversion()
     if ~isfile(contentsFile)
         error("Toolbox does not have a Contents.m file")
     end
-    
+
     fileStr = fileread(contentsFile);
-   
+
     % First try to get a version with a sub-patch version number
     matchedStr = regexp(fileStr, 'Version \d*\.\d*\.\d*.\d*(?= )', 'match');
 

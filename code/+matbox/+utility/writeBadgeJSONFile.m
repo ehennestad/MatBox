@@ -62,7 +62,7 @@ function writeBadgeJSONFile(label, message, color, projectRootDirectory, options
     badgeInfo.message = message;
     badgeInfo.color = color;
     badgeJSON = jsonencode(badgeInfo);
-    
+
     if ismissing(options.FileName)
         name = strrep(label, " ", "_");
     else

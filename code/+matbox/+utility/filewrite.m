@@ -1,7 +1,7 @@
 function filewrite(fileName, textStr)
 
     folderPath = fileparts(fileName);
-    
+
     if ~isempty(folderPath) && ~exist(folderPath, 'dir')
         mkdir(folderPath)
     end

@@ -1,10 +1,10 @@
 function [tf, versionString, toolboxFolder] = isToolboxInstalled(toolboxIdentifier, versionString)
-    
+
     arguments
         toolboxIdentifier (1,1) string
         versionString (1,1) string = missing
     end
-    
+
     import matlab.internal.addons.util.retrieveInstallationFolderForAddOn
 
     tf = false;

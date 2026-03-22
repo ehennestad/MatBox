@@ -2,25 +2,25 @@ function addStartupToMainStartup(toolboxFolder)
 % addStartupToMainStartup - Add startup from toolbox folder to main startup file
 %
 % Syntax:
-%   matbox.addStartupToMainStartup(toolboxFolder) adds a toolbox' startup.m in 
+%   matbox.addStartupToMainStartup(toolboxFolder) adds a toolbox' startup.m in
 %   a run statement to the user's main startup file.
 %
 % Details:
-%   This function locates the toolbox’s startup file and then adds a run 
-%   statement to the user's main startup file. For a startup file that is a 
-%   function, the run statement is inserted into the function body (before the 
-%   final end). For a script file (which may include local functions), the run 
+%   This function locates the toolbox’s startup file and then adds a run
+%   statement to the user's main startup file. For a startup file that is a
+%   function, the run statement is inserted into the function body (before the
+%   final end). For a script file (which may include local functions), the run
 %   statement is inserted before the first local function definition.
 %
 % Caveats:
-%   Cases not explicitly handled include files that do not follow the 
-%   conventional structure (for example, files that are empty or contain 
+%   Cases not explicitly handled include files that do not follow the
+%   conventional structure (for example, files that are empty or contain
 %   misleading comments) or if the run statement appears in a commented‐out form.
-    
+
     arguments
         toolboxFolder (1,1) string {mustBeFolder}
     end
-    
+
     startupFilePath = matbox.setup.internal.findStartupFile(toolboxFolder);
     if isempty(startupFilePath)
         warning('No startup file was found in the given directory:\n%s', toolboxFolder)
@@ -38,7 +38,7 @@ function addStartupToMainStartup(toolboxFolder)
 
     % Only update if the startupFilePath is not already mentioned.
     if ~contains(fileContent, startupFilePath)
-        
+
         lines = splitlines(fileContent);
         % Determine insertion point for the run statement.
         % Find the first non-empty, non-comment line.
@@ -84,7 +84,7 @@ function addStartupToMainStartup(toolboxFolder)
             indentStr = "";
         end
         runStatement = indentStr + sprintf("run('%s')", startupFilePath);
-        
+
         % Adjust newlines if statement is added at the end of the file.
         if insertIdx == numel(lines)
             if ~endsWith(fileContent, newline)

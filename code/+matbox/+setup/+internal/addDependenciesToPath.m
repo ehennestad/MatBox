@@ -4,7 +4,7 @@ function addDependenciesToPath(toolboxFolder, options)
         toolboxFolder (1,1) string {mustBeFolder}
         options.InstallationLocation (1,1) string = matbox.setup.internal.getDefaultAddonFolder()
     end
-    
+
     reqs = matbox.setup.internal.getRequirements(toolboxFolder);
 
     for i = 1:numel(reqs)
@@ -13,7 +13,7 @@ function addDependenciesToPath(toolboxFolder, options)
                 % Todo.
                 % [repoUrl, branchName] = parseGitHubUrl(reqs(i).URI);
                 % matbox.setup.internal.installGithubRepository( repoUrl, branchName )
-            
+
             case 'FileExchange'
                 [packageUuid, version] = matbox.setup.internal.fex.parseFileExchangeURI( reqs(i).URI );
                 [isInstalled, version] = matbox.setup.internal.fex.isToolboxInstalled(packageUuid, version);
@@ -24,7 +24,7 @@ function addDependenciesToPath(toolboxFolder, options)
                 continue
         end
     end
-    
+
     % Add all addons in the package's addon folder to path
     addonLocation = options.InstallationLocation;
     addonListing = dir(addonLocation);
@@ -39,7 +39,7 @@ function addDependenciesToPath(toolboxFolder, options)
 
         folderPath = fullfile(addonListing(i).folder, addonListing(i).name);
         startupFile = matbox.setup.internal.findStartupFile(folderPath);
-        
+
         if ~isempty(startupFile)
             run( startupFile )
         else
