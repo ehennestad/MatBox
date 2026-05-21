@@ -14,7 +14,7 @@ function codespellToolbox(codeFolder, options)
         options.RequireCodespellPassing (1,1) logical = false
         options.SaveResults (1,1) logical = false;
     end
-    
+
     if ~strcmp(codeFolder, pwd)
         currentDir = pwd();
         cleanupObj = onCleanup( @(pathName) cd(currentDir));
@@ -22,9 +22,9 @@ function codespellToolbox(codeFolder, options)
     end
 
     options.Skip = [options.Skip, "*words.txt"];
-    
+
     commandStr = options.CodeSpellExecutable;
-    
+
     if options.DoAutomaticFix
         commandStr = sprintf("%s --write-changes", commandStr);
     end
@@ -50,7 +50,7 @@ function codespellToolbox(codeFolder, options)
 
     [s, m] = system(commandStr);
     codespellPassing = ~s;
-    
+
     if options.DoAutomaticFix
         return
     end
@@ -81,11 +81,11 @@ function codespellToolbox(codeFolder, options)
 
         for i = 1:numel(lines)
             splitLine = split(lines{i}, ':');
-            
+
             % Clean filepath:
             relativeFilePath = splitLine{1}(2:end);
             filePath = fullfile(codeFolder, relativeFilePath);
-            
+
             fullName = omni.matlab.meta.abspath2funcname(strtrim(filePath));
             lineNumber = str2double(splitLine{2});
 
@@ -104,7 +104,7 @@ function codespellToolbox(codeFolder, options)
                 S(i).Ignore = createIgnoreLink(S(i).Word, options.ConfigFilePath);
             end
         end
-        
+
         if options.SaveResults
             fid = fopen('words.txt', 'w');
             fwrite(fid, strjoin(typos, newline));
@@ -114,7 +114,7 @@ function codespellToolbox(codeFolder, options)
             T = sortrows(T, "Auto");
             disp( T )
         end
-    
+
         if options.RequireCodespellPassing
             message = sprintf( "Codespell identified the following potential spelling mistakes:\n%s", ...
                 strjoin( "    " + typos, newline));

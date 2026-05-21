@@ -8,7 +8,7 @@ function defaultBranch = getDefaultBranch(owner, repoName)
 
     % Build the API URL
     apiUrl = sprintf('https://api.github.com/repos/%s/%s', owner, repoName);
-    
+
     requestOpts =  matbox.setup.internal.github.api.getGithubWebOptions();
     requestOpts.Timeout = 10;
     requestOpts.ContentType = 'json';

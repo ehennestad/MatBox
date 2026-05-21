@@ -13,7 +13,7 @@ classdef SetupTest <  matlab.unittest.TestCase
             testCase.applyFixture(WorkingFolderFixture)
         end
     end
-    
+
     methods (Test)
         function testInstallRequirements(testCase)
             testCase.installRequirements()
@@ -28,7 +28,7 @@ classdef SetupTest <  matlab.unittest.TestCase
         end
 
         function testUpdateGitRequirementWithGit(testCase)
-            
+
             system('git clone "https://github.com/ehennestad/StructEditor"')
             addpath("StructEditor")
 
@@ -44,7 +44,7 @@ classdef SetupTest <  matlab.unittest.TestCase
                 testCase
                 options.Update (1,1) logical = false
             end
-            
+
             pathStr = matboxtools.projectdir();
             requirementsPath = fullfile(pathStr, "tools", "tests", "test_resources");
 

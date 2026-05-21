@@ -39,7 +39,7 @@ function [toolboxPathFolders, cleanupObj] = resolvePathFolders(projectRootDirect
         options.SourceFolderName (1,1) string = "src"
         options.PathFolders (1,:) string = string.empty
     end
-    
+
     if isempty(options.PathFolders)
         toolboxCodeFolder = fullfile(projectRootDirectory, options.SourceFolderName);
         toolboxPathFolders = string( strsplit(genpath(toolboxCodeFolder), pathsep));

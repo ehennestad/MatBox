@@ -1,5 +1,5 @@
 function writeCommitHash(repositoryFolderPath, repositoryName, owner, branchName)
-% writeCommitHash - Writes the current commit hash of a repository to file. 
+% writeCommitHash - Writes the current commit hash of a repository to file.
 %
 % Syntax:
 %   writeCommitHash(repositoryFolderPath, repositoryName, owner, branchName)
@@ -12,7 +12,7 @@ function writeCommitHash(repositoryFolderPath, repositoryName, owner, branchName
 %
 % See also:
 %   matbox.setup.internal.github.api.getCurrentCommitID
-%   matbox.setup.internal.github.readCommitHash 
+%   matbox.setup.internal.github.readCommitHash
 
     arguments
         repositoryFolderPath (1,1) string

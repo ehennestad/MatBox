@@ -33,9 +33,9 @@ function pythonExecutable = getPythonExecutable()
 
     % Todo: What if MATLAB release is older than R2019b when pyenv was
     % introduced?
-    
+
     pythonInfo = pyenv;
-    
+
     if pythonInfo.Version == ""
         error("MatBox:PythonNotInstalled", "Python not installed.")
     end

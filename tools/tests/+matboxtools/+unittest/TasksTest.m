@@ -19,13 +19,13 @@ classdef TasksTest <  matlab.unittest.TestCase
             testCase.applyFixture(matlab.unittest.fixtures.WorkingFolderFixture);
         end
     end
-    
+
     methods (Test)
         function testCodecheckToolbox(testCase)
             pathStr = matboxtools.projectdir();
 
             copyfile(pathStr, pwd);
-            
+
             matbox.tasks.codecheckToolbox(pwd, ...
                 "CreateBadge", false, "SaveReport", false);
 

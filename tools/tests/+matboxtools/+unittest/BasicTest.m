@@ -18,7 +18,7 @@ classdef BasicTest <  matlab.unittest.TestCase
             % Pass. No method setup routines needed
         end
     end
-    
+
     methods (Test)
         function testToolboxDir(testCase)
             pathStr = matbox.toolboxdir();

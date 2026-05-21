@@ -13,13 +13,13 @@ function issues = codecheckToolbox(projectRootDir, options)
 
     filesToCheck = matbox.tasks.internal.resolveFiles(projectRootDir, ...
         options.FoldersToCheck, options.FilesToCheck);
-    
+
     if isempty(filesToCheck)
         error("MatBox:CodeIssues", "No files to check.")
     end
 
     issueCount = struct;
-    
+
     if verLessThan('matlab','9.13') %#ok<VERLESSMATLAB>
         % Use the old check code before R2022b
         issues = checkcode(filesToCheck);
@@ -86,7 +86,7 @@ function createCodeIssuesBadge(issueCount, projectRootDir)
     if issueCount.Error > 0
         color = "red";
     end
-    
+
     matbox.utility.createBadgeSvg("code issues", ...
         string(issueCount.Total), color, projectRootDir)
 end

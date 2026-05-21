@@ -7,14 +7,14 @@ function repoFolder = downloadZippedGithubRepo(githubUrl, targetFolder, updateFl
     if isa(updateFlag, 'char') && strcmp(updateFlag, 'update')
         updateFlag = true;
     end
-    
+
     % Create a temporary path for storing the downloaded file.
     [~, ~, fileType] = fileparts(githubUrl);
     tempFilepath = [tempname, fileType];
-    
+
     % Get web options with GitHub authentication if available
     options = matbox.setup.internal.github.api.getGithubWebOptions();
-    
+
     % Download the file containing the addon toolbox
     try
         tempFilepath = websave(tempFilepath, githubUrl, options);
@@ -32,12 +32,12 @@ function repoFolder = downloadZippedGithubRepo(githubUrl, targetFolder, updateFl
     if endsWith(unzippedFolder, filesep)
         unzippedFolder = unzippedFolder(1:end-1);
     end
-    
+
     [~, repoFolderName] = fileparts(unzippedFolder);
     targetFolder = fullfile(targetFolder, repoFolderName);
 
     if updateFlag && isfolder(targetFolder)
-        
+
         % Delete current version
         if isfolder(targetFolder)
             if contains(path, fullfile(targetFolder, filesep))
@@ -56,7 +56,7 @@ function repoFolder = downloadZippedGithubRepo(githubUrl, targetFolder, updateFl
     end
 
     movefile(unzippedFolder, targetFolder);
-    
+
     % Delete the temp zip file
     clear fileCleanupObj
 

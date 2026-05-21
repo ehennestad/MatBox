@@ -5,7 +5,7 @@ function versionStr = getLatestMatlabReleaseForGitHubActions(includePrerelease)
 %   versionStr = matbox.utility.getLatestMatlabReleaseForGitHubActions()
 %
 % Input Arguments:
-%   includePrerelease - A boolean flag indicating whether to include 
+%   includePrerelease - A boolean flag indicating whether to include
 %                       pre-release versions in the result.
 %
 % Output Arguments:
@@ -14,9 +14,9 @@ function versionStr = getLatestMatlabReleaseForGitHubActions(includePrerelease)
     arguments
         includePrerelease (1,1) logical = false
     end
-    
+
     apiUrl = "https://ssd.mathworks.com/supportfiles/ci/matlab-release/v0/latest";
-    
+
     if includePrerelease
         apiUrl = apiUrl + "-including-prerelease";
     end

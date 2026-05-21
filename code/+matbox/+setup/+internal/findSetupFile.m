@@ -8,7 +8,7 @@ function setupFilePath = findSetupFile(folderPath)
     if ~isfolder(folderPath)
         error('Provided folder does not exist')
     end
-    
+
     L = [ dir(fullfile(folderPath, 'setup.m')), ...
           dir(fullfile(folderPath, '*', 'setup.m')) ];
 

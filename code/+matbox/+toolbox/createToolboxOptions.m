@@ -15,7 +15,7 @@ function toolboxOptions = createToolboxOptions(projectRootDirectory, versionNumb
 
     % Read the toolbox info from MLToolboxInfo.json
     [toolboxInfo, identifier] = matbox.toolbox.readToolboxInfo(projectRootDirectory);
-    
+
     % Resolve folders to add to path for toolbox. This needs to be done
     % before creating the ToolboxOptions object due to a bug in that class
     % (See matbox.toolbox.internal.resolvePathFolders for more info)
@@ -33,7 +33,7 @@ function toolboxOptions = createToolboxOptions(projectRootDirectory, versionNumb
     % Initialize the ToolboxOptions from the code folder and initial metadata
     toolboxFolder = fullfile(projectRootDirectory, options.SourceFolderName);
     opts = matlab.addons.toolbox.ToolboxOptions(toolboxFolder, identifier, toolboxInfo);
-    
+
     % Set the toolbox version
     opts.ToolboxVersion = versionNumber;
 
@@ -52,7 +52,7 @@ function toolboxOptions = createToolboxOptions(projectRootDirectory, versionNumb
     opts.SupportedPlatforms.Maci64 = true;
     opts.SupportedPlatforms.Glnxa64 = true;
     opts.SupportedPlatforms.MatlabOnline = true;
-    
+
     % Populate required addons from requirements file
     try
         requirements = matbox.setup.internal.getRequirements(projectRootDirectory);
@@ -76,7 +76,7 @@ function toolboxOptions = createToolboxOptions(projectRootDirectory, versionNumb
 end
 
 function opts = addRequirementsToToolboxOptions(opts, requirements)
-    % Add GitHub repository requirements as Additional Software 
+    % Add GitHub repository requirements as Additional Software
     isGithubRequirement = strcmp({requirements.Type}, 'GitHub');
     opts.RequiredAdditionalSoftware = ...
         matbox.setup.internal.github.getRequiredAdditionalSoftwareStructForToolboxOptions( {requirements(isGithubRequirement).URI} );

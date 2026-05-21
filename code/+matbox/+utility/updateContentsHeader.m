@@ -8,7 +8,7 @@ function updateContentsHeader(toolboxFolder, contentsHeader)
     contentsFilePath = fullfile(toolboxFolder, 'Contents.m');
     if isfile(contentsFilePath)
         contentsStr = fileread(contentsFilePath);
-    
+
         % Assume header is 5 lines
         contentsStrLines = strsplit(contentsStr, newline);
         contentsStrLines(1:5) = cellstr(strsplit(contentsHeader, newline));

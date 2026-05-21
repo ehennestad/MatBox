@@ -15,7 +15,7 @@ function [commitID, commitDetails] = getCurrentCommitID(repositoryName, options)
 
     API_BASE_URL = sprintf("https://api.github.com/repos/%s/%s", ...
         options.Owner, repositoryName);
-    
+
     apiURL = strjoin( [API_BASE_URL, "commits", options.BranchName], '/');
 
     % Get info about latest commit:

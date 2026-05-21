@@ -34,7 +34,7 @@ function fixRequiredAdditionalSoftware(initialToolboxFilePath, finalToolboxFileP
         filePath = fullfile(L(i).folder, L(i).name);
         targetFilename = strrep(L(i).name, 'maci64', 'common');
         copyfile(filePath, targetFilename);
-        
+
         mlAddonAddInstructionSet(char(finalToolboxFilePath), targetFilename)
     end
 end

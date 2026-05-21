@@ -1,8 +1,8 @@
 function [exists, repositoryPath] = lookForRepository(repositoryName, branchName)
-    
+
     exists = false;
     repositoryPath = "";
-    
+
     % Get the full MATLAB search path:
     pathList = strsplit(path, pathsep);
 
@@ -48,7 +48,7 @@ function [exists, repositoryPath] = lookForRepository(repositoryName, branchName
         end
     end
     repositoryPath = string(repositoryPath);
-    
+
     % Make sure folder exists
     if ~isempty(char(repositoryPath)) && ~isfolder(repositoryPath)
         warning("Repository was found on MATLAB's search path, but folder does not exist")
@@ -57,7 +57,7 @@ function [exists, repositoryPath] = lookForRepository(repositoryName, branchName
     end
 
     if repositoryPath == ""; return; end
-    
+
     % Check if folder contains expected files...
     L = dir( repositoryPath );
     assert(contains('README.md', {L.name}, 'IgnoreCase', true) && ...

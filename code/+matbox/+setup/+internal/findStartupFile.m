@@ -8,7 +8,7 @@ function startupFilePath = findStartupFile(folderPath)
     if ~isfolder(folderPath)
         error('Provided folder does not exist')
     end
-    
+
     L = [ dir(fullfile(folderPath, 'startup.m')), ...
           dir(fullfile(folderPath, '*', 'startup.m')) ];
 

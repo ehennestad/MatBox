@@ -15,7 +15,7 @@ function testToolbox(projectRootDirectory, options)
         options.HasTag (1,1) string = ""
         options.ExcludeTags (1,:) string = string.empty
     end
-    
+
     import matlab.unittest.TestSuite;
     import matlab.unittest.TestRunner;
     import matlab.unittest.plugins.CodeCoveragePlugin;
@@ -23,13 +23,12 @@ function testToolbox(projectRootDirectory, options)
     import matlab.unittest.plugins.codecoverage.CoverageReport;
     import matlab.unittest.plugins.codecoverage.CoberturaFormat;
     import matlab.unittest.selectors.HasTag;
-    
-    
-    testFolder = fullfile(projectRootDirectory, options.TestsFolderName);    
+
+    testFolder = fullfile(projectRootDirectory, options.TestsFolderName);
     codeFolder = fullfile(projectRootDirectory, options.SourceFolderName);
     oldpath = addpath(genpath(testFolder), genpath(codeFolder));
     finalize = onCleanup(@()(path(oldpath)));
-    
+
     % Run startup function if it exists
     if isfile( fullfile(codeFolder, 'startup.m') )
         run( fullfile(codeFolder, 'startup.m') )
@@ -41,7 +40,7 @@ function testToolbox(projectRootDirectory, options)
     end
 
     suite = TestSuite.fromFolder( testFolder, "IncludingSubfolders", true );
-    
+
     if isMATLABReleaseOlderThan('R2022a') % fromFolder did not include packages
         % List packages and add suites by package names
         packageListing = dir(fullfile(testFolder, '+*'));
@@ -74,7 +73,7 @@ function testToolbox(projectRootDirectory, options)
     runner = TestRunner.withTextOutput('Verbosity', options.Verbosity);
 
     codecoverageFileName = fullfile(outputDirectory, "codecoverage.xml");
-        
+
     if ~isempty(options.CoverageFileList)
         codecoverageFileList = options.CoverageFileList;
         if ~ismissing(options.CoverageRootFolder)
@@ -89,8 +88,7 @@ function testToolbox(projectRootDirectory, options)
         end
         codecoverageFileList = fullfile({mfileListing.folder}, {mfileListing.name});
     end
-    
-    
+
     codeCoverageFormats = [CoberturaFormat(codecoverageFileName)];
     if options.HtmlReports
         htmlReport = CoverageReport(outputDirectory, 'MainFile', "codecoverage.html");
@@ -98,8 +96,7 @@ function testToolbox(projectRootDirectory, options)
     end
     runner.addPlugin(XMLPlugin.producingJUnitFormat(fullfile(outputDirectory,'test-results.xml')));
     runner.addPlugin(CodeCoveragePlugin.forFile(codecoverageFileList, 'Producing', codeCoverageFormats));
-       
-    
+
     results = runner.run(suite);
 
     if ~verLessThan('matlab','9.9') && ~isMATLABReleaseOlderThan("R2022a") %#ok<VERLESSMATLAB>
@@ -110,7 +107,7 @@ function testToolbox(projectRootDirectory, options)
     if options.CreateBadge
         createTestResultBadge(results, projectRootDirectory) % local function
     end
-    
+
     displayTestResultSummary(results)
 
     results.assertSuccess();
@@ -120,7 +117,7 @@ function createTestResultBadge(results, projectRootDirectory)
     numTests = numel(results);
     numPassedTests = sum([results.Passed]);
     numFailedTests = sum([results.Failed]);
-    
+
     % Generate the JSON files for the shields in the readme.md
     if numFailedTests == 0
         color = "green";

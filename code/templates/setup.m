@@ -2,7 +2,7 @@ function setup(mode, options)
 % setup - Setup/install a MATLAB package
 
 % Note: should be placed in the root level of the repository or adapted if located in another directory
- 
+
     arguments (Repeating)
         mode (1,1) string {mustBeMember(mode, ["savepath", "s"])};
     end
@@ -26,7 +26,7 @@ function setup(mode, options)
     % Assumes setup.m is located in root repository folder
     rootPath = fileparts(mfilename('fullpath'));
     addpath(genpath(fullfile(rootPath, 'code')))
-        
+
     if options.SavePathDef
         savepath()
     end

@@ -94,7 +94,7 @@ function packageInfo = getPackageInfo(packageName, options)
     % Postprocess Requires, Required_by
     packageInfo.Requires = split(packageInfo.Requires, ', ');
     packageInfo.Required_by = split(packageInfo.Required_by, ', ');
-    
+
     if ~ismissing( options.Field )
         packageInfo = packageInfo.(options.Field);
     end

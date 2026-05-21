@@ -12,7 +12,7 @@ function [toolboxOptions, identifier, toolboxInfo] = readToolboxInfo(projectRoot
     if isempty(fileListing)
         error('MatBox:ToolboxInfoFileNotFound', ...
               'The file "MLToolboxInfo.json" could not be found in the specified project root directory.');
-        
+
     elseif numel(fileListing) > 1
         error('MatBox:MultipleToolboxInfoFilesFound', ...
               'Multiple instances of "MLToolboxInfo.json" were found in the project root directory. Please ensure there is only one file.');
@@ -22,7 +22,7 @@ function [toolboxOptions, identifier, toolboxInfo] = readToolboxInfo(projectRoot
     toolboxInfoFilePath = fullfile(fileListing.folder, fileListing.name);
     toolboxInfo = jsondecode(fileread(toolboxInfoFilePath));
     toolboxOptions = toolboxInfo.ToolboxOptions;
-        
+
     % Expand path names by prepending project root directory
     pathOptions = ["ToolboxImageFile", "ToolboxGettingStartedGuide"];
     for iPathOption = 1:numel(pathOptions)

@@ -2,12 +2,12 @@ function commitHash = readCommitHash(repositoryFolderPath)
 % readCommitHash - Reads the commit hash from a specified repository folder
 %
 % Syntax:
-%   commitHash = readCommitHash(repositoryFolderPath) 
-%   This function reads the commit hash from a file named '.commit_hash' 
+%   commitHash = readCommitHash(repositoryFolderPath)
+%   This function reads the commit hash from a file named '.commit_hash'
 %   located in the specified repository folder.
 %
 % Input Arguments:
-%   repositoryFolderPath - A string specifying the path to the repository 
+%   repositoryFolderPath - A string specifying the path to the repository
 %   folder from which the commit hash will be read.
 %
 % Output Arguments:

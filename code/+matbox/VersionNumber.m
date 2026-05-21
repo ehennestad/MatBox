@@ -18,7 +18,7 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
     methods
         % Constructor
         function obj = VersionNumber(versionSpecification, options)
-            
+
             arguments (Repeating)
                 versionSpecification
             end
@@ -34,7 +34,7 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
             if isscalar(versionSpecification) && iscell(versionSpecification{1})
                 versionSpecification = versionSpecification{1};
             end
-            
+
             if numel(versionSpecification) > 1
                 obj(numel(versionSpecification)) = 1;
             end
@@ -64,7 +64,7 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
                 [obj.IsLatest] = options.IsLatest;
             end
         end
-        
+
         % Set version
         function setVersion(obj, versionAsArray)
 
@@ -96,7 +96,7 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
 
             assert( isequal(versionStr, strjoin(string(num2str(parts)), '.')), ...
                 'Not a valid version specification %s', versionStr)
-            
+
             if length(parts) >= 1
                 obj.Major = parts(1);
             end
@@ -112,7 +112,7 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
                 obj.Build = parts(4);
             end
         end
-        
+
         % toString method for custom string format
         function str = string(obj)
             str = repmat("", size(obj));
@@ -130,7 +130,7 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
         function result = isEqualTo(obj, other)
             result = (obj.Major == other.Major) && (obj.Minor == other.Minor) && (obj.Patch == other.Patch) && (obj.Build == other.Build);
         end
-        
+
         % Bumping version methods
         function bumpMajor(obj)
             obj.Major = obj.Major + 1;
@@ -138,25 +138,25 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
             obj.Patch = 0;
             obj.Build = 0;
         end
-        
+
         function bumpMinor(obj)
             obj.Minor = obj.Minor + 1;
             obj.Patch = 0;
             obj.Build = 0;
         end
-        
+
         function bumpPatch(obj)
             obj.Patch = obj.Patch + 1;
             obj.Build = 0;
         end
-        
+
         function bumpBuild(obj)
             obj.Build = obj.Build + 1;
         end
     end
 
     methods
-        
+
         % Greater than or equal (>=)
         function result = ge(obj, other)
             arguments
@@ -169,7 +169,7 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
                      (obj.Major == other.Major && obj.Minor == other.Minor && obj.Patch > other.Patch) || ...
                      (obj.Major == other.Major && obj.Minor == other.Minor && obj.Patch == other.Patch && obj.Build >= other.Build);
         end
-    
+
         % Greater than (>)
         function result = gt(obj, other)
             arguments
@@ -181,7 +181,7 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
                      (obj.Major == other.Major && obj.Minor == other.Minor && obj.Patch > other.Patch) || ...
                      (obj.Major == other.Major && obj.Minor == other.Minor && obj.Patch == other.Patch && obj.Build > other.Build);
         end
-    
+
         % Less than or equal (<=)
         function result = le(obj, other)
             arguments
@@ -193,7 +193,7 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
                      (obj.Major == other.Major && obj.Minor == other.Minor && obj.Patch < other.Patch) || ...
                      (obj.Major == other.Major && obj.Minor == other.Minor && obj.Patch == other.Patch && obj.Build <= other.Build);
         end
-    
+
         % Less than (<)
         function result = lt(obj, other)
             arguments
@@ -206,7 +206,7 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
                      (obj.Major == other.Major && obj.Minor == other.Minor && obj.Patch < other.Patch) || ...
                      (obj.Major == other.Major && obj.Minor == other.Minor && obj.Patch == other.Patch && obj.Build < other.Build);
         end
-    
+
         % Equal (==)
         function result = eq(obj, other)
             arguments
@@ -217,13 +217,13 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
             if obj.IsLatest && other.IsLatest
                 result = true; return
             end
-            
+
             result = (obj.Major == other.Major) && ...
                      (obj.Minor == other.Minor) && ...
                      (obj.Patch == other.Patch) && ...
                      (obj.Build == other.Build);
         end
-    
+
         % Not equal (~=)
         function result = ne(obj, other)
             arguments
@@ -300,7 +300,7 @@ classdef VersionNumber < handle & matlab.mixin.CustomDisplay & matlab.mixin.Cust
             end
 
             validVersions = [validVersions{:}];
-        
+
             isValid = arrayfun(@(v) versionRef == v, validVersions);
             if ~any(isValid)
                 [validVersions(:).Format] = deal( versionRef.Format );
