@@ -1,160 +1,228 @@
-<a href="https://github.com/user-attachments/assets/2d53e2fa-9b07-41b5-b20f-e086d126102d">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/2d53e2fa-9b07-41b5-b20f-e086d126102d">
-    <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/2d53e2fa-9b07-41b5-b20f-e086d126102d">
-    <img alt="Dropbox-API-Client-logo" src="[/resources/images/toolbox_image.png](https://github.com/user-attachments/assets/2d53e2fa-9b07-41b5-b20f-e086d126102d)" title="MatBox" align="right" height="70"​>
-  </picture>
-</a>
+<p align="right">
+  <img alt="MatBox logo" src="https://github.com/user-attachments/assets/2d53e2fa-9b07-41b5-b20f-e086d126102d" title="MatBox" align="right" height="70">
+</p>
 
-# MatBox: CI Tools for MATLAB Toolbox Development
+# MatBox - Tools for MATLAB Toolbox Development
 
 [![Version Number](https://img.shields.io/github/v/release/ehennestad/MatBox?label=version)](https://github.com/ehennestad/MatBox/releases/latest)
 [![View MatBox on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://se.mathworks.com/matlabcentral/fileexchange/180185-matbox)
 [![MATLAB Tests](.github/badges/tests.svg)](https://github.com/ehennestad/MatBox/actions/workflows/update.yml)
 [![codecov](https://codecov.io/gh/ehennestad/MatBox/graph/badge.svg?token=6D7STF19X0)](https://codecov.io/gh/ehennestad/MatBox)
 [![MATLAB Code Issues](.github/badges/code_issues.svg)](https://github.com/ehennestad/MatBox/security/code-scanning)
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://gitHub.com/ehennestad/MatBox/graphs/commit-activity)
-[![Release](https://img.shields.io/badge/MATLAB-%3E%3DR2023b-blue?logo=data:image/svg%2bxml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgd2lkdGg9IjEyIgogICBoZWlnaHQ9IjEwLjcyNSIKICAgdmlld0JveD0iMCAwIDEyIDEwLjcyNSIKICAgZmlsbD0ibm9uZSIKICAgdmVyc2lvbj0iMS4xIgogICBpZD0ic3ZnNCIKICAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZwogICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwMF8zMTRfMTY2KSIKICAgICBpZD0iZzIiCiAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTQsLTQuMDc1MjAwMSkiPgogICAgPHBhdGgKICAgICAgIGQ9Im0gNi4xNzUsMTEuNTc1MiBjIC0wLjYsLTAuNDUgLTEuMzUsLTAuOTc1IC0yLjE3NSwtMS41NzUgMC45NzUsLTAuMzc1IDEuOTUsLTAuNzUgMi45MjUsLTEuMTI1IGwgMS4yLDAuOSBjIC0wLjksMS4wNSAtMS41LDEuNDI1IC0xLjk1LDEuOCB6IG0gOC4wMjUsLTMuMTUgYyAtMC4yMjUsLTAuNiAtMC4zNzUsLTEuMiAtMC42LC0xLjggLTAuMjI1LC0wLjY3NSAtMC40NSwtMS4yNzUgLTAuODI1LC0xLjggLTAuMTUsLTAuMjI1IC0wLjQ1LC0wLjc1IC0wLjgyNSwtMC43NSAtMC4wNzUsMCAtMC4xNSwwLjA3NSAtMC4yMjUsMC4wNzUgLTAuMjI1LDAuMDc1IC0wLjUyNSwwLjUyNSAtMC42LDAuODI1IC0wLjIyNSwwLjM3NSAtMC42NzUsMC45NzUgLTAuOTc1LDEuMzUgLTAuMDc1LDAuMTUgLTAuMjI1LDAuMyAtMC4zLDAuMzc1IC0wLjIyNSwwLjE1IC0wLjQ1LDAuMzc1IC0wLjc1LDAuNTI1IC0wLjA3NSwwIC0wLjE1LDAuMDc1IC0wLjIyNSwwLjA3NSAtMC4yMjUsMCAtMC4zNzUsMC4xNSAtMC41MjUsMC4yMjUgLTAuMjI1LDAuMjI1IC0wLjQ1LDAuNTI1IC0wLjY3NSwwLjc1IDAsMC4wNzUgLTAuMDc1LDAuMTUgLTAuMTUsMC4yMjUgbCAxLjEyNSwwLjgyNSBjIDAuODI1LC0wLjk3NSAxLjgsLTEuOTUgMi40NzUsLTMuODI1IDAsMCAtMC4yMjUsMi4wMjUgLTIuMDI1LDQuMiAtMS4xMjUsMS4yNzUgLTIuMDI1LDEuOTUgLTIuMTc1LDIuMSAwLDAgMC4zLC0wLjA3NSAwLjYsMC4wNzUgMC42LDAuMjI1IDAuOSwxLjA1IDEuMTI1LDEuNjUgMC4xNSwwLjQ1IDAuMzc1LDAuODI1IDAuNTI1LDEuMjc1IDAuNiwtMC4xNSAwLjk3NSwtMC4zNzUgMS4zNSwtMC43NSAwLjM3NSwtMC4zNzUgMC43NSwtMC44MjUgMS4xMjUsLTEuMiAwLjY3NSwtMC44MjUgMS41LC0xLjg3NSAyLjU1LC0xLjM1IDAuMTUsMC4wNzUgMC4zNzUsMC4yMjUgMC40NSwwLjMgMC4yMjUsMC4xNSAwLjM3NSwwLjMgMC42LDAuNTI1IDAuMzc1LDAuMyAwLjUyNSwwLjUyNSAwLjgyNSwwLjY3NSAtMC43NSwtMS41IC0xLjI3NSwtMyAtMS44NzUsLTQuNTc1IHoiCiAgICAgICBmaWxsPSIjZmZmZmZmIgogICAgICAgaWQ9InBhdGgyIiAvPgogIDwvZz4KICA8ZGVmcwogICAgIGlkPSJkZWZzNCI+CiAgICA8Y2xpcFBhdGgKICAgICAgIGlkPSJjbGlwMF8zMTRfMTY2Ij4KICAgICAgPHJlY3QKICAgICAgICAgd2lkdGg9IjEyIgogICAgICAgICBoZWlnaHQ9IjEyIgogICAgICAgICBmaWxsPSIjZmZmZmZmIgogICAgICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSg0LDQpIgogICAgICAgICBpZD0icmVjdDQiCiAgICAgICAgIHg9IjAiCiAgICAgICAgIHk9IjAiIC8+CiAgICA8L2NsaXBQYXRoPgogIDwvZGVmcz4KPC9zdmc+Cg==&label=MATLAB&labelColor=C95C2E&color=2A5F98)](https://se.mathworks.com/products/new_products/release2022b.html)
+[![MATLAB](https://img.shields.io/badge/MATLAB-%3E%3DR2023a-blue?logo=data:image/svg%2bxml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgd2lkdGg9IjEyIgogICBoZWlnaHQ9IjEwLjcyNSIKICAgdmlld0JveD0iMCAwIDEyIDEwLjcyNSIKICAgZmlsbD0ibm9uZSIKICAgdmVyc2lvbj0iMS4xIgogICBpZD0ic3ZnNCIKICAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZwogICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwMF8zMTRfMTY2KSIKICAgICBpZD0iZzIiCiAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTQsLTQuMDc1MjAwMSkiPgogICAgPHBhdGgKICAgICAgIGQ9Im0gNi4xNzUsMTEuNTc1MiBjIC0wLjYsLTAuNDUgLTEuMzUsLTAuOTc1IC0yLjE3NSwtMS41NzUgMC45NzUsLTAuMzc1IDEuOTUsLTAuNzUgMi45MjUsLTEuMTI1IGwgMS4yLDAuOSBjIC0wLjksMS4wNSAtMS41LDEuNDI1IC0xLjk1LDEuOCB6IG0gOC4wMjUsLTMuMTUgYyAtMC4yMjUsLTAuNiAtMC4zNzUsLTEuMiAtMC42LC0xLjggLTAuMjI1LC0wLjY3NSAtMC40NSwtMS4yNzUgLTAuODI1LC0xLjggLTAuMTUsLTAuMjI1IC0wLjQ1LC0wLjc1IC0wLjgyNSwtMC43NSAtMC4wNzUsMCAtMC4xNSwwLjA3NSAtMC4yMjUsMC4wNzUgLTAuMjI1LDAuMDc1IC0wLjUyNSwwLjUyNSAtMC42LDAuODI1IC0wLjIyNSwwLjM3NSAtMC42NzUsMC45NzUgLTAuOTc1LDEuMzUgLTAuMDc1LDAuMTUgLTAuMjI1LDAuMyAtMC4zLDAuMzc1IC0wLjIyNSwwLjE1IC0wLjQ1LDAuMzc1IC0wLjc1LDAuNTI1IC0wLjA3NSwwIC0wLjE1LDAuMDc1IC0wLjIyNSwwLjA3NSAtMC4yMjUsMCAtMC4zNzUsMC4xNSAtMC41MjUsMC4yMjUgLTAuMjI1LDAuMjI1IC0wLjQ1LDAuNTI1IC0wLjY3NSwwLjc1IDAsMC4wNzUgLTAuMDc1LDAuMTUgLTAuMTUsMC4yMjUgbCAxLjEyNSwwLjgyNSBjIDAuODI1LC0wLjk3NSAxLjgsLTEuOTUgMi40NzUsLTMuODI1IDAsMCAtMC4yMjUsMi4wMjUgLTIuMDI1LDQuMiAtMS4xMjUsMS4yNzUgLTIuMDI1LDEuOTUgLTIuMTc1LDIuMSAwLDAgMC4zLC0wLjA3NSAwLjYsMC4wNzUgMC42LDAuMjI1IDAuOSwxLjA1IDEuMTI1LDEuNjUgMC4xNSwwLjQ1IDAuMzc1LDAuODI1IDAuNTI1LDEuMjc1IDAuNiwtMC4xNSAwLjk3NSwtMC4zNzUgMS4zNSwtMC43NSAwLjM3NSwtMC4zNzUgMC43NSwtMC44MjUgMS4xMjUsLTEuMiAwLjY3NSwtMC44MjUgMS41LC0xLjg3NSAyLjU1LC0xLjM1IDAuMTUsMC4wNzUgMC4zNzUsMC4yMjUgMC40NSwwLjMgMC4yMjUsMC4xNSAwLjM3NSwwLjMgMC42LDAuNTI1IDAuMzc1LDAuMyAwLjUyNSwwLjUyNSAwLjgyNSwwLjY3NSAtMC43NSwtMS41IC0xLjI3NSwtMyAtMS44NzUsLTQuNTc1IHoiCiAgICAgICBmaWxsPSIjZmZmZmZmIgogICAgICAgaWQ9InBhdGgyIiAvPgogIDwvZz4KICA8ZGVmcwogICAgIGlkPSJkZWZzNCI+CiAgICA8Y2xpcFBhdGgKICAgICAgIGlkPSJjbGlwMF8zMTRfMTY2Ij4KICAgICAgPHJlY3QKICAgICAgICAgd2lkdGg9IjEyIgogICAgICAgICBoZWlnaHQ9IjEyIgogICAgICAgICBmaWxsPSIjZmZmZmZmIgogICAgICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSg0LDQpIgogICAgICAgICBpZD0icmVjdDQiCiAgICAgICAgIHg9IjAiCiAgICAgICAgIHk9IjAiIC8+CiAgICA8L2NsaXBQYXRoPgogIDwvZGVmcz4KPC9zdmc+Cg==&label=MATLAB&labelColor=C95C2E&color=2A5F98)](https://se.mathworks.com/products/matlab.html)
 
----
+MatBox provides reusable MATLAB utilities for maintaining MATLAB toolbox repositories. It installs toolbox dependencies, runs tests with coverage reports, runs MATLAB code analysis, and packages `.mltbx` releases from repository metadata.
 
-MatBox is a streamlined solution for managing MATLAB toolbox development: automate code checks, dependency management, cleaning, packaging, and continuous integration.
+MatBox is intended for MATLAB toolbox projects that follow a small set of conventions: source code in a source folder, tests in a test folder, dependency declarations in `requirements.txt`, and toolbox metadata in `MLToolboxInfo.json`.
 
----
+## What MatBox Does
 
-## 🚀 Features
+- Install MATLAB toolbox dependencies from `requirements.txt`
+- Install dependencies from GitHub repositories and MATLAB File Exchange packages
+- Run MATLAB unit tests and write JUnit and Cobertura coverage reports
+- Run MATLAB Code Analyzer and optionally export reports
+- Create README badges for test results and code analysis results
+- Package `.mltbx` releases using `MLToolboxInfo.json`
 
-- **Automated Dependency Management**: Use a `requirements.txt` for easy installation/configuration.
-- **Continuous Integration**: Ready-to-use GitHub Actions and workflow templates for code analysis and unit testing.
-- **Effortless Packaging**: Bundle your toolbox with a simple `MLToolbox.json` file.
+## Requirements
 
----
+- MATLAB R2023a or later is the supported baseline for MatBox itself.
+- Some functionality may work in older MATLAB releases, but the current package metadata and tests target R2023a or later.
+- Dependency installation requires network access when packages are fetched from GitHub or MATLAB File Exchange.
 
-## ⚡ Quickstart
+## Installation
 
-### 1. New Projects
+Install MatBox from one of the released `.mltbx` files:
 
-- **Create a repository** using the [MATLAB Toolbox Template](https://github.com/ehennestad/matlab-toolbox-template).
-- (Optional) **Add dependencies** in a `requirements.txt` (see below).
-- **Customize `setup.m`** ([template here](https://github.com/ehennestad/MatBox/blob/main/code/templates/setup.m)).
-- **Adjust workflow files** in `.github/workflows` if needed.
-- **Add or override CI functions** in the `tools/` directory.
+- [Latest GitHub release](https://github.com/ehennestad/MatBox/releases/latest)
+- [MATLAB File Exchange](https://se.mathworks.com/matlabcentral/fileexchange/180185-matbox)
 
-### 2. Adding to Existing Projects
+For GitHub Actions workflows, use the companion action:
 
-> **Note:** Direct documentation for retrofitting MatBox to existing repositories is in progress.  
-> See [openMINDS-MATLAB-UI](https://github.com/ehennestad/openMINDS-MATLAB-UI) for a practical example.
+- [matbox-actions/install-matbox](https://github.com/ehennestad/matbox-actions/tree/main/install-matbox)
 
-**Minimal steps:**
-- Add MatBox as a dependency (see [matbox-actions/install-matbox](https://github.com/ehennestad/matbox-actions/tree/main/install-matbox)).
-- Add/adjust `requirements.txt`, `setup.m`, and `.github/workflows` as above.
-- Place custom tasks (optional) in a `tools/` folder.
+## Quick Start
 
----
-
-## 📦 Requirements & Installation
-
-- **MATLAB R2023a** or later is recommended for toolbox packaging (other features may work with older versions).
-- To install dependencies listed in your `requirements.txt`:
-    ```matlab
-    matbox.installRequirements(pwd)
-    ```
-- Example `requirements.txt`:
-    ```
-    https://github.com/openMetadataInitiative/openMINDS_MATLAB
-    https://github.com/ehennestad/StructEditor
-    fex://66235-widgets-toolbox-compatibility-support/1.3.330
-    fex://83328-widgets-toolbox-matlab-app-designer-components
-    ```
-
----
-
-## 🧑‍💻 Basic Usage
-
-- **Run tests**:
-    ```matlab
-    matbox.tasks.testToolbox(pwd)
-    ```
-- **Package your toolbox**:
-    ```matlab
-    [newVersion, mltbxPath] = matbox.tasks.packageToolbox(pwd, 'build')
-    ```
-
----
-
-## 🔧 Customizing Tasks
-
-MatBox lets you override or extend its default behavior by adding custom task functions to your repository’s `tools/` directory. This is especially useful if you want to:
-
-- Run additional CI steps (like linting, style checks, or artifact generation)
-- Customize how tests or packaging are run for your toolbox
-- Add project-specific setup or teardown logic
-
-### How it Works
-
-When a workflow or CI job calls a MatBox task (like `matbox.tasks.testToolbox`), it will check if a function with the same name exists in your `tools/` directory and use that version instead of the built-in one.
-
-**For example:**  
-If you create a `tools/testToolbox.m` file, your version will run instead of the default MatBox test task.
-
-### Example: Custom Test Task
+Install dependencies for a toolbox repository:
 
 ```matlab
-% File: tools/testToolbox.m
+matbox.installRequirements(pwd)
+```
 
-function testToolbox(varargin)
-    % Project-specific test setup (optional)
-    disp('Running custom project tests...');
-    % Call the core MatBox test task (optional)
-    matbox.tasks.testToolbox(pwd, varargin{:});
-    % Add any extra steps here
+Run tests:
+
+```matlab
+matbox.tasks.testToolbox(pwd)
+```
+
+Run MATLAB Code Analyzer:
+
+```matlab
+matbox.tasks.codecheckToolbox(pwd)
+```
+
+Package a toolbox release:
+
+```matlab
+[newVersion, mltbxPath] = matbox.tasks.packageToolbox(pwd, "patch")
+```
+
+Use `"build"`, `"major"`, `"minor"`, `"patch"`, or `"specific"` as the release type.
+
+## Repository Conventions
+
+MatBox expects toolbox projects to provide a few files and folders.
+
+```text
+my-toolbox/
+  requirements.txt
+  tools/
+    MLToolboxInfo.json
+  src/
+    Contents.m
+  tests/
+```
+
+The default source folder is `src`, and the default test folder is `tests`. If your project uses different folder names, pass them explicitly:
+
+```matlab
+matbox.tasks.testToolbox( ...
+    pwd, ...
+    "SourceFolderName", "code", ...
+    "TestsFolderName", fullfile("tools", "tests"))
+```
+
+Packaging uses `MLToolboxInfo.json` to create MATLAB `ToolboxOptions`. MatBox looks for exactly one `MLToolboxInfo.json` file in a direct subfolder of the project root.
+
+Generated outputs are written to conventional locations:
+
+- `docs/reports` for test, coverage, and code-analysis reports
+- `.github/badges` for generated SVG badges
+- `releases` for packaged `.mltbx` files
+
+## Dependency Files
+
+Dependencies are declared in `requirements.txt`, one requirement per line. Empty lines and lines beginning with `#` are ignored.
+
+Supported formats:
+
+```text
+https://github.com/<owner>/<repo>
+https://github.com/<owner>/<repo>@<branch>
+fex://<file-exchange-id-title>
+fex://<file-exchange-id-title>/<version>
+```
+
+Example:
+
+```text
+https://github.com/openMetadataInitiative/openMINDS_MATLAB
+https://github.com/ehennestad/StructEditor
+fex://66235-widgets-toolbox-compatibility-support/1.3.330
+fex://83328-widgets-toolbox-matlab-app-designer-components
+```
+
+Install or update dependencies:
+
+```matlab
+matbox.installRequirements(pwd)
+matbox.installRequirements(pwd, "update")
+```
+
+By default, installed dependencies are added to the MATLAB path and the path is saved. These behaviors can be controlled with name-value arguments:
+
+```matlab
+matbox.installRequirements( ...
+    pwd, ...
+    "InstallationLocation", fullfile(userpath, "MATLAB-AddOns"), ...
+    "UpdateSearchPath", true, ...
+    "SaveSearchPath", true)
+```
+
+## Common Tasks
+
+Run all tests and create reports:
+
+```matlab
+matbox.tasks.testToolbox( ...
+    pwd, ...
+    "HtmlReports", true, ...
+    "CreateBadge", true)
+```
+
+Run tests with tag filtering:
+
+```matlab
+matbox.tasks.testToolbox(pwd, "HasTag", "Unit")
+matbox.tasks.testToolbox(pwd, "ExcludeTags", ["Graphical", "Slow"])
+```
+
+Run code analysis and fail when warnings or errors are present:
+
+```matlab
+matbox.tasks.codecheckToolbox( ...
+    pwd, ...
+    "RequireIssuesResolved", true, ...
+    "SeverityThreshold", "warning")
+```
+
+Package a build release without changing the three-part semantic version:
+
+```matlab
+matbox.tasks.packageToolbox(pwd, "build")
+```
+
+Package a specific version:
+
+```matlab
+matbox.tasks.packageToolbox(pwd, "specific", "1.2.3")
+```
+
+## Project-Specific Task Wrappers
+
+Projects can keep their own CI entry points in `tools/tasks`. These wrapper functions are useful when a project needs non-default source folders, test folders, tag filters, report settings, or packaging options.
+
+Example:
+
+```matlab
+function testToolbox()
+    taskFile = mfilename('fullpath');
+    projectRoot = fileparts(fileparts(fileparts(taskFile)));
+
+    matbox.tasks.testToolbox( ...
+        projectRoot, ...
+        "SourceFolderName", "code", ...
+        "TestsFolderName", fullfile("tools", "tests"), ...
+        "HtmlReports", true);
 end
 ```
 
-### Other Common Task Overrides
+This keeps project-specific policy in the project repository while reusing the core MatBox task implementation.
 
-You can override any task by creating a function with the same name as the task in your `tools/` directory, e.g.:
+## New Projects
 
-- `testToolbox.m` &ensp;→&ensp; Custom test runner
-- `packageToolbox.m` &ensp;→&ensp; Custom packaging logic
-- `codecheckToolbox.m` &ensp;→&ensp; Custom code analysis
+For new toolbox repositories, start from the MATLAB toolbox template:
 
-### Best Practices
+- [MATLAB Toolbox Template](https://github.com/ehennestad/matlab-toolbox-template)
 
-- Call the original MatBox task from your override if you want to extend (not replace) its behavior.
-- Use the `tools/` directory to keep custom CI logic organized and version-controlled.
-- Document your custom tasks for future contributors!
+Then configure:
 
-For practical examples, see the [openMINDS-MATLAB-UI](https://github.com/ehennestad/openMINDS-MATLAB-UI/tree/main/tools/tasks) repository.
+- `requirements.txt` for dependencies
+- `setup.m` for local setup
+- `MLToolboxInfo.json` for toolbox metadata
+- `.github/workflows` for CI
+- optional `tools/tasks` wrappers for project-specific task settings
 
----
-
-## 🏁 Example Repositories
+## Example Repositories
 
 - [dropbox-sdk-matlab](https://github.com/ehennestad/dropbox-sdk-matlab)
 - [openMINDS-MATLAB-UI](https://github.com/ehennestad/openMINDS-MATLAB-UI)
 
----
+## Related Projects
 
-## 🛠 FAQ / Troubleshooting
+- [MatBox Actions](https://github.com/ehennestad/matbox-actions)
+- [MATLAB Toolbox Template](https://github.com/ehennestad/matlab-toolbox-template)
 
-**Q: Can I use MatBox with an existing non-template repo?**  
-A: Yes, with some manual setup; see the [example repo](https://github.com/ehennestad/openMINDS-MATLAB-UI).
-
-**Q: Where do I put custom CI or utility functions?**  
-A: In the `tools/` directory of your project.
-
-**Q: How do I run tests or package my toolbox?**  
-A: See "Basic Usage" above.
-
----
-
-## 📝 License
+## License
 
 This project is available under the MIT License. See [LICENSE](LICENSE).
-
----
-
-**See also:**  
-- [MatBox Actions (GitHub Actions)](https://github.com/ehennestad/matbox-actions)
-- [MATLAB Toolbox Template](https://github.com/ehennestad/matlab-toolbox-template)
