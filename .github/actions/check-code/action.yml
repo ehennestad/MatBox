@@ -16,9 +16,25 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Check if buildfile exists
+      id: check-buildfile
+      shell: bash
+      run: |
+        if [ -f "buildfile.m" ]; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Check for MATLAB code issues (buildtool)
+      if: steps.check-buildfile.outputs.exists == 'true'
+      uses: matlab-actions/run-build@v2
+      with:
+        tasks: check
+
     - name: Check for MATLAB code issues
+      if: steps.check-buildfile.outputs.exists != 'true'
       uses: matlab-actions/run-command@v2
-      if: always()
       with:
         command: |
           addpath(genpath("${{ inputs.tools_directory }}"));
