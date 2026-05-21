@@ -9,7 +9,7 @@ function deleteGitTag(tagName, projectDirectory)
 
     if ~strcmp(pwd, projectDirectory)
         currentWorkingDir = pwd;
-        cleanupObj = onCleanup(@(fn) cd(currentWorkingDir));
+        cleanupObj = onCleanup(@() cd(currentWorkingDir));
         cd(projectDirectory)
     end
 
