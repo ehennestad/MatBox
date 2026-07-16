@@ -213,7 +213,10 @@ The reusable workflow chains these jobs:
    `matlab_versions` or from `MLToolboxInfo.json`
 3. **Test** — runs the test suites across the MATLAB version matrix
 4. **Package and release** — packages the `.mltbx` with
-   `matbox.tasks.packageToolbox` and creates a draft GitHub release
+   `matbox.tasks.packageToolbox` and creates a draft GitHub release.
+   Project root files declared in the top-level `RootFilesToPackage`
+   list in `MLToolboxInfo.json` (by default `LICENSE`) are included in
+   the packaged toolbox
 5. **Verify installation** — installs the packaged toolbox and confirms it
    loads
 

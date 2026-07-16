@@ -181,6 +181,12 @@ Package a specific version:
 matbox.tasks.packageToolbox(pwd, "specific", "1.2.3")
 ```
 
+By default, a `LICENSE` file in the project root is included in the packaged toolbox. To control which project root files are packaged, add a top-level `RootFilesToPackage` list to `MLToolboxInfo.json`:
+
+```json
+"RootFilesToPackage": ["LICENSE", "THIRD_PARTY_NOTICES.md"]
+```
+
 ## Project-Specific Task Wrappers
 
 Projects can keep their own CI entry points in `tools/tasks`. These wrapper functions are useful when a project needs non-default source folders, test folders, tag filters, report settings, or packaging options.
