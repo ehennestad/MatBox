@@ -1,5 +1,6 @@
 {
     "Namespace" : "matbox",
+    "RootFilesToPackage": ["LICENSE", "THIRD_PARTY_NOTICES.md"],
     "ToolboxOptions": {
         "Identifier": "dedfd78a-8fd1-4fca-9db3-f5eff64c7a88",
         "ToolboxName": "MatBox",

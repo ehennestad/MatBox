@@ -34,7 +34,8 @@ function writeBadgeJSONFile(label, message, color, projectRootDirectory, options
 %   necessary. The badge information is encoded as a JSON string and written
 %   to a file in the specified directory.
 %
-%   CREDIT: https://github.com/mathworks/climatedatastore/tree/main/buildUtilities
+%   Adapted from: https://github.com/mathworks/climatedatastore/blob/main/buildUtilities/writeBadgeJSONFile.m
+%   See the THIRD_PARTY_NOTICES.md file distributed with MatBox for license terms.
 
     arguments
         label (1,1) string

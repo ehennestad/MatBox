@@ -18,6 +18,7 @@ function [newVersion, mltbxPath] = packageToolbox(projectRootDirectory, releaseT
 % e.g. "RootFilesToPackage": ["LICENSE", "THIRD_PARTY_NOTICES.md"].
 %
 % Adapted from: https://github.com/mathworks/climatedatastore/blob/main/buildUtilities/packageToolbox.m
+% See the THIRD_PARTY_NOTICES.md file distributed with MatBox for license terms.
 
 % Todo:
 %  [ ] Create a matlab script that fills in toolbox options for path
