@@ -11,18 +11,22 @@
 [![MATLAB Code Issues](.github/badges/code_issues.svg)](https://github.com/ehennestad/MatBox/security/code-scanning)
 [![MATLAB](https://img.shields.io/badge/MATLAB-%3E%3DR2023a-blue?logo=data:image/svg%2bxml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgd2lkdGg9IjEyIgogICBoZWlnaHQ9IjEwLjcyNSIKICAgdmlld0JveD0iMCAwIDEyIDEwLjcyNSIKICAgZmlsbD0ibm9uZSIKICAgdmVyc2lvbj0iMS4xIgogICBpZD0ic3ZnNCIKICAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZwogICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwMF8zMTRfMTY2KSIKICAgICBpZD0iZzIiCiAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTQsLTQuMDc1MjAwMSkiPgogICAgPHBhdGgKICAgICAgIGQ9Im0gNi4xNzUsMTEuNTc1MiBjIC0wLjYsLTAuNDUgLTEuMzUsLTAuOTc1IC0yLjE3NSwtMS41NzUgMC45NzUsLTAuMzc1IDEuOTUsLTAuNzUgMi45MjUsLTEuMTI1IGwgMS4yLDAuOSBjIC0wLjksMS4wNSAtMS41LDEuNDI1IC0xLjk1LDEuOCB6IG0gOC4wMjUsLTMuMTUgYyAtMC4yMjUsLTAuNiAtMC4zNzUsLTEuMiAtMC42LC0xLjggLTAuMjI1LC0wLjY3NSAtMC40NSwtMS4yNzUgLTAuODI1LC0xLjggLTAuMTUsLTAuMjI1IC0wLjQ1LC0wLjc1IC0wLjgyNSwtMC43NSAtMC4wNzUsMCAtMC4xNSwwLjA3NSAtMC4yMjUsMC4wNzUgLTAuMjI1LDAuMDc1IC0wLjUyNSwwLjUyNSAtMC42LDAuODI1IC0wLjIyNSwwLjM3NSAtMC42NzUsMC45NzUgLTAuOTc1LDEuMzUgLTAuMDc1LDAuMTUgLTAuMjI1LDAuMyAtMC4zLDAuMzc1IC0wLjIyNSwwLjE1IC0wLjQ1LDAuMzc1IC0wLjc1LDAuNTI1IC0wLjA3NSwwIC0wLjE1LDAuMDc1IC0wLjIyNSwwLjA3NSAtMC4yMjUsMCAtMC4zNzUsMC4xNSAtMC41MjUsMC4yMjUgLTAuMjI1LDAuMjI1IC0wLjQ1LDAuNTI1IC0wLjY3NSwwLjc1IDAsMC4wNzUgLTAuMDc1LDAuMTUgLTAuMTUsMC4yMjUgbCAxLjEyNSwwLjgyNSBjIDAuODI1LC0wLjk3NSAxLjgsLTEuOTUgMi40NzUsLTMuODI1IDAsMCAtMC4yMjUsMi4wMjUgLTIuMDI1LDQuMiAtMS4xMjUsMS4yNzUgLTIuMDI1LDEuOTUgLTIuMTc1LDIuMSAwLDAgMC4zLC0wLjA3NSAwLjYsMC4wNzUgMC42LDAuMjI1IDAuOSwxLjA1IDEuMTI1LDEuNjUgMC4xNSwwLjQ1IDAuMzc1LDAuODI1IDAuNTI1LDEuMjc1IDAuNiwtMC4xNSAwLjk3NSwtMC4zNzUgMS4zNSwtMC43NSAwLjM3NSwtMC4zNzUgMC43NSwtMC44MjUgMS4xMjUsLTEuMiAwLjY3NSwtMC44MjUgMS41LC0xLjg3NSAyLjU1LC0xLjM1IDAuMTUsMC4wNzUgMC4zNzUsMC4yMjUgMC40NSwwLjMgMC4yMjUsMC4xNSAwLjM3NSwwLjMgMC42LDAuNTI1IDAuMzc1LDAuMyAwLjUyNSwwLjUyNSAwLjgyNSwwLjY3NSAtMC43NSwtMS41IC0xLjI3NSwtMyAtMS44NzUsLTQuNTc1IHoiCiAgICAgICBmaWxsPSIjZmZmZmZmIgogICAgICAgaWQ9InBhdGgyIiAvPgogIDwvZz4KICA8ZGVmcwogICAgIGlkPSJkZWZzNCI+CiAgICA8Y2xpcFBhdGgKICAgICAgIGlkPSJjbGlwMF8zMTRfMTY2Ij4KICAgICAgPHJlY3QKICAgICAgICAgd2lkdGg9IjEyIgogICAgICAgICBoZWlnaHQ9IjEyIgogICAgICAgICBmaWxsPSIjZmZmZmZmIgogICAgICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSg0LDQpIgogICAgICAgICBpZD0icmVjdDQiCiAgICAgICAgIHg9IjAiCiAgICAgICAgIHk9IjAiIC8+CiAgICA8L2NsaXBQYXRoPgogIDwvZGVmcz4KPC9zdmc+Cg==&label=MATLAB&labelColor=C95C2E&color=2A5F98)](https://se.mathworks.com/products/matlab.html)
 
-MatBox provides reusable MATLAB utilities for maintaining MATLAB toolbox repositories. It installs toolbox dependencies, runs tests with coverage reports, runs MATLAB code analysis, and packages `.mltbx` releases from repository metadata.
+MatBox automates the maintenance of MATLAB toolbox repositories: installing dependencies, running tests with coverage reports, running code analysis, and packaging `.mltbx` releases.
 
-MatBox is intended for MATLAB toolbox projects that follow a small set of conventions: source code in a source folder, tests in a test folder, dependency declarations in `requirements.txt`, and toolbox metadata in `MLToolboxInfo.json`.
+Each task covers something MATLAB either lacks or makes you re-implement per repository:
 
-## What MatBox Does
+- **Dependencies** — MATLAB has no package manager for GitHub or File Exchange packages. MatBox installs them from a `requirements.txt` file: `matbox.installRequirements(pwd)`.
+- **Test reports** — CI services consume JUnit, Cobertura, and HTML reports, which each repository otherwise has to wire up itself. `matbox.tasks.testToolbox(pwd)` runs the test suite and writes all three to `docs/reports`.
+- **Code analysis** — Code Analyzer results do not reach GitHub on their own. `matbox.tasks.codecheckToolbox(pwd)` exports them as SARIF for GitHub's code-scanning tab and can fail CI at a chosen severity.
+- **Releases** — packaging an `.mltbx` involves a version bump, `ToolboxOptions` metadata, and file selection. `matbox.tasks.packageToolbox(pwd, "patch")` does all three, driven by `MLToolboxInfo.json`.
+- **Badges** — status badges normally depend on an external service. MatBox generates test-result and code-issue badges as SVG files committed to the repository.
 
-- Install MATLAB toolbox dependencies from `requirements.txt`
-- Install dependencies from GitHub repositories and MATLAB File Exchange packages
-- Run MATLAB unit tests and write JUnit and Cobertura coverage reports
-- Run MATLAB Code Analyzer and optionally export reports
-- Create README badges for test results and code analysis results
-- Package `.mltbx` releases using `MLToolboxInfo.json`
+Projects that follow MatBox's conventions can reuse the companion [matbox-actions](https://github.com/ehennestad/matbox-actions) for CI, so each repository only needs a few short workflow files. See these example repositories, where MatBox produces the badges, CI runs, and packaged releases:
+
+- [dropbox-sdk-matlab](https://github.com/ehennestad/dropbox-sdk-matlab) — a class-based Dropbox API client
+- [openMINDS-MATLAB-UI](https://github.com/ehennestad/openMINDS-MATLAB-UI) — a graphical interface for openMINDS metadata
+
+The conventions are minimal: source code in a source folder, tests in a test folder, dependency declarations in `requirements.txt`, and toolbox metadata in `MLToolboxInfo.json`.
 
 ## Requirements
 
@@ -178,6 +182,12 @@ Package a specific version:
 matbox.tasks.packageToolbox(pwd, "specific", "1.2.3")
 ```
 
+By default, a `LICENSE` file in the project root is included in the packaged toolbox. To control which project root files are packaged, add a top-level `RootFilesToPackage` list to `MLToolboxInfo.json`:
+
+```json
+"RootFilesToPackage": ["LICENSE", "THIRD_PARTY_NOTICES.md"]
+```
+
 ## Project-Specific Task Wrappers
 
 Projects can keep their own CI entry points in `tools/tasks`. These wrapper functions are useful when a project needs non-default source folders, test folders, tag filters, report settings, or packaging options.
@@ -199,6 +209,39 @@ end
 
 This keeps project-specific policy in the project repository while reusing the core MatBox task implementation.
 
+## Continuous Integration
+
+MatBox is designed to run in GitHub Actions. The companion repository [matbox-actions](https://github.com/ehennestad/matbox-actions) provides composite actions and reusable workflows that install MatBox on a runner and invoke the MatBox tasks, so a toolbox repository only needs a few small workflow files.
+
+A minimal test workflow (`.github/workflows/test-code.yml`):
+
+```yaml
+name: Test code
+
+on:
+  push:
+    branches: main
+  pull_request:
+    branches: main
+
+jobs:
+  test:
+    name: Analyse and test code
+    uses: ehennestad/matbox-actions/.github/workflows/test-code-workflow.yml@v1
+    with:
+      source_directory: src
+      tests_directory: tests
+      tools_directory: tools
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+```
+
+This runs code analysis and the test suites, publishes test results, uploads coverage to Codecov (if the token is set), commits updated badges, and uploads all reports as a build artifact. A corresponding release workflow packages the toolbox and creates a draft GitHub release when a version tag is pushed.
+
+If a project defines its own task wrappers in `tools/tasks` (see above), the CI actions find and call them instead of the built-in `matbox.tasks.*` functions.
+
+See the [CI documentation](docs/ci.md) for the full setup, including the release pipeline, badge behavior, code coverage, and all workflow inputs.
+
 ## New Projects
 
 For new toolbox repositories, start from the MATLAB toolbox template:
@@ -212,11 +255,6 @@ Then configure:
 - `MLToolboxInfo.json` for toolbox metadata
 - `.github/workflows` for CI
 - optional `tools/tasks` wrappers for project-specific task settings
-
-## Example Repositories
-
-- [dropbox-sdk-matlab](https://github.com/ehennestad/dropbox-sdk-matlab)
-- [openMINDS-MATLAB-UI](https://github.com/ehennestad/openMINDS-MATLAB-UI)
 
 ## Related Projects
 
