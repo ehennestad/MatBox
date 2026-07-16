@@ -2,7 +2,7 @@ function issues = codecheckToolbox(projectRootDir, options)
 % codecheckToolbox - Run MATLAB code analysis on project source files
 %
 % Adapted from: https://github.com/mathworks/climatedatastore/blob/main/buildUtilities/codecheckToolbox.m
-% See THIRD_PARTY_NOTICES.md in the repository root for license terms.
+% See the THIRD_PARTY_NOTICES.md file distributed with MatBox for license terms.
 
     arguments
         projectRootDir (1,1) string {mustBeFolder}

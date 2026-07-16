@@ -35,7 +35,7 @@ function writeBadgeJSONFile(label, message, color, projectRootDirectory, options
 %   to a file in the specified directory.
 %
 %   Adapted from: https://github.com/mathworks/climatedatastore/blob/main/buildUtilities/writeBadgeJSONFile.m
-%   See THIRD_PARTY_NOTICES.md in the repository root for license terms.
+%   See the THIRD_PARTY_NOTICES.md file distributed with MatBox for license terms.
 
     arguments
         label (1,1) string
