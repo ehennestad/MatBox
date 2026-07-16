@@ -12,6 +12,11 @@ function [newVersion, mltbxPath] = packageToolbox(projectRootDirectory, releaseT
 % packageTookbox('specific', versionString) VERSIONSTRING is a string containing
 % the specific 3 part semantic version (i.e. "2.3.4") to use.
 %
+% By default, a LICENSE file in the project root directory is included in
+% the packaged toolbox. To control which project root files are included,
+% specify a top-level "RootFilesToPackage" list in MLToolboxInfo.json,
+% e.g. "RootFilesToPackage": ["LICENSE", "THIRD_PARTY_NOTICES.md"].
+%
 % Adapted from: https://github.com/mathworks/climatedatastore/blob/main/buildUtilities/packageToolbox.m
 
 % Todo:
@@ -32,6 +37,12 @@ function [newVersion, mltbxPath] = packageToolbox(projectRootDirectory, releaseT
 
     % Get updated version number
     sourceFolderPath = fullfile(projectRootDirectory, options.SourceFolderName);
+
+    % Temporarily copy project root files (e.g. LICENSE) into the source
+    % folder so they are included in the packaged toolbox.
+    stagedFilesCleanupObj = matbox.toolbox.internal.stageRootFilesForPackaging(...
+        projectRootDirectory, sourceFolderPath); %#ok<NASGU>
+
     try
         previousVersion = matbox.utility.getVersionFromContents(sourceFolderPath);
     catch
