@@ -2,6 +2,7 @@ function newVersion = updateVersionNumber(previousVersion, releaseType, versionS
 % updateVersionNumber - Utility function to update a version number
 %
 % Adapted from: https://github.com/mathworks/climatedatastore/blob/main/buildUtilities/packageToolbox.m
+% See THIRD_PARTY_NOTICES.md in the repository root for license terms.
 
     arguments
         previousVersion string {mustBeTextScalar} = "";

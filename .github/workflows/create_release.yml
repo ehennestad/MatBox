@@ -1,5 +1,6 @@
 # Test the toolbox across all supported releases of MATLAB, package toolbox, create release
 # Adapted from: https://github.com/mathworks/climatedatastore/blob/main/.github/workflows/release.yml
+# See THIRD_PARTY_NOTICES.md in the repository root for license terms.
 
 name: Create new release
 

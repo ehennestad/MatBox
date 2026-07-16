@@ -1,6 +1,8 @@
 function testToolbox(projectRootDirectory, options)
-    %RUNTESTWITHCODECOVERAGE Summary of this function goes here
-    %   Detailed explanation goes here
+    % testToolbox - Run project test suites with coverage and test reports
+    %
+    % Adapted from: https://github.com/mathworks/climatedatastore/blob/main/buildUtilities/testToolbox.m
+    % See THIRD_PARTY_NOTICES.md in the repository root for license terms.
 
     arguments
         projectRootDirectory (1,1) string {mustBeFolder}

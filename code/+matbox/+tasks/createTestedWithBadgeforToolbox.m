@@ -2,7 +2,8 @@ function createTestedWithBadgeforToolbox(versionNumber, projectRootDirectory)
 %createTestedWithBadgesforToolbox - Take the test reports from the runs against
 % multiple MATLAB releases, and generate the "Tested with" badge
 %
-%   Adapted from: https://github.com/mathworks/climatedatastore/tree/main/buildUtilities
+%   Adapted from: https://github.com/mathworks/climatedatastore/blob/main/buildUtilities/badgesforToolbox.m
+%   See THIRD_PARTY_NOTICES.md in the repository root for license terms.
 
     arguments
         versionNumber (1,1) string

@@ -13,6 +13,7 @@ function [newVersion, mltbxPath] = packageToolbox(projectRootDirectory, releaseT
 % the specific 3 part semantic version (i.e. "2.3.4") to use.
 %
 % Adapted from: https://github.com/mathworks/climatedatastore/blob/main/buildUtilities/packageToolbox.m
+% See THIRD_PARTY_NOTICES.md in the repository root for license terms.
 
 % Todo:
 %  [ ] Create a matlab script that fills in toolbox options for path
