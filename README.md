@@ -21,7 +21,7 @@ Maintaining a MATLAB toolbox as a Git repository means solving the same problems
 - **Release with one command** — `matbox.tasks.packageToolbox(pwd, "patch")` bumps the version, builds `ToolboxOptions` from `MLToolboxInfo.json`, and packages the `.mltbx`.
 - **Generate badges** — test-result and code-issue badges rendered in MATLAB, committed to the repo, no external badge service.
 
-Because every MatBox project follows the same small set of conventions, the companion [GitHub Actions](https://github.com/ehennestad/matbox-actions) give any toolbox repository full CI — tests, analysis, coverage, badges, releases — from a few short workflow files.
+Because every MatBox project follows the same small set of conventions, the companion [matbox-actions](https://github.com/ehennestad/matbox-actions) give any toolbox repository full CI — tests, analysis, coverage, badges, releases — from a few short workflow files.
 
 To see this in practice, browse [dropbox-sdk-matlab](https://github.com/ehennestad/dropbox-sdk-matlab) or [openMINDS-MATLAB-UI](https://github.com/ehennestad/openMINDS-MATLAB-UI): the badges, test and code-analysis runs, and packaged releases in those repositories are produced by MatBox.
 
