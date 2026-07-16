@@ -199,6 +199,39 @@ end
 
 This keeps project-specific policy in the project repository while reusing the core MatBox task implementation.
 
+## Continuous Integration
+
+MatBox is designed to run in GitHub Actions. The companion repository [matbox-actions](https://github.com/ehennestad/matbox-actions) provides composite actions and reusable workflows that install MatBox on a runner and invoke the MatBox tasks, so a toolbox repository only needs a few small workflow files.
+
+A minimal test workflow (`.github/workflows/test-code.yml`):
+
+```yaml
+name: Test code
+
+on:
+  push:
+    branches: main
+  pull_request:
+    branches: main
+
+jobs:
+  test:
+    name: Analyse and test code
+    uses: ehennestad/matbox-actions/.github/workflows/test-code-workflow.yml@v1
+    with:
+      source_directory: src
+      tests_directory: tests
+      tools_directory: tools
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+```
+
+This runs code analysis and the test suites, publishes test results, uploads coverage to Codecov (if the token is set), commits updated badges, and uploads all reports as a build artifact. A corresponding release workflow packages the toolbox and creates a draft GitHub release when a version tag is pushed.
+
+If a project defines its own task wrappers in `tools/tasks` (see above), the CI actions find and call them instead of the built-in `matbox.tasks.*` functions.
+
+See the [CI documentation](docs/ci.md) for the full setup, including the release pipeline, badge behavior, code coverage, and all workflow inputs.
+
 ## New Projects
 
 For new toolbox repositories, start from the MATLAB toolbox template:
