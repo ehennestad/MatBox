@@ -11,19 +11,20 @@
 [![MATLAB Code Issues](.github/badges/code_issues.svg)](https://github.com/ehennestad/MatBox/security/code-scanning)
 [![MATLAB](https://img.shields.io/badge/MATLAB-%3E%3DR2023a-blue?logo=data:image/svg%2bxml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgd2lkdGg9IjEyIgogICBoZWlnaHQ9IjEwLjcyNSIKICAgdmlld0JveD0iMCAwIDEyIDEwLjcyNSIKICAgZmlsbD0ibm9uZSIKICAgdmVyc2lvbj0iMS4xIgogICBpZD0ic3ZnNCIKICAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogICB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZwogICAgIGNsaXAtcGF0aD0idXJsKCNjbGlwMF8zMTRfMTY2KSIKICAgICBpZD0iZzIiCiAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTQsLTQuMDc1MjAwMSkiPgogICAgPHBhdGgKICAgICAgIGQ9Im0gNi4xNzUsMTEuNTc1MiBjIC0wLjYsLTAuNDUgLTEuMzUsLTAuOTc1IC0yLjE3NSwtMS41NzUgMC45NzUsLTAuMzc1IDEuOTUsLTAuNzUgMi45MjUsLTEuMTI1IGwgMS4yLDAuOSBjIC0wLjksMS4wNSAtMS41LDEuNDI1IC0xLjk1LDEuOCB6IG0gOC4wMjUsLTMuMTUgYyAtMC4yMjUsLTAuNiAtMC4zNzUsLTEuMiAtMC42LC0xLjggLTAuMjI1LC0wLjY3NSAtMC40NSwtMS4yNzUgLTAuODI1LC0xLjggLTAuMTUsLTAuMjI1IC0wLjQ1LC0wLjc1IC0wLjgyNSwtMC43NSAtMC4wNzUsMCAtMC4xNSwwLjA3NSAtMC4yMjUsMC4wNzUgLTAuMjI1LDAuMDc1IC0wLjUyNSwwLjUyNSAtMC42LDAuODI1IC0wLjIyNSwwLjM3NSAtMC42NzUsMC45NzUgLTAuOTc1LDEuMzUgLTAuMDc1LDAuMTUgLTAuMjI1LDAuMyAtMC4zLDAuMzc1IC0wLjIyNSwwLjE1IC0wLjQ1LDAuMzc1IC0wLjc1LDAuNTI1IC0wLjA3NSwwIC0wLjE1LDAuMDc1IC0wLjIyNSwwLjA3NSAtMC4yMjUsMCAtMC4zNzUsMC4xNSAtMC41MjUsMC4yMjUgLTAuMjI1LDAuMjI1IC0wLjQ1LDAuNTI1IC0wLjY3NSwwLjc1IDAsMC4wNzUgLTAuMDc1LDAuMTUgLTAuMTUsMC4yMjUgbCAxLjEyNSwwLjgyNSBjIDAuODI1LC0wLjk3NSAxLjgsLTEuOTUgMi40NzUsLTMuODI1IDAsMCAtMC4yMjUsMi4wMjUgLTIuMDI1LDQuMiAtMS4xMjUsMS4yNzUgLTIuMDI1LDEuOTUgLTIuMTc1LDIuMSAwLDAgMC4zLC0wLjA3NSAwLjYsMC4wNzUgMC42LDAuMjI1IDAuOSwxLjA1IDEuMTI1LDEuNjUgMC4xNSwwLjQ1IDAuMzc1LDAuODI1IDAuNTI1LDEuMjc1IDAuNiwtMC4xNSAwLjk3NSwtMC4zNzUgMS4zNSwtMC43NSAwLjM3NSwtMC4zNzUgMC43NSwtMC44MjUgMS4xMjUsLTEuMiAwLjY3NSwtMC44MjUgMS41LC0xLjg3NSAyLjU1LC0xLjM1IDAuMTUsMC4wNzUgMC4zNzUsMC4yMjUgMC40NSwwLjMgMC4yMjUsMC4xNSAwLjM3NSwwLjMgMC42LDAuNTI1IDAuMzc1LDAuMyAwLjUyNSwwLjUyNSAwLjgyNSwwLjY3NSAtMC43NSwtMS41IC0xLjI3NSwtMyAtMS44NzUsLTQuNTc1IHoiCiAgICAgICBmaWxsPSIjZmZmZmZmIgogICAgICAgaWQ9InBhdGgyIiAvPgogIDwvZz4KICA8ZGVmcwogICAgIGlkPSJkZWZzNCI+CiAgICA8Y2xpcFBhdGgKICAgICAgIGlkPSJjbGlwMF8zMTRfMTY2Ij4KICAgICAgPHJlY3QKICAgICAgICAgd2lkdGg9IjEyIgogICAgICAgICBoZWlnaHQ9IjEyIgogICAgICAgICBmaWxsPSIjZmZmZmZmIgogICAgICAgICB0cmFuc2Zvcm09InRyYW5zbGF0ZSg0LDQpIgogICAgICAgICBpZD0icmVjdDQiCiAgICAgICAgIHg9IjAiCiAgICAgICAgIHk9IjAiIC8+CiAgICA8L2NsaXBQYXRoPgogIDwvZGVmcz4KPC9zdmc+Cg==&label=MATLAB&labelColor=C95C2E&color=2A5F98)](https://se.mathworks.com/products/matlab.html)
 
-MatBox provides the toolbox-repository infrastructure that MATLAB leaves to you: dependency installation, test and coverage reporting, code analysis, and release packaging — implemented once, reused across all your toolbox repositories.
+MatBox is a MATLAB toolbox with tools for maintaining MATLAB toolbox repositories: it installs dependencies, runs tests with coverage reports, runs code analysis, and packages `.mltbx` releases.
 
-Maintaining a MATLAB toolbox as a Git repository means solving the same problems in every project. MATLAB has no package manager for installing dependencies from GitHub or File Exchange, and while recent releases add useful building blocks — projects, the `buildtool` framework, test-report formats — each repository is still left writing its own glue for CI reports, badges, version management, and packaged releases. MatBox provides these as ready-made tasks, each a single function call:
+Each task addresses a gap or a per-repository chore in plain MATLAB:
 
-- **Install dependencies** — declare GitHub and File Exchange dependencies in `requirements.txt`; `matbox.installRequirements(pwd)` installs them on your machine and on CI runners alike.
-- **Run tests with real reports** — `matbox.tasks.testToolbox(pwd)` runs your test suite and writes JUnit results, Cobertura coverage, and an HTML report to `docs/reports` — the formats GitHub checks and Codecov consume directly.
-- **Check code quality** — `matbox.tasks.codecheckToolbox(pwd)` runs the MATLAB Code Analyzer and exports SARIF, so issues show up on GitHub's code-scanning tab; optionally fail CI when warnings are present.
-- **Release with one command** — `matbox.tasks.packageToolbox(pwd, "patch")` bumps the version, builds `ToolboxOptions` from `MLToolboxInfo.json`, and packages the `.mltbx`.
-- **Generate badges** — test-result and code-issue badges rendered in MATLAB, committed to the repo, no external badge service.
+- **Dependencies** — MATLAB has no package manager for GitHub or File Exchange packages. MatBox installs them from a `requirements.txt` file: `matbox.installRequirements(pwd)`.
+- **Test reports** — CI services consume JUnit, Cobertura, and HTML reports, which each repository otherwise has to wire up itself. `matbox.tasks.testToolbox(pwd)` runs the test suite and writes all three to `docs/reports`.
+- **Code analysis** — Code Analyzer results do not reach GitHub on their own. `matbox.tasks.codecheckToolbox(pwd)` exports them as SARIF for GitHub's code-scanning tab and can fail CI at a chosen severity.
+- **Releases** — packaging an `.mltbx` involves a version bump, `ToolboxOptions` metadata, and file selection. `matbox.tasks.packageToolbox(pwd, "patch")` does all three, driven by `MLToolboxInfo.json`.
+- **Badges** — status badges normally depend on an external service. MatBox generates test-result and code-issue badges as SVG files committed to the repository.
 
-Because every MatBox project follows the same small set of conventions, the companion [matbox-actions](https://github.com/ehennestad/matbox-actions) give any toolbox repository full CI — tests, analysis, coverage, badges, releases — from a few short workflow files.
+Projects that follow MatBox's conventions can reuse the companion [matbox-actions](https://github.com/ehennestad/matbox-actions) for CI, so each repository only needs a few short workflow files. MatBox produces the badges, CI runs, and packaged releases in these repositories:
 
-To see this in practice, browse [dropbox-sdk-matlab](https://github.com/ehennestad/dropbox-sdk-matlab) or [openMINDS-MATLAB-UI](https://github.com/ehennestad/openMINDS-MATLAB-UI): the badges, test and code-analysis runs, and packaged releases in those repositories are produced by MatBox.
+- [dropbox-sdk-matlab](https://github.com/ehennestad/dropbox-sdk-matlab) — a class-based Dropbox API client
+- [openMINDS-MATLAB-UI](https://github.com/ehennestad/openMINDS-MATLAB-UI) — a graphical interface for openMINDS metadata
 
 The conventions are minimal: source code in a source folder, tests in a test folder, dependency declarations in `requirements.txt`, and toolbox metadata in `MLToolboxInfo.json`.
 
@@ -254,13 +255,6 @@ Then configure:
 - `MLToolboxInfo.json` for toolbox metadata
 - `.github/workflows` for CI
 - optional `tools/tasks` wrappers for project-specific task settings
-
-## Example Repositories
-
-These repositories use MatBox for testing, code analysis, badges, and releases:
-
-- [dropbox-sdk-matlab](https://github.com/ehennestad/dropbox-sdk-matlab) — a class-based Dropbox API client
-- [openMINDS-MATLAB-UI](https://github.com/ehennestad/openMINDS-MATLAB-UI) — a graphical interface for openMINDS metadata
 
 ## Related Projects
 
