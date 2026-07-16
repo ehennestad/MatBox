@@ -21,7 +21,7 @@ Each task covers something MATLAB either lacks or makes you re-implement per rep
 - **Releases** — packaging an `.mltbx` involves a version bump, `ToolboxOptions` metadata, and file selection. `matbox.tasks.packageToolbox(pwd, "patch")` does all three, driven by `MLToolboxInfo.json`.
 - **Badges** — status badges normally depend on an external service. MatBox generates test-result and code-issue badges as SVG files committed to the repository.
 
-Projects that follow MatBox's conventions can reuse the companion [matbox-actions](https://github.com/ehennestad/matbox-actions) for CI, so each repository only needs a few short workflow files. Explore these example repositories, where MatBox produces the badges, CI runs, and packaged releases:
+Projects that follow MatBox's conventions can reuse the companion [matbox-actions](https://github.com/ehennestad/matbox-actions) for CI, so each repository only needs a few short workflow files. See these example repositories, where MatBox produces the badges, CI runs, and packaged releases:
 
 - [dropbox-sdk-matlab](https://github.com/ehennestad/dropbox-sdk-matlab) — a class-based Dropbox API client
 - [openMINDS-MATLAB-UI](https://github.com/ehennestad/openMINDS-MATLAB-UI) — a graphical interface for openMINDS metadata
