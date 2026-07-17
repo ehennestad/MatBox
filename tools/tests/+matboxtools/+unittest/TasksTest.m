@@ -34,6 +34,23 @@ classdef TasksTest <  matlab.unittest.TestCase
             testCase.verifyTrue(isfolder(fullfile(pwd, "docs", "reports")))
         end
 
+        function testCodecheckToolboxCreatesBadgeJson(testCase)
+            pathStr = matboxtools.projectdir();
+            copyfile(pathStr, pwd);
+
+            matbox.tasks.codecheckToolbox(pwd, ...
+                "CreateBadge", true, "SaveReport", false);
+
+            badgeFile = fullfile(pwd, "docs", "reports", "badges", "code_issues.json");
+            testCase.verifyTrue(isfile(badgeFile), ...
+                "Expected badge JSON file was not created.")
+
+            badgeInfo = jsondecode(fileread(badgeFile));
+            testCase.verifyEqual(badgeInfo.label, 'code issues')
+            testCase.verifyTrue(ismember(string(badgeInfo.color), ...
+                ["green", "yellow", "red"]))
+        end
+
         function testPackageToolbox(testCase)
             pathStr = matboxtools.projectdir();
             copyfile(pathStr, pwd);

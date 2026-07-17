@@ -1,4 +1,11 @@
 function createBadgeSvg(label, message, color, projectRootDirectory, options)
+% createBadgeSvg - Create an SVG badge using the pybadges Python package
+%
+%   Deprecated: MatBox tasks now write badge descriptions as JSON files
+%   (see matbox.utility.writeBadgeJSONFile), which are rendered to SVG in
+%   CI by the matbox-actions workflows. This function requires Python and
+%   the deprecated pybadges package, and will be removed in a future
+%   release.
 
     arguments
         label (1,1) string

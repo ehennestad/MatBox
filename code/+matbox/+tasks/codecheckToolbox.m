@@ -92,8 +92,9 @@ function createCodeIssuesBadge(issueCount, projectRootDir)
         color = "red";
     end
 
-    matbox.utility.createBadgeSvg("code issues", ...
-        string(issueCount.Total), color, projectRootDir)
+    matbox.utility.writeBadgeJSONFile("code issues", ...
+        string(issueCount.Total), color, ...
+        "OutputFolder", fullfile(projectRootDir, "docs", "reports", "badges"))
 end
 
 function ME = throwUnresolvedCodeIssuesException()
