@@ -131,8 +131,7 @@ function createTestResultBadge(results, projectRootDirectory)
         color = "red";
         message = sprintf("%d/%d passed", numPassedTests, numTests);
     end
-    matbox.utility.writeBadgeJSONFile("tests", message, color, ...
-        "OutputFolder", fullfile(projectRootDirectory, "docs", "reports", "badges"))
+    matbox.tasks.internal.createBadge("tests", message, color, projectRootDirectory)
 end
 
 function displayTestResultSummary(testResults)

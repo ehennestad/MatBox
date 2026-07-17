@@ -38,6 +38,12 @@ classdef TasksTest <  matlab.unittest.TestCase
             pathStr = matboxtools.projectdir();
             copyfile(pathStr, pwd);
 
+            % The matbox-actions workflows set this environment variable to
+            % request badge JSON instead of legacy in-MATLAB SVG rendering.
+            previousValue = getenv("MATBOX_BADGE_FORMAT");
+            setenv("MATBOX_BADGE_FORMAT", "json")
+            testCase.addTeardown(@() setenv("MATBOX_BADGE_FORMAT", previousValue))
+
             matbox.tasks.codecheckToolbox(pwd, ...
                 "CreateBadge", true, "SaveReport", false);
 
