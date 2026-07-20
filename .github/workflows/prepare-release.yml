@@ -6,9 +6,18 @@ on:
       - 'v[0-9]+.[0-9]+.[0-9]+' # Matches tags like v1.2.3
   workflow_dispatch:
     inputs:
-      version:
-        description: 'Version number in major.minor.patch format'
+      bump:
+        description: 'Version bump; the new version is inferred from the latest release tag'
         required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+        default: patch
+      version:
+        description: 'Explicit version override in major.minor.patch format; takes precedence over bump'
+        required: false
         type: string
 
 jobs:
