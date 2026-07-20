@@ -92,7 +92,7 @@ function createCodeIssuesBadge(issueCount, projectRootDir)
         color = "red";
     end
 
-    matbox.utility.createBadgeSvg("code issues", ...
+    matbox.tasks.internal.createBadge("code issues", ...
         string(issueCount.Total), color, projectRootDir)
 end
 
