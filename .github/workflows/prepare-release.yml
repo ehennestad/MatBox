@@ -26,6 +26,7 @@ jobs:
     uses: ehennestad/matbox-actions/.github/workflows/prepare-release-workflow.yml@v1
     with:
       version: ${{ inputs.version }}
+      bump: ${{ inputs.bump }}
       ref_name: ${{ github.ref_name }}
       source_directory: code
       tests_directory: tools/tests
