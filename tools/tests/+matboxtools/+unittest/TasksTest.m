@@ -122,5 +122,82 @@ classdef TasksTest <  matlab.unittest.TestCase
             testCase.verifyEqual(fileread(packagedLicenseFile), shadowText)
             testCase.verifyTrue(isfile(fullfile(pwd, 'code', 'LICENSE')))
         end
+
+        function testTestedWithBadgeCountsReleaseWithSkippedTests(testCase)
+            % Tests filtered by an unmet assumption are reported as skipped
+            % rather than failed, so the release is still tested with.
+            writeTestResultsReport(pwd, "R2024a", "Skipped", 4);
+            writeTestResultsReport(pwd, "R2024b");
+
+            matbox.tasks.createTestedWithBadgeforToolbox("v1.2.3", pwd);
+
+            badgeInfo = readTestedWithBadge(testCase, pwd, "v1.2.3");
+            testCase.verifyEqual(string(badgeInfo.message), "R2024a | R2024b")
+            testCase.verifyEqual(string(badgeInfo.color), "green")
+        end
+
+        function testTestedWithBadgeExcludesFailingRelease(testCase)
+            % Errors and failures still disqualify a release, and the badge
+            % turns orange once a single release is left out.
+            writeTestResultsReport(pwd, "R2024a", "Failures", 1);
+            writeTestResultsReport(pwd, "R2024b", "Skipped", 2);
+
+            matbox.tasks.createTestedWithBadgeforToolbox("v1.2.3", pwd);
+
+            badgeInfo = readTestedWithBadge(testCase, pwd, "v1.2.3");
+            testCase.verifyEqual(string(badgeInfo.message), "R2024b")
+            testCase.verifyEqual(string(badgeInfo.color), "orange")
+        end
+
+        function testTestedWithBadgeErrorsWhenNoReleasePassed(testCase)
+            % Writing no badge at all would surface much later as a missing
+            % file, so the task has to report the problem itself.
+            writeTestResultsReport(pwd, "R2024a", "Errors", 1);
+            writeTestResultsReport(pwd, "R2024b", "Failures", 1);
+
+            testCase.verifyError( ...
+                @() matbox.tasks.createTestedWithBadgeforToolbox("v1.2.3", pwd), ...
+                "MATBOX:BadgeCreation:NoReleasePassed")
+        end
     end
+end
+
+function writeTestResultsReport(projectRootDirectory, releaseName, options)
+% writeTestResultsReport - Write a minimal JUnit-style report for one release
+%
+%   The report holds a single test suite whose error, failure and skip counts
+%   are given by the optional arguments. It mirrors the layout that the release
+%   workflow produces by downloading one report artifact per MATLAB release.
+
+    arguments
+        projectRootDirectory (1,1) string
+        releaseName (1,1) string
+        options.Errors (1,1) double = 0
+        options.Failures (1,1) double = 0
+        options.Skipped (1,1) double = 0
+    end
+
+    reportFolder = fullfile(projectRootDirectory, "docs", "reports", "reports-" + releaseName);
+    if ~isfolder(reportFolder)
+        mkdir(reportFolder)
+    end
+
+    reportXml = sprintf([...
+        '<?xml version="1.0" encoding="UTF-8" standalone="no" ?>\n' ...
+        '<testsuites>\n' ...
+        '  <testsuite errors="%d" failures="%d" name="ExampleTest" skipped="%d" tests="%d" time="1.0"/>\n' ...
+        '</testsuites>\n'], ...
+        options.Errors, options.Failures, options.Skipped, ...
+        options.Errors + options.Failures + options.Skipped + 1);
+
+    matbox.utility.filewrite(fullfile(reportFolder, "test-results.xml"), reportXml);
+end
+
+function badgeInfo = readTestedWithBadge(testCase, projectRootDirectory, versionNumber)
+% readTestedWithBadge - Read back the badge written for a given version
+
+    badgeFile = fullfile(projectRootDirectory, ".github", "badges", versionNumber, "tested_with.json");
+    testCase.assertTrue(isfile(badgeFile), ...
+        "Expected 'tested with' badge file was not created.")
+    badgeInfo = jsondecode(fileread(badgeFile));
 end
