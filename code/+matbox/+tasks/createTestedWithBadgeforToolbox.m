@@ -45,10 +45,12 @@ function createTestedWithBadgeforToolbox(versionNumber, projectRootDirectory)
         % Read the test results file
         testResults = readstruct(currentFile);
 
-        % If no tests failed, errors, or were skipped, then add it to the list
+        % A release counts as tested when nothing errored or failed. Skipped
+        % tests are deliberately filtered by test assumptions (an optional
+        % dependency that is absent, a documented gap), so they say nothing
+        % about whether the toolbox works on that release.
         if sum([testResults.testsuite.errorsAttribute]) == 0 ...
-           && sum([testResults.testsuite.failuresAttribute]) == 0 ...
-           && sum([testResults.testsuite.skippedAttribute]) == 0
+           && sum([testResults.testsuite.failuresAttribute]) == 0
             if releasesTestedWith ~= ""
                 % Insert the separator between released after the first one
                 releasesTestedWith = releasesTestedWith + " | ";
@@ -58,22 +60,28 @@ function createTestedWithBadgeforToolbox(versionNumber, projectRootDirectory)
             releasesFailed = releasesFailed + 1;
         end
     end
-    if releasesTestedWith ~= ""
-        switch releasesFailed
-            case 0
-                badgecolor = "green";
-            case 1
-                badgecolor = "orange";
-            case 2
-                badgecolor = "yellow";
-            otherwise
-                badgecolor = "red";
-        end
 
-        outputDirectory = fullfile(projectRootDirectory, '.github', 'badges', versionNumber);
-        matbox.utility.writeBadgeJSONFile("tested with", releasesTestedWith, badgecolor,...
-            "OutputFolder", outputDirectory)
+    % Fail loudly rather than leaving the caller with a missing badge file.
+    assert( releasesTestedWith ~= "", ...
+        'MATBOX:BadgeCreation:NoReleasePassed', ...
+        ['No release passed its tests, so no "tested with" badge was ', ...
+         'created. Inspect the test reports under docs/reports and fix the ', ...
+         'failing tests.\n'] )
+
+    switch releasesFailed
+        case 0
+            badgecolor = "green";
+        case 1
+            badgecolor = "orange";
+        case 2
+            badgecolor = "yellow";
+        otherwise
+            badgecolor = "red";
     end
+
+    outputDirectory = fullfile(projectRootDirectory, '.github', 'badges', versionNumber);
+    matbox.utility.writeBadgeJSONFile("tested with", releasesTestedWith, badgecolor,...
+        "OutputFolder", outputDirectory)
 end
 
 function result = getReleaseNamesFromFolderPaths(folderPaths)
