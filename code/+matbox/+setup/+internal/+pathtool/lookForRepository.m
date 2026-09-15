@@ -1,4 +1,9 @@
-function [exists, repositoryPath] = lookForRepository(repositoryName, branchName)
+function [exists, repositoryPath] = lookForRepository(repositoryName, gitRef)
+% lookForRepository - Look for an installed repository on the MATLAB search path
+%
+%   [exists, repositoryPath] = lookForRepository(repositoryName, gitRef)
+%   searches the MATLAB search path for a folder holding the repository at
+%   the given git reference (branch name, tag name, or commit SHA).
 
     exists = false;
     repositoryPath = "";
@@ -6,31 +11,37 @@ function [exists, repositoryPath] = lookForRepository(repositoryName, branchName
     % Get the full MATLAB search path:
     pathList = strsplit(path, pathsep);
 
-    % First, we look for the following pattern: {repositoryName}-{branchName}
-    %   This should be the default name if a repository is downloaded as a
-    %   zip and unzipped locally.
-    %
-    % If not found, search for the repository name, as would be expected if
-    %   the repository is cloned from GitHub
+    % Candidate folder names, most specific first:
+    %   {repositoryName}-{gitRef} is the folder name of a repository that
+    %   was downloaded as a zip archive (see installGithubRepository).
+    %   {repositoryName} is the folder name of a repository cloned with git.
+    % Each candidate is matched both as the last folder of a path entry
+    % ("$") and as a parent folder of a path entry (filesep).
+    candidateFolderNames = [ ...
+        sprintf("%s-%s", repositoryName, gitRef), ...
+        sprintf("%s-%s", repositoryName, gitRef), ...
+        string(repositoryName), ...
+        string(repositoryName)];
+    candidateSuffixes = ["$", filesep, "$", filesep];
 
-    expectedFolderName = [ ...
-        sprintf("%s-%s$", repositoryName, branchName), ...
-        sprintf("%s-%s%s", repositoryName, branchName, filesep), ...
-        string(repositoryName) + "$", ...
-        string(repositoryName) + filesep];
+    for i = 1:numel(candidateFolderNames)
+        folderName = candidateFolderNames(i);
+        suffix = candidateSuffixes(i);
 
-    for i = 1:numel(expectedFolderName)
+        % Escape regexp metacharacters: tag names commonly contain "."
+        % (v1.0.0) and may contain "+" (build metadata).
+        pattern = regexptranslate('escape', folderName) + suffix;
 
         % Check if this repo is already on path:
-        matchingFolderName = regexp(pathList, expectedFolderName(i), 'match');
+        matchingFolderName = regexp(pathList, pattern, 'match');
 
         isEmpty = cellfun('isempty', matchingFolderName);
         matchedFolderIndex = find(~isEmpty);
 
-        if endsWith(expectedFolderName(i), filesep)
+        if suffix == filesep
             matchedFolderNames = string(pathList(matchedFolderIndex));
-            matchedFolderNames = unique( extractBefore(matchedFolderNames, expectedFolderName(i)));
-            matchedFolderNames = fullfile(matchedFolderNames, expectedFolderName(i));
+            matchedFolderNames = unique( extractBefore(matchedFolderNames, folderName + suffix));
+            matchedFolderNames = fullfile(matchedFolderNames, folderName + suffix);
         else
             matchedFolderNames = unique( string( pathList(matchedFolderIndex) ) );
         end

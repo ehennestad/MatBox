@@ -8,7 +8,8 @@ function installResult = installFromSourceUri(sourceUri, options)
 %       sourceUri (string) - URI for package installation
 %       Supported URI schemes:
 %           - fex://<id-title>[/version]
-%           - https://github.com/<owner>/<repo>[@branch]
+%           - https://github.com/<owner>/<repo>[@ref]
+%             where ref is a branch name, tag name, or commit SHA
 %
 %   Output Arguments:
 %       installResult (struct) - Structure with the following fields:
@@ -42,10 +43,10 @@ function installResult = installFromSourceUri(sourceUri, options)
             "ToolboxIdentifier", packageUuid);
 
     elseif startsWith(sourceUri, "https://github.com/")
-        [repoUrl, branchName] = parseGitHubSourceUri(sourceUri);
+        [repoUrl, gitRef] = parseGitHubSourceUri(sourceUri);
         repoTargetFolder = matbox.setup.internal.installGithubRepository( ...
             repoUrl, ...
-            branchName, ...
+            gitRef, ...
             "InstallationLocation", options.InstallationLocation, ...
             "AddToPath", options.AddToPath, ...
             "Update", options.Update, ...
@@ -100,12 +101,12 @@ function [packageUuid, title, version] = getFEXPackageSpecification(uri)
     end
 end
 
-function [repoUrl, branchName] = parseGitHubSourceUri(repoUrl)
-% parseGitHubSourceUri - Extract branchname if present
-    branchName = string(missing);
+function [repoUrl, gitRef] = parseGitHubSourceUri(repoUrl)
+% parseGitHubSourceUri - Extract the git reference (branch, tag or commit) if present
+    gitRef = string(missing);
     if contains(repoUrl, '@')
         splitUrl = strsplit(repoUrl, '@');
         repoUrl = splitUrl{1};
-        branchName = splitUrl{2};
+        gitRef = splitUrl{2};
     end
 end

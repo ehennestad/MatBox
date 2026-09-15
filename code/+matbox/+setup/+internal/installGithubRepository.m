@@ -1,11 +1,13 @@
-function repoTargetFolder = installGithubRepository(repositoryUrl, branchName, options)
+function repoTargetFolder = installGithubRepository(repositoryUrl, gitRef, options)
 % INSTALLGITHUBREPOSITORY Install or update a GitHub repository
-%   repoTargetFolder = installGithubRepository(repositoryUrl, branchName, options)
+%   repoTargetFolder = installGithubRepository(repositoryUrl, gitRef, options)
 %   installs or updates a GitHub repository and returns the target folder path.
 %
 %   Parameters:
 %       repositoryUrl - URL of the GitHub repository
-%       branchName - Branch to install (default: "main")
+%       gitRef - Git reference to install: a branch name, tag name, or
+%           commit SHA (default: "main"). Pass a missing string to use the
+%           repository's default branch.
 %       options - Structure with the following fields:
 %           Update - Whether to update if repository exists (default: false)
 %           InstallationLocation - Where to install (default: default addon folder)
@@ -15,7 +17,7 @@ function repoTargetFolder = installGithubRepository(repositoryUrl, branchName, o
 
     arguments
         repositoryUrl (1,1) string
-        branchName (1,1) string = "main"
+        gitRef (1,1) string = "main"
         options.Update (1,1) logical = false
         options.UseGit (1,1) logical = false
         options.InstallationLocation (1,1) string = matbox.setup.internal.getDefaultAddonFolder()
@@ -27,13 +29,13 @@ function repoTargetFolder = installGithubRepository(repositoryUrl, branchName, o
     [ownerName, repositoryName] = ...
         matbox.setup.internal.github.parseRepositoryURL(repositoryUrl);
 
-    if ismissing(branchName) % - Get default branchname
-        branchName = matbox.setup.internal.github.api.getDefaultBranch(...
+    if ismissing(gitRef) % - Use the repository's default branch
+        gitRef = matbox.setup.internal.github.api.getDefaultBranch(...
             ownerName, repositoryName);
     end
 
     [repoExists, repoFolderLocation] = ...
-        matbox.setup.internal.pathtool.lookForRepository(repositoryName, branchName);
+        matbox.setup.internal.pathtool.lookForRepository(repositoryName, gitRef);
 
     if repoExists
         isUpdateNeeded = options.Update;
@@ -50,7 +52,7 @@ function repoTargetFolder = installGithubRepository(repositoryUrl, branchName, o
                 end
             else
                 isUpdateNeeded = checkCommitHash(repoFolderLocation, repositoryName, ...
-                    ownerName, branchName, repositoryUrl, "Verbose", options.Verbose);
+                    ownerName, gitRef, repositoryUrl, "Verbose", options.Verbose);
             end
         end
 
@@ -89,11 +91,14 @@ function repoTargetFolder = installGithubRepository(repositoryUrl, branchName, o
         fprintf('Please wait, downloading "%s"...', repositoryUrl)
     end
 
-    downloadUrl = sprintf( '%s/archive/refs/heads/%s.zip', repositoryUrl, branchName );
+    % The "archive/<ref>.zip" form resolves branch names, tag names and
+    % commit SHAs alike, unlike "archive/refs/heads/<branch>.zip".
+    downloadUrl = sprintf('%s/archive/%s.zip', repositoryUrl, gitRef);
     repoTargetFolder = matbox.setup.internal.downloadZippedGithubRepo(downloadUrl, repoTargetFolder, true, true);
+    repoTargetFolder = renameToReferenceFolderName(repoTargetFolder, repositoryName, gitRef);
 
     matbox.setup.internal.github.writeCommitHash(...
-        repoTargetFolder, repositoryName, ownerName, branchName)
+        repoTargetFolder, repositoryName, ownerName, gitRef)
 
     if options.Verbose
         fprintf('Done.\n')
@@ -116,6 +121,40 @@ function repoTargetFolder = installGithubRepository(repositoryUrl, branchName, o
     if ~nargout
         clear repoTargetFolder
     end
+end
+
+function repoFolder = renameToReferenceFolderName(repoFolder, repositoryName, gitRef)
+% renameToReferenceFolderName - Rename an unzipped archive folder to <repo>-<ref>
+%
+%   GitHub names the top-level folder of a zip archive after the requested
+%   reference, but not always verbatim. GitHub does not document the naming
+%   scheme; as observed on github.com, a leading "v" is dropped from tag
+%   names (v1.0.0 unpacks to <repo>-1.0.0) and an abbreviated commit SHA is
+%   expanded to the full hash, while branch archives unpack to
+%   <repo>-<branch>. Renaming to the reference exactly as written in the
+%   requirement makes the folder name predictable regardless of how GitHub
+%   names the archive, so that lookForRepository recognises the
+%   installation on later runs instead of downloading again.
+
+    [parentFolder, folderName, folderNameSuffix] = fileparts(repoFolder);
+    actualName = strcat(folderName, folderNameSuffix); % fileparts splits names like "repo-1.0.0" at the last dot
+    expectedName = sprintf('%s-%s', repositoryName, gitRef);
+
+    % Compare case-insensitively: the archive uses the repository's canonical
+    % casing, which may differ from the casing in the requirement URL.
+    if strcmpi(actualName, expectedName)
+        return
+    end
+
+    expectedFolder = fullfile(parentFolder, expectedName);
+    if isfolder(expectedFolder)
+        % A stale copy that is not on the search path (otherwise it would
+        % have been found and removed before downloading). Replace it, as
+        % movefile would otherwise move the new folder inside it.
+        rmdir(expectedFolder, 's')
+    end
+    movefile(repoFolder, expectedFolder)
+    repoFolder = expectedFolder;
 end
 
 function tf = isGitRepository(folderPath)
@@ -163,14 +202,14 @@ function wasSuccess = gitPull(folderPath)
 end
 
 function needsUpdate = checkCommitHash(repoFolderLocation, repoName, ...
-        ownerName, branchName, repositoryUrl, options)
+        ownerName, gitRef, repositoryUrl, options)
 % checkCommitHash - Check if the local commit hash matches remote commit hash
 
     arguments
         repoFolderLocation (1,1) string
         repoName (1,1) string
         ownerName (1,1) string
-        branchName (1,1) string
+        gitRef (1,1) string
         repositoryUrl (1,1) string
         options.Verbose (1,1) logical = true
     end
@@ -187,7 +226,7 @@ function needsUpdate = checkCommitHash(repoFolderLocation, repoName, ...
             matbox.setup.internal.github.api.getCurrentCommitID(...
             repoName, ...
             'Owner', ownerName, ...
-            'BranchName', branchName);
+            'BranchName', gitRef);
 
         % Only update if commit hashes are different
         if strcmp(storedCommitHash, currentCommitHash)
