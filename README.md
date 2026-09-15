@@ -113,15 +113,19 @@ Supported formats:
 ```text
 https://github.com/<owner>/<repo>
 https://github.com/<owner>/<repo>@<branch>
+https://github.com/<owner>/<repo>@<tag>
+https://github.com/<owner>/<repo>@<commit>
 fex://<file-exchange-id-title>
 fex://<file-exchange-id-title>/<version>
 ```
+
+A GitHub requirement without an `@` suffix installs the repository's default branch. A branch pin follows the branch on update; a tag or commit pin stays at that revision. The commit may be abbreviated.
 
 Example:
 
 ```text
 https://github.com/openMetadataInitiative/openMINDS_MATLAB
-https://github.com/ehennestad/StructEditor
+https://github.com/ehennestad/StructEditor@v0.1.0
 fex://66235-widgets-toolbox-compatibility-support/1.3.330
 fex://83328-widgets-toolbox-matlab-app-designer-components
 ```

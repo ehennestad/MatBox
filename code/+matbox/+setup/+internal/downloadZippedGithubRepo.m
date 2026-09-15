@@ -33,7 +33,10 @@ function repoFolder = downloadZippedGithubRepo(githubUrl, targetFolder, updateFl
         unzippedFolder = unzippedFolder(1:end-1);
     end
 
-    [~, repoFolderName] = fileparts(unzippedFolder);
+    % Keep the "extension": fileparts splits folder names containing dots,
+    % such as the "<repo>-1.0.0" folder of a tag archive, at the last dot.
+    [~, repoFolderName, repoFolderNameSuffix] = fileparts(unzippedFolder);
+    repoFolderName = [repoFolderName, repoFolderNameSuffix];
     targetFolder = fullfile(targetFolder, repoFolderName);
 
     if updateFlag && isfolder(targetFolder)
