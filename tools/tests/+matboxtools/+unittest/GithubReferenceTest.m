@@ -59,7 +59,9 @@ classdef GithubReferenceTest < matlab.unittest.TestCase
         end
 
         function testLookForRepositoryMatchesDotsLiterally(testCase)
-            % A "." in a tag name must not act as a regexp wildcard.
+            % The dots in "v0.1.0" must match literally. An unescaped "."
+            % matches any character, so a decoy folder named "-v0x1x0"
+            % would wrongly be found.
             testCase.createRepositoryFolder(testCase.RepositoryName + "-v0x1x0");
             exists = matbox.setup.internal.pathtool.lookForRepository( ...
                 testCase.RepositoryName, testCase.TagName);
