@@ -35,7 +35,7 @@ function toolboxOptions = createToolboxOptions(projectRootDirectory, versionNumb
     opts = matlab.addons.toolbox.ToolboxOptions(toolboxFolder, identifier, toolboxInfo);
 
     % Set the toolbox version
-    opts.ToolboxVersion = versionNumber;
+    opts.ToolboxVersion = formatToolboxVersion(versionNumber);
 
     % Ignore some files if specified
     toIgnore = false(size( opts.ToolboxFiles ));
@@ -67,12 +67,28 @@ function toolboxOptions = createToolboxOptions(projectRootDirectory, versionNumb
         end
     end
 
-    % Specify name for output .mltbx file.
-    versionNumber = strrep(opts.ToolboxVersion, '.', '_');
+    % Specify name for output .mltbx file. Every version separator, including
+    % the "+" before a build number, becomes an underscore.
+    versionNumber = replace(opts.ToolboxVersion, [".", "+"], "_");
     outputFileName = sprintf('%s_v%s.mltbx', MLTBX_NAME, versionNumber);
     opts.OutputFile = fullfile(projectRootDirectory, "releases", outputFileName);
 
     toolboxOptions = opts;
+end
+
+function toolboxVersion = formatToolboxVersion(versionNumber)
+% formatToolboxVersion - Write a version number in the form ToolboxOptions accepts
+%
+%   From R2026b, ToolboxVersion must be a semantic version, which writes a
+%   build number as <major>.<minor>.<patch>+<build>. Earlier releases accept
+%   only <major>.<minor>.<patch>.<build>.
+
+    versionParts = split(versionNumber, ".");
+    if numel(versionParts) == 4 && ~isMATLABReleaseOlderThan("R2026b")
+        toolboxVersion = join(versionParts(1:3), ".") + "+" + versionParts(4);
+    else
+        toolboxVersion = versionNumber;
+    end
 end
 
 function opts = addRequirementsToToolboxOptions(opts, requirements)
