@@ -46,6 +46,23 @@ classdef VendorPackageTest < matlab.unittest.TestCase
             "endOfSentence", "% is in the namespace webprogress. It has", ...
             "alreadyRenamed", "mytoolbox.external.webprogress.upload(a)")
 
+        % A line of code that refers to SourceNamespace in a way that
+        % renameNamespaceInText cannot rename
+        unrenamedReferenceCase = struct( ...
+            "stringConcatenation", "className = ""webprogress."" + name;", ...
+            "fevalCall", "feval(""webprogress."" + functionName, a)", ...
+            "namespaceQuery", "namespaceInfo = meta.package.fromName(""webprogress"");", ...
+            "classNameCheck", "tf = startsWith(class(obj), ""webprogress."");")
+
+        % A line of code that names SourceNamespace in a place that is not
+        % an unrenamed reference
+        ignoredLineCase = struct( ...
+            "renamedReference", "x = mytoolbox.external.webprogress.upload(a);", ...
+            "errorIdentifier", "error(""webprogress:upload:Failed"", ""Failed."")", ...
+            "commentLine", "    % Part of the webprogress toolbox", ...
+            "longerNamespaceName", "webprogresstools.projectdir()", ...
+            "folderPath", "folderPath = fullfile(root, ""src/webprogress"");")
+
         % A folder path followed by the name of the namespace it defines
         namespaceCase = struct( ...
             "singleFolder", ["src/webprogress/+webprogress", "webprogress"], ...
@@ -107,6 +124,82 @@ classdef VendorPackageTest < matlab.unittest.TestCase
             namespaceName = matbox.tasks.internal.getNamespaceName(namespaceCase(1));
 
             testCase.verifyEqual(namespaceName, namespaceCase(2))
+        end
+    end
+
+    methods (Test) % findNamespaceReferences
+        function testUnrenamedReferenceIsFound(testCase, unrenamedReferenceCase)
+            folderPath = fullfile(pwd, "package");
+            writeText(fullfile(folderPath, "code.m"), ...
+                join(["function code(name)", unrenamedReferenceCase, "end"], newline))
+
+            locations = matbox.tasks.internal.findNamespaceReferences( ...
+                folderPath, testCase.SourceNamespace);
+
+            testCase.verifyEqual(locations, "code.m:2")
+        end
+
+        function testIgnoredLineIsNotFound(testCase, ignoredLineCase)
+            folderPath = fullfile(pwd, "package");
+            writeText(fullfile(folderPath, "code.m"), ...
+                join(["function code(name)", ignoredLineCase, "end"], newline))
+
+            locations = matbox.tasks.internal.findNamespaceReferences( ...
+                folderPath, testCase.SourceNamespace);
+
+            testCase.verifyEqual(locations, strings(0, 1))
+        end
+
+        function testNameInJsonFileIsFoundByLine(testCase)
+            folderPath = fullfile(pwd, "package");
+            writeText(fullfile(folderPath, "resources", "functionSignatures.json"), ...
+                testCase.createFunctionSignatures())
+
+            locations = matbox.tasks.internal.findNamespaceReferences( ...
+                folderPath, testCase.SourceNamespace);
+
+            testCase.verifyEqual(locations, "resources/functionSignatures.json:3")
+        end
+
+        function testPlacesInSeveralFilesAreListedInOrder(testCase)
+            folderPath = fullfile(pwd, "package");
+            writeText(fullfile(folderPath, "b.m"), ...
+                join(["x = 1;", "f = ""webprogress."" + a;", "g = ""webprogress."" + b;"], newline))
+            writeText(fullfile(folderPath, "a.m"), "x = 1;")
+            writeText(fullfile(folderPath, "sub", "c.json"), """webprogress.upload""")
+
+            locations = matbox.tasks.internal.findNamespaceReferences( ...
+                folderPath, testCase.SourceNamespace);
+
+            testCase.verifyEqual(locations, ["b.m:2"; "b.m:3"; "sub/c.json:1"])
+        end
+
+        function testNameInLiveScriptIsFoundByFileName(testCase)
+            % A live script is a zip archive that holds its code in the file
+            % matlab/document.xml.
+            contentFolder = fullfile(pwd, "liveScriptContent");
+            writeText(fullfile(contentFolder, "matlab", "document.xml"), ...
+                "<w:t>x = webprogress.upload(a);</w:t>")
+            zip(fullfile(pwd, "demo.zip"), "matlab", contentFolder)
+            folderPath = fullfile(pwd, "package");
+            mkdir(fullfile(folderPath, "examples"))
+            movefile(fullfile(pwd, "demo.zip"), fullfile(folderPath, "examples", "demo.mlx"))
+
+            locations = matbox.tasks.internal.findNamespaceReferences( ...
+                folderPath, testCase.SourceNamespace);
+
+            testCase.verifyEqual(locations, "examples/demo.mlx")
+        end
+
+        function testNameInBinaryFileIsFoundByFileName(testCase)
+            folderPath = fullfile(pwd, "package");
+            writeText(fullfile(folderPath, "data.bin"), ...
+                char(0) + "webprogress.upload" + char(0))
+
+            locations = matbox.tasks.internal.findNamespaceReferences( ...
+                folderPath, testCase.SourceNamespace);
+
+            testCase.verifyEqual(locations, "data.bin")
         end
     end
 
@@ -400,6 +493,52 @@ classdef VendorPackageTest < matlab.unittest.TestCase
             testCase.verifyEqual(readBytes(fullfile(targetFolder, "scale.m")), ...
                 unicode2native(expectedText, "UTF-8"))
         end
+
+        function testStringBuiltReferenceWarns(testCase)
+            repositoryFolder = testCase.createRepository();
+            writeText(fullfile(repositoryFolder, testCase.SourceFolder, "createMonitor.m"), ...
+                join([
+                    "function monitor = createMonitor(name)"
+                    "    monitor = feval(""webprogress."" + name);"
+                    "end"
+                    ], newline))
+            targetFolder = testCase.getTargetFolder();
+
+            testCase.verifyWarning( ...
+                @() matbox.tasks.internal.vendorPackageFromFolder( ...
+                    repositoryFolder, testCase.SourceFolder, targetFolder), ...
+                "MatBox:VendorPackage:UnrenamedReferences")
+
+            testCase.verifySubstring(lastwarn(), "createMonitor.m:2")
+            testCase.verifyTrue(isfile(fullfile(targetFolder, "createMonitor.m")))
+        end
+
+        function testFunctionSignaturesReferenceWarns(testCase)
+            repositoryFolder = testCase.createRepository();
+            writeText(fullfile(repositoryFolder, testCase.SourceFolder, ...
+                "resources", "functionSignatures.json"), testCase.createFunctionSignatures())
+            targetFolder = testCase.getTargetFolder();
+
+            testCase.verifyWarning( ...
+                @() matbox.tasks.internal.vendorPackageFromFolder( ...
+                    repositoryFolder, testCase.SourceFolder, targetFolder), ...
+                "MatBox:VendorPackage:UnrenamedReferences")
+
+            testCase.verifySubstring(lastwarn(), "resources/functionSignatures.json:3")
+        end
+
+        function testCopyWithoutUnrenamedReferencesDoesNotWarn(testCase)
+            % The license file and vendorinfo.json name the source namespace
+            % without referring to it, and are not searched.
+            repositoryFolder = testCase.createRepository();
+            writeText(fullfile(repositoryFolder, "LICENSE"), ...
+                "Copyright (c) the authors of webprogress")
+            targetFolder = testCase.getTargetFolder();
+
+            testCase.verifyWarningFree( ...
+                @() matbox.tasks.internal.vendorPackageFromFolder( ...
+                    repositoryFolder, testCase.SourceFolder, targetFolder))
+        end
     end
 
     methods (Test) % vendorPackage
@@ -451,6 +590,19 @@ classdef VendorPackageTest < matlab.unittest.TestCase
             writeText(fullfile(packageFolder, testCase.ExcludedFile), "function toolboxdir(), end")
             writeText(fullfile(packageFolder, "private", "mustBeValidUrl.m"), ...
                 "function mustBeValidUrl(~), end")
+        end
+
+        function signaturesText = createFunctionSignatures(~)
+            % Text of a functionSignatures.json file that names a function
+            % of SourceNamespace on line 3
+            signaturesText = join([
+                "{"
+                "  ""_schemaVersion"": ""1.0.0"","
+                "  ""webprogress.upload"": {"
+                "    ""inputs"": []"
+                "  }"
+                "}"
+                ], newline);
         end
 
         function targetFolder = getTargetFolder(~)
