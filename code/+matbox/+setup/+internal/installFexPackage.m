@@ -101,7 +101,13 @@ function [packageTargetFolder, installationMethod] = installFexPackage(toolboxId
 
         elseif endsWith(addonUrl, '/mltbx')
             [tempFilepath, C] = matbox.setup.internal.utility.tempsave(addonUrl, [toolboxIdentifier, '_temp.mltbx']);
-            installedAddon = matlab.addons.install(tempFilepath, options.AgreeToLicense);
+            if isMATLABReleaseOlderThan("R2026b")
+                installedAddon = matlab.addons.install(tempFilepath, options.AgreeToLicense);
+            else
+                % From R2026b, installing accepts the license agreement,
+                % and an agreeToLicense argument of false is an error.
+                installedAddon = matlab.addons.install(tempFilepath);
+            end
             if isempty(installedAddon)
                 fprintf(newline)
                 error('Failed to install "%s"...', toolboxName)
