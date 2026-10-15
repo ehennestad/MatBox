@@ -62,6 +62,24 @@ function vendorInfo = vendorPackageFromFolder(repositoryFolder, sourceFolder, ta
             targetFolder, VENDOR_INFO_FILE_NAME)
     end
 
+    % A vendored folder is only replaced by a copy of the same source, so
+    % that a wrong target path cannot replace another vendored package.
+    recordedSourceFolder = replace(sourceFolder, "\", "/");
+    if isfolder(targetFolder)
+        previousInfo = jsondecode(native2unicode( ...
+            readBytes(fullfile(targetFolder, VENDOR_INFO_FILE_NAME)), "UTF-8"));
+        isSameSource = string(previousInfo.Source) == options.RepositoryUrl ...
+            && string(previousInfo.SourceFolder) == recordedSourceFolder;
+        if ~isSameSource
+            error("MatBox:VendorPackage:TargetFolderHasOtherSource", ...
+                "The folder ""%s"" holds a copy of ""%s"" from ""%s"", so it " + ...
+                "is not replaced by a copy of ""%s"" from ""%s"". Choose " + ...
+                "another target folder, or remove the folder first to switch " + ...
+                "it to this source.", targetFolder, previousInfo.SourceFolder, ...
+                previousInfo.Source, recordedSourceFolder, options.RepositoryUrl)
+        end
+    end
+
     % The copy is prepared in a temporary folder and replaces the target
     % folder as the last step, so that an error leaves the target unchanged.
     stagingFolder = string(tempname());
@@ -81,7 +99,7 @@ function vendorInfo = vendorPackageFromFolder(repositoryFolder, sourceFolder, ta
         "Source", options.RepositoryUrl, ...
         "Reference", options.Reference, ...
         "CommitID", options.CommitID, ...
-        "SourceFolder", replace(sourceFolder, "\", "/"), ...
+        "SourceFolder", recordedSourceFolder, ...
         "SourceNamespace", sourceNamespace, ...
         "TargetNamespace", targetNamespace, ...
         "ExcludedFiles", options.ExcludeFiles);
@@ -89,14 +107,7 @@ function vendorInfo = vendorPackageFromFolder(repositoryFolder, sourceFolder, ta
 
     % Replacing the whole folder also removes the files that the source no
     % longer has, which copying over the existing folder would leave behind.
-    if isfolder(targetFolder)
-        rmdir(targetFolder, "s")
-    end
-    parentFolder = fileparts(targetFolder);
-    if strlength(parentFolder) > 0 && ~isfolder(parentFolder)
-        mkdir(parentFolder)
-    end
-    movefile(stagingFolder, targetFolder)
+    replaceFolder(targetFolder, stagingFolder)
 
     if nargout < 1
         clear vendorInfo
@@ -162,6 +173,49 @@ function writeVendorInfo(filePath, vendorInfo)
     % string array with one element would be encoded as a JSON string.
     vendorInfo.ExcludedFiles = cellstr(vendorInfo.ExcludedFiles);
     writeBytes(filePath, unicode2native(jsonencode(vendorInfo, PrettyPrint=true), "UTF-8"))
+end
+
+function replaceFolder(targetFolder, newFolder)
+%replaceFolder - Replace a folder with another folder, keeping one complete copy at every step
+    parentFolder = fileparts(targetFolder);
+    if strlength(parentFolder) > 0 && ~isfolder(parentFolder)
+        mkdir(parentFolder)
+    end
+
+    % The new folder is first moved next to the target. That move can copy
+    % between volumes and fail partway, but it does not touch the target.
+    % The moves after it stay within one folder, where a move is a rename.
+    [~, uniqueName] = fileparts(tempname());
+    incomingFolder = fullfile(parentFolder, uniqueName + "_incoming");
+    movefile(newFolder, incomingFolder)
+    incomingFolderCleanup = onCleanup(@() removeFolderIfPresent(incomingFolder));
+
+    if isfolder(targetFolder)
+        previousFolder = fullfile(parentFolder, uniqueName + "_previous");
+        movefile(targetFolder, previousFolder)
+        try
+            movefile(incomingFolder, targetFolder)
+        catch ME
+            movefile(previousFolder, targetFolder)
+            rethrow(ME)
+        end
+        removePreviousCopy(previousFolder)
+    else
+        movefile(incomingFolder, targetFolder)
+    end
+end
+
+function removePreviousCopy(previousFolder)
+%removePreviousCopy - Delete the replaced copy, or warn if that fails
+    % The new copy is in place at this point, so a failure to delete the
+    % old one does not fail the call.
+    try
+        rmdir(previousFolder, "s")
+    catch ME
+        warning("MatBox:VendorPackage:PreviousCopyNotRemoved", ...
+            "The previous copy in ""%s"" could not be removed: %s " + ...
+            "Delete that folder.", previousFolder, ME.message)
+    end
 end
 
 function removeFolderIfPresent(folderPath)

@@ -263,6 +263,87 @@ classdef VendorPackageTest < matlab.unittest.TestCase
             testCase.verifyEqual(contentsAfter, contentsBefore)
         end
 
+        function testFailedMoveLeavesExistingCopyUnchanged(testCase)
+            % A parent folder without write permission makes the move of the
+            % new copy into it fail, after the copy has been prepared.
+            testCase.assumeFalse(ispc, ...
+                "A read-only folder on Windows still accepts new files.")
+            repositoryFolder = testCase.createRepository();
+            targetFolder = testCase.getTargetFolder();
+            matbox.tasks.internal.vendorPackageFromFolder( ...
+                repositoryFolder, testCase.SourceFolder, targetFolder)
+            [pathsBefore, contentsBefore] = readFolder(targetFolder);
+
+            parentFolder = fileparts(targetFolder);
+            fileattrib(parentFolder, "-w")
+            testCase.addTeardown(@() fileattrib(parentFolder, "+w"))
+            testCase.assumeFalse(mkdir(fullfile(parentFolder, "writeProbe")), ...
+                "The test user can write to folders without write permission.")
+
+            testCase.verifyError( ...
+                @() matbox.tasks.internal.vendorPackageFromFolder( ...
+                    repositoryFolder, testCase.SourceFolder, targetFolder), ...
+                ?MException)
+
+            [pathsAfter, contentsAfter] = readFolder(targetFolder);
+            testCase.verifyEqual(pathsAfter, pathsBefore)
+            testCase.verifyEqual(contentsAfter, contentsBefore)
+        end
+
+        function testReplacementLeavesNoTemporaryFolders(testCase)
+            repositoryFolder = testCase.createRepository();
+            targetFolder = testCase.getTargetFolder();
+
+            matbox.tasks.internal.vendorPackageFromFolder( ...
+                repositoryFolder, testCase.SourceFolder, targetFolder)
+            matbox.tasks.internal.vendorPackageFromFolder( ...
+                repositoryFolder, testCase.SourceFolder, targetFolder)
+
+            [parentFolder, targetName] = fileparts(targetFolder);
+            folderListing = dir(parentFolder);
+            folderNames = setdiff(string({folderListing.name}), [".", ".."]);
+            testCase.verifyEqual(folderNames, targetName)
+        end
+
+        function testFolderFromOtherRepositoryIsNotReplaced(testCase)
+            repositoryFolder = testCase.createRepository();
+            targetFolder = testCase.getTargetFolder();
+            matbox.tasks.internal.vendorPackageFromFolder( ...
+                repositoryFolder, testCase.SourceFolder, targetFolder, ...
+                RepositoryUrl="https://github.com/owner/webprogress")
+            [pathsBefore, contentsBefore] = readFolder(targetFolder);
+
+            testCase.verifyError( ...
+                @() matbox.tasks.internal.vendorPackageFromFolder( ...
+                    repositoryFolder, testCase.SourceFolder, targetFolder, ...
+                    RepositoryUrl="https://github.com/owner/otherpackage"), ...
+                "MatBox:VendorPackage:TargetFolderHasOtherSource")
+
+            [pathsAfter, contentsAfter] = readFolder(targetFolder);
+            testCase.verifyEqual(pathsAfter, pathsBefore)
+            testCase.verifyEqual(contentsAfter, contentsBefore)
+        end
+
+        function testFolderFromOtherSourceFolderIsNotReplaced(testCase)
+            repositoryFolder = testCase.createRepository();
+            otherSourceFolder = "legacy/+webprogress";
+            copyfile(fullfile(repositoryFolder, testCase.SourceFolder), ...
+                fullfile(repositoryFolder, otherSourceFolder))
+            targetFolder = testCase.getTargetFolder();
+            matbox.tasks.internal.vendorPackageFromFolder( ...
+                repositoryFolder, testCase.SourceFolder, targetFolder)
+            [pathsBefore, contentsBefore] = readFolder(targetFolder);
+
+            testCase.verifyError( ...
+                @() matbox.tasks.internal.vendorPackageFromFolder( ...
+                    repositoryFolder, otherSourceFolder, targetFolder), ...
+                "MatBox:VendorPackage:TargetFolderHasOtherSource")
+
+            [pathsAfter, contentsAfter] = readFolder(targetFolder);
+            testCase.verifyEqual(pathsAfter, pathsBefore)
+            testCase.verifyEqual(contentsAfter, contentsBefore)
+        end
+
         function testSameNamespaceCopiesFilesUnchanged(testCase)
             repositoryFolder = testCase.createRepository();
             targetFolder = fullfile(pwd, "project", "external", "+webprogress");

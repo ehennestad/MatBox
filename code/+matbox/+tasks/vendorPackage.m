@@ -21,7 +21,8 @@ function vendorInfo = vendorPackage(projectRootDirectory, sourceUri, sourceFolde
 %   the commit that was copied, the two namespace names and the excluded
 %   files. Changes made to the copied files are lost on the next call,
 %   because the folder is replaced as a whole. A folder without a
-%   vendorinfo.json file is never replaced.
+%   vendorinfo.json file is never replaced, and neither is a folder whose
+%   vendorinfo.json file records another repository or source folder.
 %
 %   vendorInfo = matbox.tasks.vendorPackage(...) returns the information
 %   written to vendorinfo.json as a struct.
