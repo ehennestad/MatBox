@@ -23,10 +23,17 @@ function installResult = installFromSourceUri(sourceUri, options)
         options.AddToPath (1,1) logical = true
         options.Update (1,1) logical = false
         options.Verbose (1,1) logical = true
-        options.AgreeToLicense (1,1) logical = false
+        options.AgreeToLicense (1,1) logical
     end
 
     if startsWith(sourceUri, "fex://")
+        % AgreeToLicense has no default, so the installer can tell an
+        % explicit choice from an omitted one. Forward it only when given.
+        licenseArgs = {};
+        if isfield(options, "AgreeToLicense")
+            licenseArgs = {"AgreeToLicense", options.AgreeToLicense};
+        end
+
         [packageUuid, title, version] = getFEXPackageSpecification(sourceUri);
         [packageTargetFolder, installationType] = matbox.setup.internal.installFexPackage( ...
             packageUuid, ...
@@ -35,7 +42,7 @@ function installResult = installFromSourceUri(sourceUri, options)
             "Version", version, ...
             "AddToPath", options.AddToPath, ...
             "Verbose", options.Verbose, ...
-            "AgreeToLicense", options.AgreeToLicense);
+            licenseArgs{:});
 
         installResult = struct( ...
             "FilePath", packageTargetFolder, ...
