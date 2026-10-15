@@ -24,6 +24,10 @@ function writeBadgeJSONFile(label, message, color, projectRootDirectory, options
 %
 %       FileName - Name of file excluding extension
 %
+%       Counts - Scalar struct of named counts written to a "counts" field,
+%                for renderers that draw one segment per count. The field
+%                is omitted when Counts is empty (default).
+%
 %   Example:
 %
 %   writeBadgeJSONFile("Test Coverage", "90%", "green") creates a file
@@ -44,6 +48,7 @@ function writeBadgeJSONFile(label, message, color, projectRootDirectory, options
         projectRootDirectory (1,1) string = missing
         options.OutputFolder (1,1) string = missing
         options.FileName (1,1) string = missing
+        options.Counts struct {mustBeScalarOrEmpty} = struct.empty
     end
 
     if ismissing(options.OutputFolder)
@@ -62,6 +67,9 @@ function writeBadgeJSONFile(label, message, color, projectRootDirectory, options
     badgeInfo.label = label;
     badgeInfo.message = message;
     badgeInfo.color = color;
+    if ~isempty(options.Counts)
+        badgeInfo.counts = options.Counts;
+    end
     badgeJSON = jsonencode(badgeInfo);
 
     if ismissing(options.FileName)

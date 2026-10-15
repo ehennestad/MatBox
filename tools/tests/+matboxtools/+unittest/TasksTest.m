@@ -55,6 +55,23 @@ classdef TasksTest <  matlab.unittest.TestCase
             testCase.verifyEqual(badgeInfo.label, 'code issues')
             testCase.verifyTrue(ismember(string(badgeInfo.color), ...
                 ["green", "yellow", "red"]))
+
+            % The per-severity counts must add up to the total in the message
+            testCase.assertTrue(isfield(badgeInfo, "counts"), ...
+                "Expected badge JSON to contain a counts field.")
+            counts = badgeInfo.counts;
+            testCase.verifyEqual(sort(string(fieldnames(counts))), ...
+                ["error"; "info"; "warning"])
+            testCase.verifyEqual(counts.error + counts.warning + counts.info, ...
+                str2double(badgeInfo.message))
+        end
+
+        function testWriteBadgeJSONFileOmitsCountsByDefault(testCase)
+            matbox.utility.writeBadgeJSONFile("tests", "1 passed", "green", ...
+                "OutputFolder", pwd)
+
+            badgeInfo = jsondecode(fileread(fullfile(pwd, "tests.json")));
+            testCase.verifyFalse(isfield(badgeInfo, "counts"))
         end
 
         function testPackageToolbox(testCase)

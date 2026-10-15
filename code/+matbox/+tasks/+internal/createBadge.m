@@ -1,4 +1,4 @@
-function createBadge(label, message, color, projectRootDirectory)
+function createBadge(label, message, color, projectRootDirectory, options)
 % createBadge - Write a badge as JSON or as a legacy SVG file
 %
 %   Writes a badge description as a JSON file (docs/reports/badges) when
@@ -10,17 +10,23 @@ function createBadge(label, message, color, projectRootDirectory)
 %   pybadges Python package, for callers without a render step: local runs
 %   and repositories pinned to older matbox-actions versions. This
 %   fallback will be removed in a future major release.
+%
+%   Optional name/value arguments:
+%       Counts - Scalar struct of named counts added to the badge JSON for
+%                segmented rendering. The legacy SVG fallback ignores it.
 
     arguments
         label (1,1) string
         message (1,1) string
         color (1,1) string
         projectRootDirectory (1,1) string {mustBeFolder}
+        options.Counts struct {mustBeScalarOrEmpty} = struct.empty
     end
 
     if strcmpi(getenv("MATBOX_BADGE_FORMAT"), "json")
         matbox.utility.writeBadgeJSONFile(label, message, color, ...
-            "OutputFolder", fullfile(projectRootDirectory, "docs", "reports", "badges"))
+            "OutputFolder", fullfile(projectRootDirectory, "docs", "reports", "badges"), ...
+            "Counts", options.Counts)
     else
         matbox.utility.createBadgeSvg(label, message, color, projectRootDirectory)
     end

@@ -93,8 +93,16 @@ function createCodeIssuesBadge(issueCount, projectRootDir)
         color = "red";
     end
 
+    % The counts let matbox-actions draw one segment per severity. The
+    % label, message and color still describe a complete single badge
+    % for renderers that ignore the counts.
+    counts = struct( ...
+        "error", issueCount.Error, ...
+        "warning", issueCount.Warning, ...
+        "info", issueCount.Info);
+
     matbox.tasks.internal.createBadge("code issues", ...
-        string(issueCount.Total), color, projectRootDir)
+        string(issueCount.Total), color, projectRootDir, "Counts", counts)
 end
 
 function ME = throwUnresolvedCodeIssuesException()
