@@ -24,8 +24,13 @@ function [packageTargetFolder, installationMethod] = installFexPackage(toolboxId
         options.AddToPath (1,1) logical = true
         options.AddToPathWithSubfolders (1,1) logical = true
         options.Verbose (1,1) logical = true
-        options.AgreeToLicense (1,1) logical = false
+        % No default, so an explicit false can be told from an omitted value
+        options.AgreeToLicense (1,1) logical
     end
+
+    isLicenseOptionGiven = isfield(options, "AgreeToLicense");
+    isLicenseAgreed = isLicenseOptionGiven && options.AgreeToLicense;
+    isLicenseDeclined = isLicenseOptionGiven && ~options.AgreeToLicense;
 
     % Check if toolbox is installed
     [isInstalled, version, toolboxFolder] = matbox.setup.internal.fex.isToolboxInstalled(toolboxIdentifier, options.Version);
@@ -101,10 +106,24 @@ function [packageTargetFolder, installationMethod] = installFexPackage(toolboxId
 
         elseif endsWith(addonUrl, '/mltbx')
             [tempFilepath, C] = matbox.setup.internal.utility.tempsave(addonUrl, [toolboxIdentifier, '_temp.mltbx']);
-            installedAddon = matlab.addons.install(tempFilepath, options.AgreeToLicense);
+            isLicenseOptionSupported = isMATLABReleaseOlderThan("R2026b");
+            if isLicenseOptionSupported
+                installedAddon = matlab.addons.install(tempFilepath, isLicenseAgreed);
+            else
+                % From R2026b, installing accepts the license agreement,
+                % and an agreeToLicense argument of false is an error.
+                installedAddon = matlab.addons.install(tempFilepath);
+            end
             if isempty(installedAddon)
                 fprintf(newline)
                 error('Failed to install "%s"...', toolboxName)
+            end
+            if isLicenseDeclined && ~isLicenseOptionSupported
+                fprintf(newline)
+                warning("MatBox:Setup:AgreeToLicenseIgnored", ...
+                    ['AgreeToLicense is false, but from R2026b MATLAB accepts the ', ...
+                    'license agreement when it installs an add-on. "%s" was installed ', ...
+                    'and its license terms apply.'], toolboxName)
             end
             packageTargetFolder = string(missing);
             installationMethod = "mltbx";
