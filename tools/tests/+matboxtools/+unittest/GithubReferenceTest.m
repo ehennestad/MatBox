@@ -3,8 +3,9 @@ classdef GithubReferenceTest < matlab.unittest.TestCase
 %
 %   A GitHub requirement may pin a branch name, tag name, or commit SHA
 %   using the "<url>@<ref>" form. These tests cover parsing the reference,
-%   locating an installed copy on the search path, and installing from
-%   GitHub. The install tests require network access.
+%   naming the installation folder, locating an installed copy on the
+%   search path, and installing from GitHub. The install tests require
+%   network access.
 
     properties (Constant)
         RepositoryUrl = "https://github.com/ehennestad/StructEditor"
@@ -15,6 +16,15 @@ classdef GithubReferenceTest < matlab.unittest.TestCase
         % exercise the rename to "<repo>-<ref>" done by installGithubRepository.
         TagName = "v0.1.0"
         CommitSha = "4e8eaa6"
+        % A branch name in the hierarchical form and the folder name it
+        % maps to. Used only by tests that need no network access, so the
+        % branch need not exist in the test repository.
+        HierarchicalBranchName = "release/1.0"
+        HierarchicalBranchFolderName = "StructEditor-release-1.0"
+        % A branch in the test repository whose name contains "/". As
+        % observed on github.com, its archive folder is named
+        % "StructEditor-codex-nansen-compatibility-contract".
+        ExistingHierarchicalBranchName = "codex/nansen-compatibility-contract"
     end
 
     methods (TestMethodSetup)
@@ -49,6 +59,20 @@ classdef GithubReferenceTest < matlab.unittest.TestCase
             testCase.verifyEqual(gitRef, testCase.CommitSha)
         end
 
+        function testRepositoryFolderNameReplacesSlashes(testCase)
+            folderName = matbox.setup.internal.github.repositoryFolderName( ...
+                testCase.RepositoryName, testCase.HierarchicalBranchName);
+            testCase.verifyEqual(folderName, testCase.HierarchicalBranchFolderName)
+        end
+
+        function testLookForRepositoryFindsHierarchicalBranchFolder(testCase)
+            folderPath = testCase.createRepositoryFolder(testCase.HierarchicalBranchFolderName);
+            [exists, repositoryPath] = matbox.setup.internal.pathtool.lookForRepository( ...
+                testCase.RepositoryName, testCase.HierarchicalBranchName);
+            testCase.verifyTrue(exists)
+            testCase.verifyEqual(repositoryPath, folderPath)
+        end
+
         function testLookForRepositoryFindsTagFolder(testCase)
             folderPath = testCase.createRepositoryFolder( ...
                 testCase.RepositoryName + "-" + testCase.TagName);
@@ -75,6 +99,10 @@ classdef GithubReferenceTest < matlab.unittest.TestCase
         function testInstallCommitPinnedRequirement(testCase)
             testCase.verifyInstallAndReinstall(testCase.CommitSha)
         end
+
+        function testInstallHierarchicalBranchPinnedRequirement(testCase)
+            testCase.verifyInstallAndReinstall(testCase.ExistingHierarchicalBranchName)
+        end
     end
 
     methods (Access = private)
@@ -90,7 +118,10 @@ classdef GithubReferenceTest < matlab.unittest.TestCase
 
         function verifyInstallAndReinstall(testCase, gitRef)
             sourceUri = testCase.RepositoryUrl + "@" + gitRef;
-            expectedFolder = string(fullfile(pwd, testCase.RepositoryName + "-" + gitRef));
+            % The installation folder sits directly in the installation
+            % location, with each "/" of the reference replaced by "-".
+            expectedFolder = string(fullfile(pwd, ...
+                testCase.RepositoryName + "-" + replace(gitRef, "/", "-")));
 
             installResult = matbox.setup.installFromSourceUri(sourceUri, ...
                 "InstallationLocation", pwd, "Verbose", false);
