@@ -12,12 +12,19 @@ function installRequirements(toolboxFolder, mode, options)
         options.SaveSearchPath (1,1) logical = true
         options.InstallationLocation (1,1) string = matbox.setup.internal.getDefaultAddonFolder()
         options.Verbose (1,1) logical = true
-        options.AgreeToLicenses (1,1) logical = false
+        options.AgreeToLicenses (1,1) logical
     end
 
     % Parse mode/flags
     mode = string(mode);
     doUpdate = any(strcmp(mode, 'update')) || any(strcmp(mode, 'u'));
+
+    % AgreeToLicenses has no default, so the installer can tell an explicit
+    % choice from an omitted one. Forward it only when given.
+    licenseArgs = {};
+    if isfield(options, "AgreeToLicenses")
+        licenseArgs = {"AgreeToLicense", options.AgreeToLicenses};
+    end
 
     installationLocation = options.InstallationLocation;
     if ~isfolder(installationLocation); mkdir(installationLocation); end
@@ -32,7 +39,7 @@ function installRequirements(toolboxFolder, mode, options)
                     "AddToPath", options.UpdateSearchPath, ...
                     "Update", doUpdate, ...
                     "Verbose", options.Verbose, ...
-                    "AgreeToLicense", options.AgreeToLicenses);
+                    licenseArgs{:});
             case 'Unknown'
                 continue
         end
