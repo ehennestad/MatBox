@@ -30,7 +30,8 @@ function issues = codecheckToolbox(projectRootDir, options)
         issues = checkcode(filesToCheck);
         issues = cat(1, issues{:});
         issueCount.Total = size(issues,1);
-        issueCount.Info = numel(issueCount);
+        % checkcode does not report a severity, so every issue counts as info
+        issueCount.Info = issueCount.Total;
         [issueCount.Warning, issueCount.Error] = deal(0);
     else
         % Use the new code analyzer in R2022b and later
