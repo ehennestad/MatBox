@@ -16,6 +16,14 @@ function vendorInfo = vendorPackage(projectRootDirectory, sourceUri, sourceFolde
 %   "webprogress.upload" into "mytoolbox.external.webprogress.upload" in
 %   code, strings and comments. Error identifiers keep the source name.
 %
+%   A namespace name that code builds at run time, such as
+%   "webprogress." + name, is not renamed, and neither is a reference in a
+%   file other than a .m file, such as an .mlx file or
+%   functionSignatures.json. These references still resolve to the source
+%   namespace. The warning MatBox:VendorPackage:UnrenamedReferences lists
+%   the places in the copied files that still name the source namespace,
+%   leaving out comment lines of .m files.
+%
 %   The license file of the repository is copied into targetFolder, and
 %   the file vendorinfo.json there records the repository, the reference,
 %   the commit that was copied, the two namespace names and the excluded
