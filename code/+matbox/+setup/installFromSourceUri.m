@@ -50,7 +50,9 @@ function installResult = installFromSourceUri(sourceUri, options)
             "ToolboxIdentifier", packageUuid);
 
     elseif startsWith(sourceUri, "https://github.com/")
-        [repoUrl, gitRef] = parseGitHubSourceUri(sourceUri);
+        [ownerName, repositoryName, gitRef] = ...
+            matbox.setup.internal.github.parseRepositoryURL(sourceUri);
+        repoUrl = "https://github.com/" + ownerName + "/" + repositoryName;
         repoTargetFolder = matbox.setup.internal.installGithubRepository( ...
             repoUrl, ...
             gitRef, ...
@@ -107,15 +109,5 @@ function [packageUuid, title, version] = getFEXPackageSpecification(uri)
             ['The specified version "%s" is not supported for FEX ', ...
             'package "%s". The following versions are available:\n%s'], ...
             version, splitUri{2}, strjoin(" - " + string(packageInfo.versions), newline));
-    end
-end
-
-function [repoUrl, gitRef] = parseGitHubSourceUri(repoUrl)
-% parseGitHubSourceUri - Extract the git reference (branch, tag or commit) if present
-    gitRef = string(missing);
-    if contains(repoUrl, '@')
-        splitUrl = strsplit(repoUrl, '@');
-        repoUrl = splitUrl{1};
-        gitRef = splitUrl{2};
     end
 end
