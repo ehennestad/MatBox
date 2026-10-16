@@ -72,6 +72,41 @@ classdef GithubReferenceTest < matlab.unittest.TestCase
             testCase.verifyTrue(exists)
             testCase.verifyEqual(repositoryPath, folderPath)
         end
+        
+        function testParseUrlWithSlashInReference(testCase)
+            [~, repositoryName, gitRef] = matbox.setup.internal.github.parseRepositoryURL( ...
+                testCase.RepositoryUrl + "@" + testCase.HierarchicalBranchName);
+            testCase.verifyEqual(repositoryName, testCase.RepositoryName)
+            testCase.verifyEqual(gitRef, testCase.HierarchicalBranchName)
+        end
+
+        function testParseUrlWithTrailingSlashAfterReference(testCase)
+            [~, ~, gitRef] = matbox.setup.internal.github.parseRepositoryURL( ...
+                testCase.RepositoryUrl + "@" + testCase.HierarchicalBranchName + "/");
+            testCase.verifyEqual(gitRef, testCase.HierarchicalBranchName)
+        end
+
+        function testParseUrlWithAtSignInReference(testCase)
+            % Only the first "@" separates the repository name from the
+            % reference; git allows "@" inside a reference name.
+            [~, repositoryName, gitRef] = matbox.setup.internal.github.parseRepositoryURL( ...
+                testCase.RepositoryUrl + "@fix@2");
+            testCase.verifyEqual(repositoryName, testCase.RepositoryName)
+            testCase.verifyEqual(gitRef, "fix@2")
+        end
+
+        function testParseUrlWithPathAfterRepositoryNameErrors(testCase)
+            testCase.verifyError(@() matbox.setup.internal.github.parseRepositoryURL( ...
+                testCase.RepositoryUrl + "/tree/main"), "MATBOX:GitHub:InvalidRepositoryURL")
+        end
+
+        function testInstallWithPathAfterRepositoryNameErrors(testCase)
+            % The URI is parsed before any request to GitHub, so this test
+            % needs no network access.
+            testCase.verifyError(@() matbox.setup.installFromSourceUri( ...
+                testCase.RepositoryUrl + "/tree/main", "InstallationLocation", pwd), ...
+                "MATBOX:GitHub:InvalidRepositoryURL")
+        end
 
         function testLookForRepositoryFindsTagFolder(testCase)
             folderPath = testCase.createRepositoryFolder( ...
