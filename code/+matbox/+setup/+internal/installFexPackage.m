@@ -105,8 +105,17 @@ function [packageTargetFolder, installationMethod] = installFexPackage(toolboxId
             end
 
         elseif endsWith(addonUrl, '/mltbx')
-            [tempFilepath, C] = matbox.setup.internal.utility.tempsave(addonUrl, [toolboxIdentifier, '_temp.mltbx']);
             isLicenseOptionSupported = isMATLABReleaseOlderThan("R2026b");
+            if isLicenseOptionSupported && ~isLicenseAgreed && ~canShowLicenseDialog()
+                fprintf(newline)
+                error("MatBox:Setup:LicenseDialogUnavailable", ...
+                    ['Installing "%s" shows its license agreement in a dialog, and ', ...
+                    'this MATLAB session cannot display one. Pass AgreeToLicense=true ', ...
+                    '(AgreeToLicenses=true in installRequirements) to accept the ', ...
+                    'license without the dialog.'], toolboxName)
+            end
+
+            [tempFilepath, C] = matbox.setup.internal.utility.tempsave(addonUrl, [toolboxIdentifier, '_temp.mltbx']);
             if isLicenseOptionSupported
                 installedAddon = matlab.addons.install(tempFilepath, isLicenseAgreed);
             else
@@ -140,6 +149,17 @@ function [packageTargetFolder, installationMethod] = installFexPackage(toolboxId
             clear installationMethod
         end
     end
+end
+
+function tf = canShowLicenseDialog()
+% canShowLicenseDialog - Whether this session can display the add-on license dialog
+%
+%   Before R2026b, matlab.addons.install shows the license agreement of an
+%   .mltbx add-on in a Java Swing dialog unless agreeToLicense is true.
+%   Java is headless when there is no display, as on a CI runner, and
+%   creating the dialog then throws java.awt.HeadlessException.
+
+    tf = usejava("jvm") && ~java.awt.GraphicsEnvironment.isHeadless();
 end
 
 function toolboxName = retrieveToolboxName(toolboxIdentifier)

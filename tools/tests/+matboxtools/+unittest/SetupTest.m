@@ -64,6 +64,18 @@ classdef SetupTest <  matlab.unittest.TestCase
             [~, lastWarningId] = lastwarn();
             testCase.verifyNotEqual(lastWarningId, 'MatBox:Setup:AgreeToLicenseIgnored')
         end
+
+        function testOmittedAgreeToLicenseWithoutDisplayErrors(testCase)
+            testCase.assumeTrue(isMATLABReleaseOlderThan("R2026b"), ...
+                "From R2026b MATLAB installs an add-on without a license dialog.")
+            testCase.assumeTrue(usejava("jvm") && java.awt.GraphicsEnvironment.isHeadless(), ...
+                "This session can display the license dialog.")
+            testCase.uninstallFexAddon(testCase.FexMltbxUri)
+
+            testCase.verifyError( ...
+                @() matbox.setup.installFromSourceUri(testCase.FexMltbxUri, "InstallationLocation", pwd), ...
+                "MatBox:Setup:LicenseDialogUnavailable")
+        end
     end
 
     methods
@@ -88,11 +100,16 @@ classdef SetupTest <  matlab.unittest.TestCase
             pathStr = matboxtools.projectdir();
             requirementsPath = fullfile(pathStr, "tools", "tests", "test_resources");
 
+            % The requirements include an .mltbx add-on. Before R2026b,
+            % installing one without accepting its license shows a dialog,
+            % which a session without a display, such as CI, cannot show.
             try
                 if options.Update
-                    matbox.installRequirements(requirementsPath, "u", "InstallationLocation", pwd)
+                    matbox.installRequirements(requirementsPath, "u", ...
+                        "InstallationLocation", pwd, "AgreeToLicenses", true)
                 else
-                    matbox.installRequirements(requirementsPath, "InstallationLocation", pwd)
+                    matbox.installRequirements(requirementsPath, ...
+                        "InstallationLocation", pwd, "AgreeToLicenses", true)
                 end
             catch ME
                 testCase.verifyFail(ME.message)
