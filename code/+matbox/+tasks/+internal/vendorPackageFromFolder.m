@@ -88,8 +88,14 @@ function vendorInfo = vendorPackageFromFolder(repositoryFolder, sourceFolder, ta
 
     removeExcludedFiles(stagingFolder, options.ExcludeFiles)
 
+    % The search runs before the license file and vendorinfo.json are added,
+    % because both can name the source namespace without referring to it.
     if isRenameNeeded
         renameNamespaceInFolder(stagingFolder, sourceNamespace, targetNamespace)
+        unrenamedLocations = matbox.tasks.internal.findNamespaceReferences( ...
+            stagingFolder, sourceNamespace);
+    else
+        unrenamedLocations = strings(0, 1);
     end
 
     [~, licenseName, licenseExtension] = fileparts(options.LicenseFile);
@@ -108,6 +114,17 @@ function vendorInfo = vendorPackageFromFolder(repositoryFolder, sourceFolder, ta
     % Replacing the whole folder also removes the files that the source no
     % longer has, which copying over the existing folder would leave behind.
     replaceFolder(targetFolder, stagingFolder)
+
+    % The warning comes after the replacement, so that it is only given for
+    % a copy that is in place.
+    if ~isempty(unrenamedLocations)
+        warning("MatBox:VendorPackage:UnrenamedReferences", ...
+            "References to the namespace ""%s"" in ""%s"" were not renamed " + ...
+            "to ""%s"", so they still resolve to ""%s"". Change them in the " + ...
+            "source repository, or check that they are not namespace " + ...
+            "references:\n%s", sourceNamespace, targetFolder, targetNamespace, ...
+            sourceNamespace, strjoin("    " + unrenamedLocations, newline))
+    end
 
     if nargout < 1
         clear vendorInfo
