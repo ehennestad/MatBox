@@ -131,14 +131,15 @@ function repoFolder = renameToReferenceFolderName(repoFolder, repositoryName, gi
 %   scheme; as observed on github.com, a leading "v" is dropped from tag
 %   names (v1.0.0 unpacks to <repo>-1.0.0) and an abbreviated commit SHA is
 %   expanded to the full hash, while branch archives unpack to
-%   <repo>-<branch>. Renaming to the reference exactly as written in the
-%   requirement makes the folder name predictable regardless of how GitHub
-%   names the archive, so that lookForRepository recognises the
-%   installation on later runs instead of downloading again.
+%   <repo>-<branch> with each "/" replaced by "-". Renaming to the name
+%   given by repositoryFolderName, which is derived from the reference as
+%   written in the requirement, makes the folder name predictable
+%   regardless of how GitHub names the archive, so that lookForRepository
+%   recognises the installation on later runs instead of downloading again.
 
     [parentFolder, folderName, folderNameSuffix] = fileparts(repoFolder);
     actualName = strcat(folderName, folderNameSuffix); % fileparts splits names like "repo-1.0.0" at the last dot
-    expectedName = sprintf('%s-%s', repositoryName, gitRef);
+    expectedName = matbox.setup.internal.github.repositoryFolderName(repositoryName, gitRef);
 
     % Compare case-insensitively: the archive uses the repository's canonical
     % casing, which may differ from the casing in the requirement URL.
