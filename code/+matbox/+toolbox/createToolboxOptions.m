@@ -14,7 +14,8 @@ function toolboxOptions = createToolboxOptions(projectRootDirectory, versionNumb
     end
 
     % Read the toolbox info from MLToolboxInfo.json
-    [toolboxInfo, identifier] = matbox.toolbox.readToolboxInfo(projectRootDirectory);
+    [toolboxInfo, identifier, toolboxInfoFileContent] = ...
+        matbox.toolbox.readToolboxInfo(projectRootDirectory);
 
     % Resolve folders to add to path for toolbox. This needs to be done
     % before creating the ToolboxOptions object due to a bug in that class
@@ -67,13 +68,37 @@ function toolboxOptions = createToolboxOptions(projectRootDirectory, versionNumb
         end
     end
 
-    % Specify name for output .mltbx file. Every version separator, including
-    % the "+" before a build number, becomes an underscore.
-    versionNumber = replace(opts.ToolboxVersion, [".", "+"], "_");
-    outputFileName = sprintf('%s_v%s.mltbx', MLTBX_NAME, versionNumber);
+    outputFileName = resolveOutputFileName(toolboxInfoFileContent, ...
+        MLTBX_NAME, opts.ToolboxVersion);
     opts.OutputFile = fullfile(projectRootDirectory, "releases", outputFileName);
 
     toolboxOptions = opts;
+end
+
+function outputFileName = resolveOutputFileName(toolboxInfoFileContent, mltbxName, toolboxVersion)
+% resolveOutputFileName - Get the file name of the packaged .mltbx file
+%
+%   A non-empty top-level "MltbxFileName" field in MLToolboxInfo.json is used
+%   as the file name, with ".mltbx" appended if it is missing. Otherwise the
+%   name is <mltbxName>_v<version>.mltbx, where every version separator,
+%   including the "+" before a build number, becomes an underscore.
+
+    if isfield(toolboxInfoFileContent, 'MltbxFileName') ...
+            && ~isempty(toolboxInfoFileContent.MltbxFileName)
+        outputFileName = string(toolboxInfoFileContent.MltbxFileName);
+        if ~isscalar(outputFileName) || contains(outputFileName, ["/", "\"])
+            error('MatBox:Package:InvalidMltbxFileName', ...
+                ['The "MltbxFileName" field in MLToolboxInfo.json must be a ', ...
+                'single file name without folders. The packaged toolbox is ', ...
+                'always saved in the "releases" folder.'])
+        end
+        if ~endsWith(outputFileName, ".mltbx", "IgnoreCase", true)
+            outputFileName = outputFileName + ".mltbx";
+        end
+    else
+        versionNumber = replace(toolboxVersion, [".", "+"], "_");
+        outputFileName = sprintf("%s_v%s.mltbx", mltbxName, versionNumber);
+    end
 end
 
 function toolboxVersion = formatToolboxVersion(versionNumber)

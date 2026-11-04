@@ -192,6 +192,14 @@ By default, a `LICENSE` file in the project root is included in the packaged too
 "RootFilesToPackage": ["LICENSE", "THIRD_PARTY_NOTICES.md"]
 ```
 
+The packaged toolbox is saved as `releases/<ToolboxName>_v<version>.mltbx`, for example `MatBox_v1_2_3.mltbx`. To use the same file name for every release, add a top-level `MltbxFileName` to `MLToolboxInfo.json`. `.mltbx` is appended if it is missing, and the name must not contain folders:
+
+```json
+"MltbxFileName": "MatBox"
+```
+
+A fixed file name gives the latest release a stable download link, `https://github.com/<owner>/<repo>/releases/latest/download/<MltbxFileName>.mltbx`.
+
 ## Project-Specific Task Wrappers
 
 Projects can keep their own CI entry points in `tools/tasks`. These wrapper functions are useful when a project needs non-default source folders, test folders, tag filters, report settings, or packaging options.
