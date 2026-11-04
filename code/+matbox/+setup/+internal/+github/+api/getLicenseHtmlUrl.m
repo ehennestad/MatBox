@@ -14,6 +14,12 @@ function htmlUrl = getLicenseHtmlUrl(repositoryName, repositoryOwner)
     catch ME
         if contains(ME.message, 'rate limit')
             error('GitHub API rate limit exceeded. Consider using a GITHUB_TOKEN environment variable.');
+        elseif strcmp(ME.identifier, 'MATLAB:webservices:HTTP404StatusCodeError')
+            % GitHub returns 404 when it finds no license file in the repository
+            error('MatBox:GitHub:LicenseNotFound', ...
+                ['GitHub found no license for the repository "%s/%s". ', ...
+                'Add a LICENSE file to that repository.'], ...
+                repositoryOwner, repositoryName)
         else
             rethrow(ME);
         end
