@@ -1,8 +1,13 @@
 function toolboxOptions = createToolboxOptions(projectRootDirectory, versionNumber, options)
-% Script for setting up toolbox (mltbx) options for openMINDS_MATLAB
+% createToolboxOptions - Create the ToolboxOptions for packaging a project
+%
+%   toolboxOptions = matbox.toolbox.createToolboxOptions(projectRootDirectory, versionNumber)
+%   returns a matlab.addons.toolbox.ToolboxOptions object for the given
+%   version, built from the project's MLToolboxInfo.json and
+%   requirements.txt.
 %
 %   Example:
-%       toolboxOptions = getToolboxOptions('0.9.2')
+%       toolboxOptions = matbox.toolbox.createToolboxOptions(pwd, "0.9.2", "SourceFolderName", "code")
 
     arguments
         projectRootDirectory (1,1) string {mustBeFolder}
