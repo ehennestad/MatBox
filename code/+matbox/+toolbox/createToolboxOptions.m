@@ -1,8 +1,13 @@
 function toolboxOptions = createToolboxOptions(projectRootDirectory, versionNumber, options)
-% Script for setting up toolbox (mltbx) options for openMINDS_MATLAB
+% createToolboxOptions - Create the ToolboxOptions for packaging a project
+%
+%   toolboxOptions = matbox.toolbox.createToolboxOptions(projectRootDirectory, versionNumber)
+%   returns a matlab.addons.toolbox.ToolboxOptions object for the given
+%   version, built from the project's MLToolboxInfo.json and
+%   requirements.txt.
 %
 %   Example:
-%       toolboxOptions = getToolboxOptions('0.9.2')
+%       toolboxOptions = matbox.toolbox.createToolboxOptions(pwd, "0.9.2", "SourceFolderName", "code")
 
     arguments
         projectRootDirectory (1,1) string {mustBeFolder}
@@ -16,6 +21,20 @@ function toolboxOptions = createToolboxOptions(projectRootDirectory, versionNumb
     % Read the toolbox info from MLToolboxInfo.json
     [toolboxInfo, identifier, toolboxInfoFileContent] = ...
         matbox.toolbox.readToolboxInfo(projectRootDirectory);
+    toolboxFolder = fullfile(projectRootDirectory, options.SourceFolderName);
+
+    % ToolboxOptions has the Readme and PackageName properties from R2026b,
+    % and earlier releases reject them as unknown name-value arguments. They
+    % are therefore taken out before the constructor and set afterwards on
+    % the releases that have them.
+    [toolboxInfo, readme] = takeOptionalField(toolboxInfo, "Readme");
+    if readme ~= ""
+        readmeFile = resolveReadmeFile(toolboxFolder, readme);
+    end
+    [toolboxInfo, packageName] = takeOptionalField(toolboxInfo, "PackageName");
+    if packageName ~= ""
+        mustBeValidPackageName(packageName)
+    end
 
     % Resolve folders to add to path for toolbox. This needs to be done
     % before creating the ToolboxOptions object due to a bug in that class
@@ -32,8 +51,14 @@ function toolboxOptions = createToolboxOptions(projectRootDirectory, versionNumb
     end
 
     % Initialize the ToolboxOptions from the code folder and initial metadata
-    toolboxFolder = fullfile(projectRootDirectory, options.SourceFolderName);
     opts = matlab.addons.toolbox.ToolboxOptions(toolboxFolder, identifier, toolboxInfo);
+
+    if readme ~= "" && isprop(opts, "Readme")
+        opts.Readme = readmeFile;
+    end
+    if packageName ~= "" && isprop(opts, "PackageName")
+        opts.PackageName = packageName;
+    end
 
     % Set the toolbox version
     opts.ToolboxVersion = formatToolboxVersion(versionNumber);
@@ -113,6 +138,53 @@ function toolboxVersion = formatToolboxVersion(versionNumber)
         toolboxVersion = join(versionParts(1:3), ".") + "+" + versionParts(4);
     else
         toolboxVersion = versionNumber;
+    end
+end
+
+function [toolboxInfo, value] = takeOptionalField(toolboxInfo, fieldName)
+% takeOptionalField - Remove a field from the toolbox info and return its value
+%
+%   The value is "" when the field is absent or empty.
+
+    value = "";
+    if isfield(toolboxInfo, fieldName)
+        if ~isempty(toolboxInfo.(fieldName))
+            value = string(toolboxInfo.(fieldName));
+        end
+        toolboxInfo = rmfield(toolboxInfo, fieldName);
+    end
+    if ~isscalar(value)
+        error("MatBox:Package:InvalidToolboxInfoField", ...
+            '"%s" in MLToolboxInfo.json must be a single text value.', fieldName)
+    end
+end
+
+function readmeFile = resolveReadmeFile(toolboxFolder, readme)
+% resolveReadmeFile - Get the full path of the readme named in MLToolboxInfo.json
+%
+%   The package contains only the files below the source folder, so the
+%   readme is given relative to that folder. A project root file such as
+%   README.md is copied there by listing it in RootFilesToPackage.
+
+    isInsideSourceFolder = ~any(split(readme, ["/", "\"]) == "..");
+    readmeFile = fullfile(toolboxFolder, readme);
+    if ~isInsideSourceFolder || ~isfile(readmeFile)
+        error("MatBox:Package:ReadmeNotFound", ...
+            ['The file "%s" given as "Readme" in MLToolboxInfo.json is not in ', ...
+            'the source folder "%s". Give its path relative to the source ', ...
+            'folder, or list a project root file in "RootFilesToPackage" to ', ...
+            'copy it there.'], readme, toolboxFolder)
+    end
+end
+
+function mustBeValidPackageName(packageName)
+% mustBeValidPackageName - Check the package name, which must be a MATLAB identifier
+    if ~isvarname(packageName)
+        error("MatBox:Package:InvalidPackageName", ...
+            ['"PackageName" in MLToolboxInfo.json is "%s", which is not a ', ...
+            'valid MATLAB identifier. Use a letter followed by letters, ', ...
+            'digits or underscores, at most %d characters.'], ...
+            packageName, namelengthmax)
     end
 end
 

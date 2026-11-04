@@ -172,6 +172,55 @@ classdef TasksTest <  matlab.unittest.TestCase
                 "MatBox:Package:InvalidMltbxFileName")
         end
 
+        function testPackageToolboxWithReadmeAndPackageName(testCase)
+            % Releases before R2026b have neither property, and must still
+            % package the readme as an ordinary file.
+            archiveFolder = packageWithReadmeAndPackageName();
+
+            packagedReadmeFile = fullfile(archiveFolder, "fsroot", "README.md");
+            testCase.verifyTrue(isfile(packagedReadmeFile))
+            testCase.verifyEqual(fileread(packagedReadmeFile), ...
+                fileread(fullfile(pwd, "README.md")))
+            testCase.verifyFalse(isfile(fullfile(pwd, "code", "README.md")))
+        end
+
+        function testPackageToolboxWritesReadmeAndPackageNameToMpackage(testCase)
+            testCase.assumeFalse(isMATLABReleaseOlderThan("R2026b"), ...
+                "ToolboxOptions has Readme and PackageName only from R2026b.")
+
+            archiveFolder = packageWithReadmeAndPackageName();
+
+            mpackage = jsondecode(fileread( ...
+                fullfile(archiveFolder, "fsroot", "resources", "mpackage.json")));
+            testCase.verifyEqual(string(mpackage.readme), "README.md")
+            testCase.verifyEqual(string(mpackage.name), "MatBoxTest")
+        end
+
+        function testCreateToolboxOptionsReadmeNotInSourceFolder(testCase)
+            copyfile(matboxtools.projectdir(), pwd);
+
+            % README.md is in the project root, but not staged
+            setToolboxInfoFields(pwd, struct("Readme", "README.md"))
+            testCase.verifyError( ...
+                @() matbox.toolbox.createToolboxOptions(pwd, "1.0.0", "SourceFolderName", "code"), ...
+                "MatBox:Package:ReadmeNotFound")
+
+            % The file exists, but outside the source folder
+            setToolboxInfoFields(pwd, struct("Readme", "../README.md"))
+            testCase.verifyError( ...
+                @() matbox.toolbox.createToolboxOptions(pwd, "1.0.0", "SourceFolderName", "code"), ...
+                "MatBox:Package:ReadmeNotFound")
+        end
+
+        function testCreateToolboxOptionsInvalidPackageName(testCase)
+            copyfile(matboxtools.projectdir(), pwd);
+
+            setToolboxInfoFields(pwd, struct("PackageName", "MatBox-Test"))
+            testCase.verifyError( ...
+                @() matbox.toolbox.createToolboxOptions(pwd, "1.0.0", "SourceFolderName", "code"), ...
+                "MatBox:Package:InvalidPackageName")
+        end
+
         function testTestedWithBadgeCountsReleaseWithSkippedTests(testCase)
             % Tests filtered by an unmet assumption are reported as skipped
             % rather than failed, so the release is still tested with.
@@ -256,4 +305,41 @@ function badgeInfo = readTestedWithBadge(testCase, projectRootDirectory, version
     testCase.assertTrue(isfile(badgeFile), ...
         "Expected 'tested with' badge file was not created.")
     badgeInfo = jsondecode(fileread(badgeFile));
+end
+
+function archiveFolder = packageWithReadmeAndPackageName()
+% packageWithReadmeAndPackageName - Package a copy of MatBox that sets Readme and PackageName
+%
+%   The project README.md is staged through RootFilesToPackage. Returns the
+%   folder the packaged toolbox is unzipped to.
+
+    copyfile(matboxtools.projectdir(), pwd);
+    setToolboxInfoFields(pwd, struct("Readme", "README.md", "PackageName", "MatBoxTest"), ...
+        {'LICENSE'; 'README.md'})
+
+    [~, toolboxFile] = matbox.tasks.packageToolbox(pwd, "build", "", "SourceFolderName", "code");
+    archiveFolder = fullfile(pwd, "toolbox-archive");
+    unzip(toolboxFile, archiveFolder)
+end
+
+function setToolboxInfoFields(projectRootDirectory, toolboxOptionsFields, rootFilesToPackage)
+% setToolboxInfoFields - Set fields of the ToolboxOptions in the project's MLToolboxInfo.json
+%
+%   A non-empty rootFilesToPackage replaces the top-level RootFilesToPackage.
+
+    arguments
+        projectRootDirectory (1,1) string
+        toolboxOptionsFields (1,1) struct
+        rootFilesToPackage (:,1) cell = {}
+    end
+
+    toolboxInfoFile = fullfile(projectRootDirectory, "tools", "MLToolboxInfo.json");
+    toolboxInfo = jsondecode(fileread(toolboxInfoFile));
+    for fieldName = string(fieldnames(toolboxOptionsFields))'
+        toolboxInfo.ToolboxOptions.(fieldName) = toolboxOptionsFields.(fieldName);
+    end
+    if ~isempty(rootFilesToPackage)
+        toolboxInfo.RootFilesToPackage = rootFilesToPackage;
+    end
+    matbox.utility.filewrite(toolboxInfoFile, jsonencode(toolboxInfo, "PrettyPrint", true));
 end
