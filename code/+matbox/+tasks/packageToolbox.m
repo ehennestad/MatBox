@@ -17,6 +17,13 @@ function [newVersion, mltbxPath] = packageToolbox(projectRootDirectory, releaseT
 % specify a top-level "RootFilesToPackage" list in MLToolboxInfo.json,
 % e.g. "RootFilesToPackage": ["LICENSE", "THIRD_PARTY_NOTICES.md"].
 %
+% From R2026b, "Readme" and "PackageName" in the "ToolboxOptions" of
+% MLToolboxInfo.json set the readme file and the package name. "Readme" is
+% a path relative to the source folder; list "README.md" in
+% "RootFilesToPackage" to package the project README. Earlier releases
+% package the readme as an ordinary file and have no package name. Both
+% fields are checked on every release.
+%
 % The MLTBX file is named <ToolboxName>_v<version>.mltbx. To use a fixed
 % file name for every release, specify a top-level "MltbxFileName" in
 % MLToolboxInfo.json, e.g. "MltbxFileName": "MatBox".

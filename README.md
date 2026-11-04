@@ -192,6 +192,20 @@ By default, a `LICENSE` file in the project root is included in the packaged too
 "RootFilesToPackage": ["LICENSE", "THIRD_PARTY_NOTICES.md"]
 ```
 
+From R2026b, an `.mltbx` file is a package file with a readme and a package name. Set them with `Readme` and `PackageName` in the `ToolboxOptions` of `MLToolboxInfo.json`:
+
+```json
+"RootFilesToPackage": ["LICENSE", "README.md"],
+"ToolboxOptions": {
+    "Readme": "README.md",
+    "PackageName": "MyToolbox"
+}
+```
+
+- `Readme` is a path relative to the source folder, because the package contains only the files below that folder. List a project root file in `RootFilesToPackage` to copy it there. Without `Readme`, R2026b uses a `README.md` at the root of the source folder, or else writes `Description` to one.
+- `PackageName` must be a valid MATLAB identifier. It names the installation folder and identifies the package in `mpmlist` and to packages that depend on it. Without it, R2026b derives the name from `ToolboxName`, dropping spaces and writing a hyphen as `0x2D`.
+- Releases before R2026b package the readme as an ordinary file and have no package name. MatBox checks both fields on every release.
+
 The packaged toolbox is saved as `releases/<ToolboxName>_v<version>.mltbx`, for example `MatBox_v1_2_3.mltbx`. To use the same file name for every release, add a top-level `MltbxFileName` to `MLToolboxInfo.json`. `.mltbx` is appended if it is missing, and the name must not contain folders:
 
 ```json
