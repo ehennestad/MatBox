@@ -217,7 +217,9 @@ The reusable workflow chains these jobs:
    Project root files declared in the top-level `RootFilesToPackage`
    list in `MLToolboxInfo.json` (by default `LICENSE`) are included in
    the packaged toolbox. On R2026b, `Readme` and `PackageName` in its
-   `ToolboxOptions` set the package readme and package name. The `.mltbx`
+   `ToolboxOptions` set the package readme and package name. A readme
+   copied from the project root loses its leading badge lines, and its
+   relative links point to the release tag. The `.mltbx`
    file is named `<ToolboxName>_v<version>.mltbx`, or by the top-level
    `MltbxFileName` in `MLToolboxInfo.json` when that field is set
 5. **Verify installation** — installs the packaged toolbox and confirms it

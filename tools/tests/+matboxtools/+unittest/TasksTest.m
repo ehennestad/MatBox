@@ -175,20 +175,48 @@ classdef TasksTest <  matlab.unittest.TestCase
         function testPackageToolboxWithReadmeAndPackageName(testCase)
             % Releases before R2026b have neither property, and must still
             % package the readme as an ordinary file.
-            archiveFolder = packageWithReadmeAndPackageName();
+            [archiveFolder, newVersion] = packageWithReadmeAndPackageName(testCase);
 
+            % The staged copy of the project README is packaged after
+            % processing, with links to the tag of the new version.
+            versionParts = split(newVersion, ".");
+            expectedText = matbox.toolbox.internal.prepareReadme( ...
+                string(fileread(fullfile(pwd, "README.md"), "Encoding", "UTF-8")), ...
+                "RepositoryURL", "https://github.com/owner/repo", ...
+                "Ref", "v" + join(versionParts(1:3), "."), ...
+                "ProjectRoot", pwd);
             packagedReadmeFile = fullfile(archiveFolder, "fsroot", "README.md");
-            testCase.verifyTrue(isfile(packagedReadmeFile))
-            testCase.verifyEqual(fileread(packagedReadmeFile), ...
-                fileread(fullfile(pwd, "README.md")))
+            testCase.assertTrue(isfile(packagedReadmeFile))
+            packagedText = string(fileread(packagedReadmeFile, "Encoding", "UTF-8"));
+            testCase.verifyEqual(packagedText, expectedText)
+            testCase.verifyFalse(contains(packagedText, "](.github/badges/tests.svg)"))
+            testCase.verifySubstring(packagedText, "https://github.com/owner/repo/blob/v")
+
             testCase.verifyFalse(isfile(fullfile(pwd, "code", "README.md")))
+        end
+
+        function testPackageToolboxLeavesCommittedReadmeUnchanged(testCase)
+            copyfile(matboxtools.projectdir(), pwd);
+
+            % A readme committed in the source folder is not a staged copy
+            readmeText = "[![b](.github/badges/tests.svg)](https://example.com)" + newline ...
+                + "See [file](LICENSE)." + newline;
+            matbox.utility.filewrite(fullfile(pwd, "code", "README.md"), readmeText);
+            setToolboxInfoFields(pwd, struct("Readme", "README.md"))
+
+            [~, toolboxFile] = matbox.tasks.packageToolbox(pwd, "build", "", "SourceFolderName", "code");
+
+            archiveFolder = fullfile(pwd, "toolbox-archive");
+            unzip(toolboxFile, archiveFolder)
+            testCase.verifyEqual(string(fileread(fullfile(archiveFolder, "fsroot", "README.md"))), readmeText)
+            testCase.verifyEqual(string(fileread(fullfile(pwd, "code", "README.md"))), readmeText)
         end
 
         function testPackageToolboxWritesReadmeAndPackageNameToMpackage(testCase)
             testCase.assumeFalse(isMATLABReleaseOlderThan("R2026b"), ...
                 "ToolboxOptions has Readme and PackageName only from R2026b.")
 
-            archiveFolder = packageWithReadmeAndPackageName();
+            archiveFolder = packageWithReadmeAndPackageName(testCase);
 
             mpackage = jsondecode(fileread( ...
                 fullfile(archiveFolder, "fsroot", "resources", "mpackage.json")));
@@ -307,17 +335,23 @@ function badgeInfo = readTestedWithBadge(testCase, projectRootDirectory, version
     badgeInfo = jsondecode(fileread(badgeFile));
 end
 
-function archiveFolder = packageWithReadmeAndPackageName()
+function [archiveFolder, newVersion] = packageWithReadmeAndPackageName(testCase)
 % packageWithReadmeAndPackageName - Package a copy of MatBox that sets Readme and PackageName
 %
-%   The project README.md is staged through RootFilesToPackage. Returns the
-%   folder the packaged toolbox is unzipped to.
+%   The project README.md is staged through RootFilesToPackage, and the
+%   repository URL is https://github.com/owner/repo. Returns the folder the
+%   packaged toolbox is unzipped to, and the packaged version.
+
+    testCase.applyFixture(matlab.unittest.fixtures.EnvironmentVariableFixture( ...
+        "GITHUB_SERVER_URL", "https://github.com"));
+    testCase.applyFixture(matlab.unittest.fixtures.EnvironmentVariableFixture( ...
+        "GITHUB_REPOSITORY", "owner/repo"));
 
     copyfile(matboxtools.projectdir(), pwd);
     setToolboxInfoFields(pwd, struct("Readme", "README.md", "PackageName", "MatBoxTest"), ...
         {'LICENSE'; 'README.md'})
 
-    [~, toolboxFile] = matbox.tasks.packageToolbox(pwd, "build", "", "SourceFolderName", "code");
+    [newVersion, toolboxFile] = matbox.tasks.packageToolbox(pwd, "build", "", "SourceFolderName", "code");
     archiveFolder = fullfile(pwd, "toolbox-archive");
     unzip(toolboxFile, archiveFolder)
 end

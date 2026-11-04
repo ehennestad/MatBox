@@ -24,6 +24,11 @@ function [newVersion, mltbxPath] = packageToolbox(projectRootDirectory, releaseT
 % package the readme as an ordinary file and have no package name. Both
 % fields are checked on every release.
 %
+% A readme copied from the project root is processed before packaging, on
+% every release: badge lines at the top are removed and relative links
+% point to the tag v<major>.<minor>.<patch> of the new version (see
+% matbox.toolbox.internal.prepareReadme).
+%
 % The MLTBX file is named <ToolboxName>_v<version>.mltbx. To use a fixed
 % file name for every release, specify a top-level "MltbxFileName" in
 % MLToolboxInfo.json, e.g. "MltbxFileName": "MatBox".
@@ -52,8 +57,8 @@ function [newVersion, mltbxPath] = packageToolbox(projectRootDirectory, releaseT
 
     % Temporarily copy project root files (e.g. LICENSE) into the source
     % folder so they are included in the packaged toolbox.
-    stagedFilesCleanupObj = matbox.toolbox.internal.stageRootFilesForPackaging(...
-        projectRootDirectory, sourceFolderPath); %#ok<NASGU>
+    [stagedFilesCleanupObj, stagedFiles] = matbox.toolbox.internal.stageRootFilesForPackaging(...
+        projectRootDirectory, sourceFolderPath); %#ok<ASGLU>
 
     try
         previousVersion = matbox.utility.getVersionFromContents(sourceFolderPath);
@@ -62,6 +67,8 @@ function [newVersion, mltbxPath] = packageToolbox(projectRootDirectory, releaseT
     end
     newVersion = matbox.utility.updateVersionNumber(previousVersion, releaseType, ...
         versionString, "IncludeBuildNumber", includeBuildNumer);
+
+    prepareStagedReadme(projectRootDirectory, sourceFolderPath, stagedFiles, newVersion)
 
     % Create/retrieve options for packaging toolbox
     nvPairs = namedargs2cell(options);
@@ -120,5 +127,24 @@ function [newVersion, mltbxPath] = packageToolbox(projectRootDirectory, releaseT
 
     if ~nargout
         clear newVersion
+    end
+end
+
+function prepareStagedReadme(projectRootDirectory, sourceFolderPath, stagedFiles, versionNumber)
+% prepareStagedReadme - Prepare the readme for the package if it is a staged copy
+%
+%   The readme named by "Readme" in MLToolboxInfo.json is processed with
+%   matbox.toolbox.internal.prepareReadmeFile only when it was copied from
+%   the project root for packaging. A readme committed in the source folder
+%   is left as it is.
+
+    toolboxInfo = matbox.toolbox.readToolboxInfo(projectRootDirectory);
+    if ~isfield(toolboxInfo, "Readme") || isempty(toolboxInfo.Readme)
+        return
+    end
+
+    readmeFile = fullfile(sourceFolderPath, string(toolboxInfo.Readme));
+    if ismember(readmeFile, stagedFiles)
+        matbox.toolbox.internal.prepareReadmeFile(readmeFile, projectRootDirectory, versionNumber)
     end
 end

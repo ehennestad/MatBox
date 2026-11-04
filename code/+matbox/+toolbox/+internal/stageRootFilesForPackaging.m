@@ -1,13 +1,15 @@
-function cleanupObj = stageRootFilesForPackaging(projectRootDirectory, sourceFolderPath)
+function [cleanupObj, stagedFiles] = stageRootFilesForPackaging(projectRootDirectory, sourceFolderPath)
 % stageRootFilesForPackaging - Temporarily copy project root files into the source folder
 %
-%   cleanupObj = stageRootFilesForPackaging(projectRootDirectory, sourceFolderPath)
+%   [cleanupObj, stagedFiles] = stageRootFilesForPackaging(projectRootDirectory, sourceFolderPath)
 %   copies selected files from the project root directory into the toolbox
 %   source folder so that they are included in the packaged toolbox.
 %   ToolboxOptions only packages files located below the source folder, so
 %   files like LICENSE that conventionally live in the project root must be
 %   staged before packaging. The returned onCleanup object deletes the
-%   staged copies when it goes out of scope.
+%   staged copies when it goes out of scope. stagedFiles holds the full
+%   paths of the copies; a file the source folder already had is not one
+%   of them.
 %
 %   The files to stage are read from the top-level "RootFilesToPackage"
 %   field of MLToolboxInfo.json. If the field is not present, the default

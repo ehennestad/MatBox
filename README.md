@@ -206,6 +206,12 @@ From R2026b, an `.mltbx` file is a package file with a readme and a package name
 - `PackageName` must be a valid MATLAB identifier. It names the installation folder and identifies the package in `mpmlist` and to packages that depend on it. Without it, R2026b derives the name from `ToolboxName`, dropping spaces and writing a hyphen as `0x2D`.
 - Releases before R2026b package the readme as an ordinary file and have no package name. MatBox checks both fields on every release.
 
+A readme copied from the project root is changed in the package, so that it reads correctly outside GitHub, for example on File Exchange. The project file is not changed, and neither is a readme committed in the source folder:
+
+- Lines made only of Markdown images, such as badges, are removed from the top of the file, before the first line of text.
+- Relative links and image paths become absolute URLs at the tag `v<major>.<minor>.<patch>` of the packaged version: `<repository>/blob/<tag>/<path>` for a file, `<repository>/tree/<tag>/<path>` for a folder, and the raw file URL for an image. This covers Markdown links and images, reference definitions, and the HTML attributes `href`, `src` and `srcset`. Fenced code blocks are left as they are.
+- The repository is `GITHUB_SERVER_URL/GITHUB_REPOSITORY` on GitHub Actions, and the `origin` remote elsewhere. Without either, links stay relative and MatBox warns `MatBox:Package:RepositoryUrlNotFound`.
+
 The packaged toolbox is saved as `releases/<ToolboxName>_v<version>.mltbx`, for example `MatBox_v1_2_3.mltbx`. To use the same file name for every release, add a top-level `MltbxFileName` to `MLToolboxInfo.json`. `.mltbx` is appended if it is missing, and the name must not contain folders:
 
 ```json
