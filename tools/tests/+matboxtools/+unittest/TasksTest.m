@@ -140,6 +140,38 @@ classdef TasksTest <  matlab.unittest.TestCase
             testCase.verifyTrue(isfile(fullfile(pwd, 'code', 'LICENSE')))
         end
 
+        function testMltbxFileNameDefaultsToVersionedName(testCase)
+            copyfile(matboxtools.projectdir(), pwd);
+
+            toolboxOptions = matbox.toolbox.createToolboxOptions(pwd, "1.2.3", ...
+                "SourceFolderName", "code");
+            [~, fileName, fileExtension] = fileparts(toolboxOptions.OutputFile);
+            testCase.verifyEqual(string(fileName) + fileExtension, "MatBox_v1_2_3.mltbx")
+        end
+
+        function testMltbxFileNameFromToolboxInfo(testCase)
+            copyfile(matboxtools.projectdir(), pwd);
+
+            fileNames = ["MatBox", "MatBox.mltbx"];
+            for iFileName = fileNames
+                setMltbxFileName(pwd, iFileName)
+                toolboxOptions = matbox.toolbox.createToolboxOptions(pwd, "1.2.3", ...
+                    "SourceFolderName", "code", "ToolboxShortName", "ShortName");
+                testCase.verifyEqual(string(toolboxOptions.OutputFile), ...
+                    fullfile(pwd, "releases", "MatBox.mltbx"), ...
+                    sprintf('Unexpected output file for MltbxFileName "%s".', iFileName))
+            end
+        end
+
+        function testMltbxFileNameWithFolderErrors(testCase)
+            copyfile(matboxtools.projectdir(), pwd);
+
+            setMltbxFileName(pwd, "subfolder/MatBox")
+            testCase.verifyError(...
+                @() matbox.toolbox.createToolboxOptions(pwd, "1.2.3", "SourceFolderName", "code"), ...
+                "MatBox:Package:InvalidMltbxFileName")
+        end
+
         function testTestedWithBadgeCountsReleaseWithSkippedTests(testCase)
             % Tests filtered by an unmet assumption are reported as skipped
             % rather than failed, so the release is still tested with.
@@ -177,6 +209,13 @@ classdef TasksTest <  matlab.unittest.TestCase
                 "MATBOX:BadgeCreation:NoReleasePassed")
         end
     end
+end
+
+function setMltbxFileName(projectRootDirectory, mltbxFileName)
+    toolboxInfoFile = fullfile(projectRootDirectory, 'tools', 'MLToolboxInfo.json');
+    toolboxInfo = jsondecode(fileread(toolboxInfoFile));
+    toolboxInfo.MltbxFileName = mltbxFileName;
+    matbox.utility.filewrite(toolboxInfoFile, jsonencode(toolboxInfo, "PrettyPrint", true));
 end
 
 function writeTestResultsReport(projectRootDirectory, releaseName, options)

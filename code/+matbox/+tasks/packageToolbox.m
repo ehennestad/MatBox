@@ -17,6 +17,10 @@ function [newVersion, mltbxPath] = packageToolbox(projectRootDirectory, releaseT
 % specify a top-level "RootFilesToPackage" list in MLToolboxInfo.json,
 % e.g. "RootFilesToPackage": ["LICENSE", "THIRD_PARTY_NOTICES.md"].
 %
+% The MLTBX file is named <ToolboxName>_v<version>.mltbx. To use a fixed
+% file name for every release, specify a top-level "MltbxFileName" in
+% MLToolboxInfo.json, e.g. "MltbxFileName": "MatBox".
+%
 % Adapted from: https://github.com/mathworks/climatedatastore/blob/main/buildUtilities/packageToolbox.m
 % See the THIRD_PARTY_NOTICES.md file distributed with MatBox for license terms.
 

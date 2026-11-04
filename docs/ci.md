@@ -216,7 +216,9 @@ The reusable workflow chains these jobs:
    `matbox.tasks.packageToolbox` and creates a draft GitHub release.
    Project root files declared in the top-level `RootFilesToPackage`
    list in `MLToolboxInfo.json` (by default `LICENSE`) are included in
-   the packaged toolbox
+   the packaged toolbox. The `.mltbx` file is named
+   `<ToolboxName>_v<version>.mltbx`, or by the top-level `MltbxFileName`
+   in `MLToolboxInfo.json` when that field is set
 5. **Verify installation** — installs the packaged toolbox and confirms it
    loads
 
