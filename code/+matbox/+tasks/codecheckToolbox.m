@@ -64,21 +64,23 @@ function issues = codecheckToolbox(projectRootDir, options)
             % R2022b and later, just display issues
             displayIssuesTable(issues.Issues)
         end
+    end
 
-        % Throw error if unresolved issues are present at specified severity
-        if options.RequireIssuesResolved
-            if options.SeverityThreshold == "info" && issueCount.Total > 0
-                throwUnresolvedCodeIssuesException()
-            elseif options.SeverityThreshold == "warning" && (issueCount.Warning > 0 || issueCount.Error > 0)
-                throwUnresolvedCodeIssuesException()
-            elseif options.SeverityThreshold == "error" && issueCount.Error > 0
-                throwUnresolvedCodeIssuesException()
-            end
+    % Throw error if unresolved issues are present at specified severity
+    if options.RequireIssuesResolved
+        if options.SeverityThreshold == "info" && issueCount.Total > 0
+            throwUnresolvedCodeIssuesException()
+        elseif options.SeverityThreshold == "warning" && (issueCount.Warning > 0 || issueCount.Error > 0)
+            throwUnresolvedCodeIssuesException()
+        elseif options.SeverityThreshold == "error" && issueCount.Error > 0
+            throwUnresolvedCodeIssuesException()
         end
+    end
 
-        if ~nargout
-            clear issues
-        end
+    % Without this, a call with no output and no semicolon displays the
+    % issues as ans
+    if ~nargout
+        clear issues
     end
 end
 
