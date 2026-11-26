@@ -66,6 +66,50 @@ classdef TasksTest <  matlab.unittest.TestCase
                 str2double(badgeInfo.message))
         end
 
+        function testCodecheckToolboxThrowsOnUnresolvedIssues(testCase)
+            sourceFolder = createFolderWithCodeWarning(pwd);
+
+            testCase.verifyError( ...
+                @() runCodecheck(pwd, sourceFolder, "RequireIssuesResolved", true), ...
+                "MatBox:CodeIssues:UnresolvedIssues")
+        end
+
+        function testCodecheckToolboxThrowsWhenShowingIssues(testCase)
+            sourceFolder = createFolderWithCodeWarning(pwd);
+
+            testCase.verifyError( ...
+                @() runCodecheck(pwd, sourceFolder, ...
+                    "RequireIssuesResolved", true, "ShowIssues", true), ...
+                "MatBox:CodeIssues:UnresolvedIssues")
+        end
+
+        function testCodecheckToolboxIgnoresIssuesBelowThreshold(testCase)
+            sourceFolder = createFolderWithCodeWarning(pwd);
+
+            testCase.verifyWarningFree( ...
+                @() runCodecheck(pwd, sourceFolder, ...
+                    "RequireIssuesResolved", true, "SeverityThreshold", "error"))
+        end
+
+        function testCodecheckToolboxAllowsIssuesByDefault(testCase)
+            sourceFolder = createFolderWithCodeWarning(pwd);
+
+            testCase.verifyWarningFree(@() runCodecheck(pwd, sourceFolder))
+        end
+
+        function testCodecheckToolboxHidesIssuesByDefault(testCase)
+            sourceFolder = createFolderWithCodeWarning(pwd);
+            codecheckOptions = {"FoldersToCheck", sourceFolder, ...
+                "CreateBadge", false, "SaveReport", false}; %#ok<NASGU> Used in evalc
+
+            % No semicolon: an output left in ans would be displayed
+            displayedText = evalc("matbox.tasks.codecheckToolbox(pwd, codecheckOptions{:})");
+
+            testCase.verifySubstring(displayedText, "Warnings: 1")
+            testCase.verifyTrue(~contains(displayedText, "hasCodeWarning.m"), ...
+                "Expected the issues not to be displayed when ShowIssues is false.")
+        end
+
         function testWriteBadgeJSONFileOmitsCountsByDefault(testCase)
             matbox.utility.writeBadgeJSONFile("tests", "1 passed", "green", ...
                 "OutputFolder", pwd)
@@ -209,6 +253,27 @@ classdef TasksTest <  matlab.unittest.TestCase
                 "MATBOX:BadgeCreation:NoReleasePassed")
         end
     end
+end
+
+function sourceFolder = createFolderWithCodeWarning(projectRootDirectory)
+% createFolderWithCodeWarning - Create a folder with one file that has one warning
+%
+%   The file assigns a variable that is never used, which the Code Analyzer
+%   reports as a single issue of severity "warning".
+
+    sourceFolder = fullfile(projectRootDirectory, "src");
+    mkdir(sourceFolder)
+
+    code = sprintf("function hasCodeWarning()\n    unusedValue = 1;\nend\n");
+    matbox.utility.filewrite(fullfile(sourceFolder, "hasCodeWarning.m"), code);
+end
+
+function runCodecheck(projectRootDirectory, sourceFolder, varargin)
+% runCodecheck - Check the given folder without writing a badge or a report
+
+    matbox.tasks.codecheckToolbox(projectRootDirectory, ...
+        "FoldersToCheck", sourceFolder, "CreateBadge", false, ...
+        "SaveReport", false, varargin{:});
 end
 
 function setMltbxFileName(projectRootDirectory, mltbxFileName)
